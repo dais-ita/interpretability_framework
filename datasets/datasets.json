@@ -1,0 +1,14 @@
+{"datasets":[
+
+	{
+		"dataset_name":"Gun Wielding Image Classification",
+		"folder":"resized_wielder_non-wielder",
+		"labels":[
+					{"label":"gun_wielder","images":853},
+					{"label":"non_wielder","images":853}
+				],
+		"image_x":128,
+		"image_y":128,
+	}
+
+]}
