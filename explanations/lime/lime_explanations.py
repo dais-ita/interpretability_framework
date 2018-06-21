@@ -35,10 +35,8 @@ class LimeExplainer(object):
       print("classify function passed a 4d tensor, processing first element")
       x = x[0]
 
-    print("x.shape",x.shape)
-    x = x.reshape(self.model.model_input_dim_height,self.model.model_input_dim_height)
-    print(x.shape)
-
+    x = x.reshape(self.model.model_input_dim_height,self.model.model_input_dim_height,self.model.model_input_channels)
+    
     explainer = lime_image.LimeImageExplainer()
 
     explanation = explainer.explain_instance(x, self.PredictFunction,labels=labels,top_labels=top_labels, hide_color=0,num_samples = num_samples)
@@ -69,7 +67,7 @@ if __name__ == '__main__':
   lime_explainer = LimeExplainer(cnn_model)
 
 
-  if(test_image.shape[-1] == 3 and self.model.model_input_channels == 1):
+  if(test_image.shape[-1] == 3 and cnn_model.model_input_channels == 1):
       X = lime_explainer.MakeInputGray(test_image)
 
   # prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,labels=list(range(n_classes)),num_samples=10,top_labels=n_classes)

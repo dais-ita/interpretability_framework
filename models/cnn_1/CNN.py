@@ -19,6 +19,10 @@ class SimpleCNN(object):
 		self.model = None
 		self.InitaliseModel(model_dir=model_dir)
 
+		from tensorflow.python.client import device_lib
+		print("detected devices:")
+		print(device_lib.list_local_devices())
+
 	
 	def InitaliseModel(self, model_dir="model_dir"):
 		self.model = tf.estimator.Estimator(self.model_fn,model_dir=model_dir)
@@ -58,39 +62,39 @@ class SimpleCNN(object):
 
 
 	def BuildModel(self, x, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, dropout, reuse, is_training):
-    
-	    # Define a scope for reusing the variables
-	    with tf.variable_scope('ConvNet', reuse=reuse):
-	    	# TF Estimator input is a dict, in case of multiple inputs
-		    # x = x_dict['images']
+		with tf.device('/gpu:0'):
+			# Define a scope for reusing the variables
+			with tf.variable_scope('ConvNet', reuse=reuse):
+				# TF Estimator input is a dict, in case of multiple inputs
+				# x = x_dict['images']
 
 
-	        # Incase of flat input vector reshape to match picture format [Height x Width x Channel]
-	        # Tensor input become 4-D: [Batch Size, Height, Width, Channel]
-	        x = tf.reshape(x, shape=[-1, model_input_dim_height, model_input_dim_width, model_input_channels])
+				# Incase of flat input vector reshape to match picture format [Height x Width x Channel]
+				# Tensor input become 4-D: [Batch Size, Height, Width, Channel]
+				x = tf.reshape(x, shape=[-1, model_input_dim_height, model_input_dim_width, model_input_channels])
 
-	        # Convolution Layer with 32 filters and a kernel size of 5
-	        conv1 = tf.layers.conv2d(x, 32, 5, activation=tf.nn.relu)
-	        # Max Pooling (down-sampling) with strides of 2 and kernel size of 2
-	        conv1 = tf.layers.max_pooling2d(conv1, 2, 2)
+				# Convolution Layer with 32 filters and a kernel size of 5
+				conv1 = tf.layers.conv2d(x, 32, 5, activation=tf.nn.relu)
+				# Max Pooling (down-sampling) with strides of 2 and kernel size of 2
+				conv1 = tf.layers.max_pooling2d(conv1, 2, 2)
 
-	        # Convolution Layer with 64 filters and a kernel size of 3
-	        conv2 = tf.layers.conv2d(conv1, 64, 3, activation=tf.nn.relu)
-	        # Max Pooling (down-sampling) with strides of 2 and kernel size of 2
-	        conv2 = tf.layers.max_pooling2d(conv2, 2, 2)
+				# Convolution Layer with 64 filters and a kernel size of 3
+				conv2 = tf.layers.conv2d(conv1, 64, 3, activation=tf.nn.relu)
+				# Max Pooling (down-sampling) with strides of 2 and kernel size of 2
+				conv2 = tf.layers.max_pooling2d(conv2, 2, 2)
 
-	        # Flatten the data to a 1-D vector for the fully connected layer
-	        fc1 = tf.contrib.layers.flatten(conv2)
+				# Flatten the data to a 1-D vector for the fully connected layer
+				fc1 = tf.contrib.layers.flatten(conv2)
 
-	        # Fully connected layer
-	        fc1 = tf.layers.dense(fc1, 1048)
-	        # Apply Dropout (if is_training is False, dropout is not applied)
-	        fc1 = tf.layers.dropout(fc1, rate=dropout, training=is_training)
+				# Fully connected layer
+				fc1 = tf.layers.dense(fc1, 1048)
+				# Apply Dropout (if is_training is False, dropout is not applied)
+				fc1 = tf.layers.dropout(fc1, rate=dropout, training=is_training)
 
-	        # Output layer, class prediction
-	        logits = tf.layers.dense(fc1, n_classes)
+				# Output layer, class prediction
+				logits = tf.layers.dense(fc1, n_classes)
 
-   		return logits
+				return logits
 
 
    	def model_fn(self, features, labels, mode):
@@ -111,7 +115,7 @@ class SimpleCNN(object):
 	    # Define loss and optimizer
 	    loss_op = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
 	        logits=logits_train, labels=tf.cast(labels, dtype=tf.int32)))
-	    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
+	    optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
 	    train_op = optimizer.minimize(loss_op, global_step=tf.train.get_global_step())
 	    
 	    # Evaluate the accuracy of the model
@@ -146,13 +150,16 @@ if __name__ == '__main__':
 
 	verbose_every = 10
 	for step in range(verbose_every,num_train_steps+1,verbose_every):
+		print("")
 		print("training")
 		print("step:",step)
 		cnn_model.TrainModel(mnist.train.images, mnist.train.labels, batch_size, verbose_every)
-
+		print("")
+		
 		print("evaluation")
 		print(cnn_model.EvaluateModel(mnist.test.images[:128], mnist.test.labels[:128], batch_size))
-
+		print("")
+		
 
 
 	print(cnn_model.Predict(mnist.test.images[:5]))

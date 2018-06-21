@@ -9,6 +9,8 @@
 				],
 		"image_x":128,
 		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo/datasets/dataset_csvs/resized_wielder_non-wielder.csv"
 	}
 
 ]}
