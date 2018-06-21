@@ -42,7 +42,6 @@ class SimpleCNN(object):
 
 
 	def Predict(self,predict_x):
-		print(len(predict_x))
 		input_fn = tf.estimator.inputs.numpy_input_fn(
 		    x=predict_x, y=None,
 		    batch_size=128, num_epochs=1, shuffle=False)
@@ -141,7 +140,7 @@ if __name__ == '__main__':
 	learning_rate = 0.001
 
 	batch_size = 128
-	num_train_steps = 1
+	num_train_steps = 200
 
 	cnn_model = SimpleCNN(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, learning_rate = learning_rate)
 
