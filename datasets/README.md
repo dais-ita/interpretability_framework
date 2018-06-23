@@ -1,4 +1,5 @@
 # Datasets
+Datasets are currently stored as part of the repo. In the future they will be moved to seperate storage and replaced in the repo by a download script. 
 
 ## JSON File
 A json file is located in "datasets" that contains detatils of each dataset available. 
