@@ -4,7 +4,7 @@ observations = []
 
 
 image_dir = "dataset_images"
-dataset_folder = "resized_wielder_non-wielder"
+dataset_folder = "wielder_non-wielder"
 
 dataset_folder_path = os.path.join(image_dir,dataset_folder)
 
@@ -21,10 +21,10 @@ for class_folder in class_folders:
 		observations.append((str(os.path.abspath(image_path)),str(class_folder)))
 
 
-output_string = "image_paths,label\n"
+output_string = "image_path,label\n"
 
 for observation in observations:
 	output_string += observation[0] + "," + observation[1] + "\n"
 
-with open(dataset_folder+".csv","w") as f:
+with open(os.path.join("dataset_csvs",dataset_folder+".csv"),"w") as f:
 	f.write(output_string[:-1])
