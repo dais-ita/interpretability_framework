@@ -14,7 +14,7 @@ For models that offer the avility to test adversarial attacks, the select is mad
 
 For each option group,a json file exists that describes the existing options. The interface is built to understand available options and valid configurations via the JSON file. 
 
-Available Datasets (https://github.com/dais-ita/p5_afm_2018_demo/blob/master/datasets/datasets.json)
+Available Datasets (https://github.com/dais-ita/p5_afm_2018_demo/blob/master/datasets)
 - gun wielder image binary classification
 - mnist (not yet integrated)
 - cifar10 (not yet integrated)
