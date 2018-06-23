@@ -60,7 +60,7 @@ dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dat
 
 ### gather required information about the dataset
 file_path = dataset_json["ground_truth_csv_path"]
-image_url_column = "image_paths"
+image_url_column = "image_path"
 ground_truth_column = "label"
 label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
 print(label_names)
@@ -102,7 +102,7 @@ cnn_model = SimpleCNN(input_image_height, input_image_width, input_image_channel
 
 ### train model
 batch_size = 128
-num_train_steps = 0
+num_train_steps = 10
 
 #load all train images as model handels batching
 source = "train"
@@ -148,6 +148,7 @@ print(test_y)
 
 
 ### use LIME to explain a classification
+print("Generating LIME explanation")
 from lime_explanations import LimeExplainer
 
 from skimage.segmentation import mark_boundaries
@@ -166,8 +167,8 @@ if(cnn_model.model_input_channels == 1 and test_image.shape[-1] == 3):
 prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,num_samples=1000,labels=list(range(n_classes)), top_labels=n_classes)
 
 predicted_class = np.argmax(prediction)
-print("predicted_class",predicted_class)
-print("mnist.test.labels[:1]",test_label)
+print("predicted_class: ",predicted_class)
+print("ground truth class: ",test_label)
 
 
 

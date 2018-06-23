@@ -462,9 +462,9 @@ if __name__ == '__main__':
 	create_filtered_live_set = False
 
 
-	if(create_filtered_live_set):
-		file_path = "resized_wielder_non-wielder.csv"
-		image_url_column = "image_paths"
+	if(create_filtered_live_set): #create and save a resized dataset if needed
+		file_path = "wielder_non-wielder.csv"
+		image_url_column = "image_path"
 		ground_truth_column = "label"
 
 		
@@ -473,12 +473,12 @@ if __name__ == '__main__':
 		output_dir = "dataset"
 		print("resizing")
 		
-		dataset_tool.CreateFilteredLiveCSV("live_dataset.csv",y_labels_to_use=["female"],save_images = True,image_dir=output_dir,batch_size=30,filter_size=(300,300,3)) 
+		dataset_tool.CreateFilteredLiveCSV("live_dataset.csv",y_labels_to_use=["non_wielder","gun_wielder"],save_images = True,image_dir=output_dir,batch_size=30,filter_size=(300,300,3)) 
 
 
 
-	file_path = "resized_wielder_non-wielder.csv"
-	image_url_column = "image_paths"
+	file_path = "wielder_non-wielder.csv"
+	image_url_column = "image_path"
 	ground_truth_column = "label"
 
 	
@@ -495,6 +495,3 @@ if __name__ == '__main__':
 	cv2.destroyAllWindows()
 	print(y[0])
 
-
-	
-	# dataset_tool.ImageResize(image_dir="dataset",output_dir="100_dataset",target_width=100,target_height=-1,crop={'x1':38,'x2':262,'y1':0,'y2':224})
