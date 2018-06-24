@@ -8,7 +8,8 @@
 			"model_path":"model_dir",
 			"test_accuracy":0.0
 			}
-		]
+		],
+		"description":""
 		}
 
 	]
