@@ -41,8 +41,6 @@ sys.path.append(datasets_path)
 
 #import dataset tool
 from DatasetClass import DataSet
-#import model
-from CNN import SimpleCNN
 
 
 #### load dataset json
@@ -95,40 +93,35 @@ if(display_example_image):
 
 
 ### instantiate the model
+model_json_path = os.path.join(models_path,"models.json")
+
+
+models_json = None
+with open(model_json_path,"r") as f:
+	models_json = json.load(f)
+
+
+
+available_models = [model for model in models_json["models"] if dataset_name in [dataset["dataset_name"] for dataset in model["trained_on"]] ]
+print("available models:")
+print(available_models)
+print("")
+model_json = available_models[0]
+print("selecting first model:" + model_json["model_name"])
+
+print(model_json["script_name"]+"."+model_json["class_name"])
+ModelModule = __import__(model_json["script_name"]) 
+ModelClass = getattr(ModelModule, model_json["class_name"])
+
+
 n_classes = len(label_names) 
 learning_rate = 0.001
 
-cnn_model = SimpleCNN(input_image_height, input_image_width, input_image_channels, n_classes, learning_rate = learning_rate)
+### load trained model
+trained_on_json = [dataset for dataset in model["trained_on"] if dataset["dataset_name"] == dataset_name][0]
+cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, learning_rate = learning_rate, model_dir=trained_on_json["model_path"])
+cnn_model.LoadModel(trained_on_json["model_path"]) ## for this model, this call is redundant. For other models this may be necessary. 
 
-### train model
-batch_size = 128
-num_train_steps = 200
-
-#load all train images as model handels batching
-source = "train"
-train_x, train_y = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True, split_one_hot = True, batch_source = source)
-
-print("num train examples: "+str(len(train_x)))
-train_y = dataset_tool.ConvertOneHotToClassNumber(train_y) #convert one hot vectors to class numbers as per model requirement
-
-#validate on 128 images only
-source = "validation"
-val_x, val_y = dataset_tool.GetBatch(batch_size = 128,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
-print("num validation examples: "+str(len(val_x)))
-val_y = dataset_tool.ConvertOneHotToClassNumber(val_y) 
-
-
-verbose_every = 10
-for step in range(verbose_every,num_train_steps+1,verbose_every):
-	print("")
-	print("training")
-	print("step:",step)
-	cnn_model.TrainModel(train_x, train_y, batch_size, verbose_every)
-
-	print("")
-	print("evaluation")
-	print(cnn_model.EvaluateModel(val_x, val_y, batch_size))
-	print("")
 
 
 ### test the model

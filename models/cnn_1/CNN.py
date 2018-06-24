@@ -3,13 +3,13 @@ import numpy as np
 
 class SimpleCNN(object):
 	"""A simple CNN model implemented using the Tensorflow estimator API"""
-	def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, learning_rate = 0.001, dropout = 0.25, model_dir = "model_dir"):
+	def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir, learning_rate = 0.001, dropout = 0.25):
 		super(SimpleCNN, self).__init__()
 		self.model_input_dim_height = model_input_dim_height
 		self.model_input_dim_width = model_input_dim_width
 		self.model_input_channels = model_input_channels
 		self.n_classes = n_classes
-
+		self.model_dir = model_dir
 
 		#model specific variables
 		# Training Parameters

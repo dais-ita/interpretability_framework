@@ -1,0 +1,16 @@
+{
+	"models":[
+		{"model_name":"cnn_1",
+		"script_name":"CNN",
+		"class_name":"SimpleCNN",
+		"trained_on":[
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"model_dir",
+			"test_accuracy":0.0
+			}
+		]
+		}
+
+	]
+
+}
