@@ -61,6 +61,7 @@ file_path = dataset_json["ground_truth_csv_path"]
 image_url_column = "image_path"
 ground_truth_column = "label"
 label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
+label_names.sort()
 print(label_names)
 
 input_image_height = dataset_json["image_y"]
@@ -121,8 +122,10 @@ additional_args = {"learning_rate":learning_rate}
 
 ### load trained model
 trained_on_json = [dataset for dataset in model["trained_on"] if dataset["dataset_name"] == dataset_name][0]
-cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=trained_on_json["model_path"], additional_args=additional_args)
-cnn_model.LoadModel(trained_on_json["model_path"]) ## for this model, this call is redundant. For other models this may be necessary. 
+
+model_load_path = os.path.join(models_path,"cnn_1",trained_on_json["model_path"])
+cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_load_path, additional_args=additional_args)
+cnn_model.LoadModel(model_load_path) ## for this model, this call is redundant. For other models this may be necessary. 
 
 
 
@@ -155,20 +158,11 @@ test_image = test_x[0]
 test_label = test_y[0]
 
 
-if(cnn_model.model_input_channels == 1 and test_image.shape[-1] == 3):
-  X = lime_explainer.MakeInputGray(test_image)
+explanation_image, explanation_text, prediction, additional_outputs = lime_explainer.Explain(test_image)
 
-# prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,labels=list(range(n_classes)),num_samples=10,top_labels=n_classes)
-prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,num_samples=1000,labels=list(range(n_classes)), top_labels=n_classes)
-
-predicted_class = np.argmax(prediction)
-print("predicted_class: ",predicted_class)
-print("ground truth class: ",test_label)
-
-
-
-for i in range(n_classes):
-	temp, mask = explanation.get_image_and_mask(i, positive_only=False, num_features=100, hide_rest=False,min_weight=0.001)
-
-	imgplot = plt.imshow(mark_boundaries(temp, mask))
-	plt.show()
+predicted_class = label_names[int(prediction)]
+print("explantion prediction class:"+ predicted_class)
+cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+cv2.imshow("image 0",cv2_image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
