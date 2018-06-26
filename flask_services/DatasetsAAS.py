@@ -11,6 +11,10 @@ import json
 
 import sys
 
+import random
+
+import numpy as np
+
 
 ## Setup Sys path for easy imports
 base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
@@ -19,6 +23,8 @@ base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
 datasets_path = os.path.join(base_dir,"datasets")
 sys.path.append(datasets_path)
 ###
+
+dataset_tools = {}
 
 
 #import dataset tool
@@ -45,16 +51,72 @@ def encIMG64(image,convert_colour = False):
     return base64.b64encode(img_buf)
 
 
+def GetDatasetJsonFromName(dataset_name):
+	return [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
+
+
+def LoadDatasetTool(dataset_name):
+	dataset_json = GetDatasetJsonFromName(dataset_name)
+	### gather required information about the dataset
+	file_path = dataset_json["ground_truth_csv_path"]
+	image_url_column = "image_path"
+	ground_truth_column = "label"
+	label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
+
+	### instantiate dataset tool
+	dataset_tool = DataSet(file_path,image_url_column,ground_truth_column) #instantiates a dataset tool
+	dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
+	
+	# !!! We should save the split during training/a global set to be used in all training and we should load the same split when reusing the dataset
+	dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
+
+	return dataset_tool,label_names
 
 
 def EncodeTestImages(dataset_name,num_images=1):
-	pass
+	if(not dataset_name in dataset_tools):
+		dataset_tool, label_names = LoadDatasetTool(dataset_name)
+		dataset_tools[dataset_name] = {"dataset_tool":dataset_tool,"label_names":label_names}
+
+	label_names = dataset_tools[dataset_name]["label_names"]
+	source = "test"
+
+	x, y = dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = len(label_names),even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source)
+
+	random_i = random.randint(0,len(x)-1)
+
+	enc_image = encIMG64(x[random_i]*255,convert_colour=True)
+
+
+	### test images by displaying pre and post encoding
+	display_example_image = False
+
+	if(display_example_image):
+		cv2_image = cv2.cvtColor(x[random_i], cv2.COLOR_RGB2BGR)
+		cv2.imshow("image 0",cv2_image)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()
+
+	display_encoded_image = False
+
+	if(display_encoded_image):
+		decoded_image = readb64(enc_image)
+		cv2_image = decoded_image
+		cv2.imshow("image 0",cv2_image)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()
+
+
+	
+	return enc_image, y[random_i]
+
 
 
 @app.route("/datasets/test_image/<string:dataset_name>", methods=['GET'])
 def ServeTestImages(dataset_name):
-	
-	response_dict = {"images":EncodeTestImages(dataset_name)}
+	enc_x, y = EncodeTestImages(dataset_name)
+	response_dict = {"input":enc_x,"ground_truth":y}
+
 	return json.dumps(response_dict)
 
 
