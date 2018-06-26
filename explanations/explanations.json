@@ -9,7 +9,8 @@
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"}
 				],
-		"description":""
+		"modality":"imagery",
+		"description":"A local (example specific) decision-boundary explanation of evidence towards classes"
 		}
 	]
 }
