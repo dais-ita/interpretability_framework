@@ -3,7 +3,7 @@ import numpy as np
 
 class SimpleCNN(object):
 	"""A simple CNN model implemented using the Tensorflow estimator API"""
-	def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir, learning_rate = 0.001, dropout = 0.25):
+	def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,additional_args={}):
 		super(SimpleCNN, self).__init__()
 		self.model_input_dim_height = model_input_dim_height
 		self.model_input_dim_width = model_input_dim_width
@@ -13,11 +13,21 @@ class SimpleCNN(object):
 
 		#model specific variables
 		# Training Parameters
-		self.learning_rate = learning_rate
-		self.dropout = dropout
+
+		if("learning_rate" in additional_args):
+			self.learning_rate = additional_args["learning_rate"]
+		else:
+			self.learning_rate = 0.001
+			print("using default of "+str(self.learning_rate)+ " for " + "learning_rate")	
+		
+		if("dropout" in additional_args):
+			self.dropout = additional_args["dropout"]
+		else:
+			self.dropout = 0.25
+			print("using default of "+str(self.dropout)+ " for " + "dropout")
 		
 		self.model = None
-		self.InitaliseModel(model_dir=model_dir)
+		self.InitaliseModel(model_dir=self.model_dir)
 
 		
 	### Required Model Functions
@@ -51,11 +61,11 @@ class SimpleCNN(object):
 
 
 	def SaveModel(self,save_dir):
-		print("model is automatically saved in 'model_dir'")
+		print("model is automatically saved in "+str(self.model_dir))
 
 
 	def LoadModel(self,load_dir):
-		print("model is automatically loaded from 'model_dir'")
+		print("model is automatically loaded from "+str(self.model_dir))
 
 
 	### Model Specific Functions
@@ -68,28 +78,28 @@ class SimpleCNN(object):
 
 			# Incase of flat input vector reshape to match picture format [Height x Width x Channel]
 			# Tensor input become 4-D: [Batch Size, Height, Width, Channel]
-			x = tf.reshape(x, shape=[-1, model_input_dim_height, model_input_dim_width, model_input_channels])
+			x = tf.reshape(x, shape=[-1, model_input_dim_height, model_input_dim_width, model_input_channels],name="reshaped_input_1")
 
 			# Convolution Layer with 32 filters and a kernel size of 5
-			conv1 = tf.layers.conv2d(x, 32, 5, activation=tf.nn.relu)
+			conv1 = tf.layers.conv2d(x, 32, 5, activation=tf.nn.relu,name="conv_1")
 			# Max Pooling (down-sampling) with strides of 2 and kernel size of 2
-			conv1 = tf.layers.max_pooling2d(conv1, 2, 2)
+			max_pool_1 = tf.layers.max_pooling2d(conv1, 2, 2,name="max_pool_1")
 
 			# Convolution Layer with 64 filters and a kernel size of 3
-			conv2 = tf.layers.conv2d(conv1, 64, 3, activation=tf.nn.relu)
+			conv2 = tf.layers.conv2d(max_pool_1, 64, 3, activation=tf.nn.relu,name="conv_2")
 			# Max Pooling (down-sampling) with strides of 2 and kernel size of 2
-			conv2 = tf.layers.max_pooling2d(conv2, 2, 2)
+			max_pool_2 = tf.layers.max_pooling2d(conv2, 2, 2,name="max_pool_2")
 
 			# Flatten the data to a 1-D vector for the fully connected layer
-			fc1 = tf.contrib.layers.flatten(conv2)
-
+			feature_vector = tf.layers.flatten(max_pool_2,name="feature_vector_1")
+			
 			# Fully connected layer
-			fc1 = tf.layers.dense(fc1, 1048)
+			fc1 = tf.layers.dense(feature_vector, 1048,name="fully_connected_1")
 			# Apply Dropout (if is_training is False, dropout is not applied)
-			fc1 = tf.layers.dropout(fc1, rate=dropout, training=is_training)
+			fc_dropout_1 = tf.layers.dropout(fc1, rate=dropout, training=is_training,name="dropout_1")
 
 			# Output layer, class prediction
-			logits = tf.layers.dense(fc1, n_classes)
+			logits = tf.layers.dense(fc_dropout_1, n_classes,name="logits")
 
 			return logits
 

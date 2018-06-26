@@ -5,9 +5,34 @@
 		"class_name":"SimpleCNN",
 		"trained_on":[
 			{"dataset_name":"Gun Wielding Image Classification",
-			"model_path":"model_dir",
+			"model_path":"gun_wielding_image_classification",
 			"test_accuracy":0.0
 			}
+		],
+		"layers":[
+			{"type":"reshape",
+			"name":"reshaped_input_1"},
+			
+			{"type":"conv2d",
+			"name":"reshaped_input_1"},
+			{"type":"max_pooling2d",
+			"name":"reshaped_input_1"},
+			
+			{"type":"conv2d",
+			"name":"reshaped_input_1"},
+			{"type":"max_pooling2d",
+			"name":"reshaped_input_1"},
+			
+			{"type":"flatten",
+			"name":"feature_vector_1"},
+			
+			{"type":"dense",
+			"name":"fully_connected_1"},
+			{"type":"dropout",
+			"name":"dropout_1"},
+
+			{"type":"dense",
+			"name":"logits"}
 		],
 		"description":""
 		}

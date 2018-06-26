@@ -117,9 +117,11 @@ ModelClass = getattr(ModelModule, model_json["class_name"])
 n_classes = len(label_names) 
 learning_rate = 0.001
 
+additional_args = {"learning_rate":learning_rate}
+
 ### load trained model
 trained_on_json = [dataset for dataset in model["trained_on"] if dataset["dataset_name"] == dataset_name][0]
-cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, learning_rate = learning_rate, model_dir=trained_on_json["model_path"])
+cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=trained_on_json["model_path"], additional_args=additional_args)
 cnn_model.LoadModel(trained_on_json["model_path"]) ## for this model, this call is redundant. For other models this may be necessary. 
 
 

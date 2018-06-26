@@ -98,7 +98,12 @@ if(display_example_image):
 n_classes = len(label_names) 
 learning_rate = 0.001
 
-cnn_model = SimpleCNN(input_image_height, input_image_width, input_image_channels, n_classes, learning_rate = learning_rate)
+model_save_path = dataset_name.lower().replace(" ","_")
+print("model_save_path",model_save_path)
+
+additional_args = {"learning_rate":learning_rate}
+
+cnn_model = SimpleCNN(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args = additional_args)
 
 ### train model
 batch_size = 128
