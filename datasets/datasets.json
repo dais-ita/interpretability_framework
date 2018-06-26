@@ -12,7 +12,7 @@
 		"image_channels":3,
 		"ground_truth_csv_path":"/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo/datasets/dataset_csvs/wielder_non-wielder.csv",
 		"references":["http://sci2s.ugr.es/weapons-detection","http://www.di.ens.fr/willow/research/stillactions/"],
-		"description":"Image classification of people holding guns and people who aren't holding guns. Gun wielding images were taken from weapons-detection dataset. Negative class examples taken from willow action in image dataset."
+		"description":"Image classification of people holding guns and people who aren't holding guns. Gun wielding images were taken from 'sci2s weapons-detection' dataset. Negative class examples taken from 'willow action image dataset'."
 	}
 
 ]}
