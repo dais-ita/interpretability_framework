@@ -98,7 +98,8 @@ if(display_example_image):
 n_classes = len(label_names) 
 learning_rate = 0.001
 
-model_save_path = dataset_name.lower().replace(" ","_")
+model_save_path = os.path.join(models_path,"cnn_1",dataset_name.lower().replace(" ","_"))
+
 print("model_save_path",model_save_path)
 
 additional_args = {"learning_rate":learning_rate}
