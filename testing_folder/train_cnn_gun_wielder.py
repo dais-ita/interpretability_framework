@@ -166,20 +166,9 @@ test_image = test_x[0]
 test_label = test_y[0]
 
 
-if(cnn_model.model_input_channels == 1 and test_image.shape[-1] == 3):
-  X = lime_explainer.MakeInputGray(test_image)
+explanation_image, explanation_text, prediction, additional_outputs = lime_explainer.Explain(test_image)
 
-# prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,labels=list(range(n_classes)),num_samples=10,top_labels=n_classes)
-prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,num_samples=1000,labels=list(range(n_classes)), top_labels=n_classes)
-
-predicted_class = np.argmax(prediction)
-print("predicted_class: ",predicted_class)
-print("ground truth class: ",test_label)
-
-
-
-for i in range(n_classes):
-	temp, mask = explanation.get_image_and_mask(i, positive_only=False, num_features=100, hide_rest=False,min_weight=0.001)
-
-	imgplot = plt.imshow(mark_boundaries(temp, mask))
-	plt.show()
+cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+cv2.imshow("image 0",cv2_image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
