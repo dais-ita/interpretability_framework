@@ -33,6 +33,8 @@ class ConvFeatureDescriptor(object):
 
         self.input_ = tf.placeholder(tf.float32, [None, 224, 224, 3], name="input_image")
 
+        self.model = vgg16.Vgg16()
+
         self.model.build(self.input_)
 
 
