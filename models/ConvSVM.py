@@ -29,10 +29,8 @@ class ConvSVM(object):
         if "alpha" in addit_args:
             self.alpha = addit_args["alpha"]
 
-        if "model" in addit_args:
-            self.model = addit_args["model"]
 
-        self.feature_desc = ConvFeatureDescriptor.ConvFeatureDescriptor(10,self.model)
+        self.feature_desc = ConvFeatureDescriptor.ConvFeatureDescriptor(10)
 
         self.input_ = None
         self.labels_ = None
@@ -208,7 +206,7 @@ if __name__ == '__main__':
     from tensorflow_vgg import vgg16, utils
     from tqdm import tqdm
 
-    model = vgg16.Vgg16()
+
     datadir = "/home/c1435690/Projects/DAIS-ITA/Datasets/resized_wielder_non-wielder/"
     contents = os.listdir(datadir)
     classes = [each for each in contents if os.path.isdir(datadir + each)]
@@ -268,8 +266,7 @@ if __name__ == '__main__':
     n_classes = 2
     additional_args = {
         'learning_rate': 0.01,
-        'alpha': 0.0001,
-        "model": model
+        'alpha': 0.0001
     }
     batch_size = 70
 
