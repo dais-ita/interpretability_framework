@@ -4,6 +4,7 @@ import tensorflow as tf
 
 from urllib.request import urlretrieve
 from os.path import isfile
+from os import mkdir
 from tqdm import tqdm
 
 try:
@@ -23,7 +24,7 @@ class ConvFeatureDescriptor(object):
         X # array of feature vectors
     """
 
-    def __init__(self, verbose=1, mode='FILE', batch_size=10, x_dim=224, y_dim=224, channels=3):
+    def __init__(self, verbose=True, mode='FILE', batch_size=10, x_dim=224, y_dim=224, channels=3):
         """load the architecture + corresponding weights"""
         self.batch_size = batch_size
         self.verbose = verbose
@@ -32,7 +33,7 @@ class ConvFeatureDescriptor(object):
         self.y_dim = y_dim
         self.channels = channels
 
-        self.__download_vggnet() if not isfile("utils/model_utils/tensorflow_vgg/vgg16.npy") else print("VGG parameters found.")
+        self.__download_vggnet() if not isfile(".utils/model_utils/tensorflow_vgg/vgg16.npy") else print("VGG parameters found.")
         self.model = vgg16.Vgg16()
         self.input = tf.placeholder(tf.float32, [None, self.x_dim, self.y_dim, self.channels], name="input_image")
 
@@ -104,20 +105,21 @@ class ConvFeatureDescriptor(object):
     def __download_vggnet(self):
 
         print("Downloading VGG16 Parameters...")
-        with self.__DLProgress(unit="B", unit_scale=True, miniters=1, desc="VGG16 params") as progress:
+        with DLProgress(unit="B", unit_scale=True, miniters=1, desc="VGG16 params") as progress:
             urlretrieve(
                 "https://s3.amazonaws.com/content.udacity-data.com/nd101/vgg16.npy",
-                "utils/model_utils/tensorflow_vgg/vgg16.npy",
+                "./utils/model_utils/tensorflow_vgg/vgg16.npy",
                 progress.hook
             )
 
-    class __DLProgress(tqdm):
-        last_block = 0
 
-        def hook(self, block_num=1, block_size=1, total_size=None):
-            self.total = total_size
-            self.update((block_num - self.last_block) * block_size)
-            self.last_block = block_num
+class DLProgress(tqdm):
+    last_block = 0
+
+    def hook(self, block_num=1, block_size=1, total_size=None):
+        self.total = total_size
+        self.update((block_num - self.last_block) * block_size)
+        self.last_block = block_num
 
 
 
