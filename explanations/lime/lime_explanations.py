@@ -46,6 +46,19 @@ class LimeExplainer(object):
 
 
 if __name__ == '__main__':
+  import os
+  ### Setup Sys path for easy imports
+  base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
+  base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
+  #add all model folders to sys path to allow for easy import
+  models_path = os.path.join(base_dir,"models")
+
+  model_folders = os.listdir(models_path)
+
+  for model_folder in model_folders:
+    model_path = os.path.join(models_path,model_folder)
+    sys.path.append(model_path)
+
   from CNN import SimpleCNN
 
   from tensorflow.examples.tutorials.mnist import input_data

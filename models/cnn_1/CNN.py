@@ -37,24 +37,40 @@ class SimpleCNN(object):
 
 	def TrainModel(self, train_x, train_y, batch_size, num_steps):
 		# Define the input function for training
+
+		if(type(train_x) != dict):
+			input_dict = {"input":train_x}
+		else:
+			input_dict = train_x
+
 		input_fn = tf.estimator.inputs.numpy_input_fn(
-		    x=train_x, y=train_y,
+		    x=input_dict, y=train_y,
 		    batch_size=batch_size, num_epochs=None, shuffle=True)
 		# Train the Model
 		self.model.train(input_fn, steps=num_steps)
 
 
 	def EvaluateModel(self,eval_x,eval_y,batch_size):
+		if(type(eval_x) != dict):
+			input_dict = {"input":eval_x}
+		else:
+			input_dict = eval_x
+
 		input_fn = tf.estimator.inputs.numpy_input_fn(
-		    x=eval_x, y=eval_y,
+		    x=input_dict, y=eval_y,
 		    batch_size=batch_size, num_epochs=None, shuffle=False)
 		# Train the Model
 		return self.model.evaluate(input_fn, steps=1)
 
 
 	def Predict(self,predict_x):
+		if(type(predict_x) != dict):
+			input_dict = {"input":predict_x}
+		else:
+			input_dict = predict_x
+
 		input_fn = tf.estimator.inputs.numpy_input_fn(
-		    x=predict_x, y=None,
+		    x=input_dict, y=None,
 		    batch_size=128, num_epochs=1, shuffle=False)
 		
 		return list(self.model.predict(input_fn))
@@ -69,11 +85,11 @@ class SimpleCNN(object):
 
 
 	### Model Specific Functions
-	def BuildModel(self, x, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, dropout, reuse, is_training):
+	def BuildModel(self, x_dict, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, dropout, reuse, is_training):
 		# Define a scope for reusing the variables
 		with tf.variable_scope('ConvNet', reuse=reuse):
-			# TF Estimator input is a dict, in case of multiple inputs
-			# x = x_dict['images']
+			#TF Estimator input is a dict, in case of multiple inputs
+			x = x_dict['input']
 
 
 			# Incase of flat input vector reshape to match picture format [Height x Width x Channel]
@@ -91,7 +107,10 @@ class SimpleCNN(object):
 			max_pool_2 = tf.layers.max_pooling2d(conv2, 2, 2,name="max_pool_2")
 
 			# Flatten the data to a 1-D vector for the fully connected layer
-			feature_vector = tf.layers.flatten(max_pool_2,name="feature_vector_1")
+			try:
+				feature_vector = tf.layers.flatten(max_pool_2,name="feature_vector_1")
+			except:
+				feature_vector = tf.contrib.layers.flatten(max_pool_2)
 			
 			# Fully connected layer
 			fc1 = tf.layers.dense(feature_vector, 1048,name="fully_connected_1")
@@ -108,8 +127,13 @@ class SimpleCNN(object):
 	    # Build the neural network
 	    # Because Dropout have different behavior at training and prediction time, we
 	    # need to create 2 distinct computation graphs that still share the same weights.
-	    logits_train = self.BuildModel(features, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=False, is_training=True)
-	    logits_test = self.BuildModel(features, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=True, is_training=False)
+	    if(type(features) != dict):
+	    	input_dict = {"input":features}
+	    else:
+	    	input_dict = features
+
+	    logits_train = self.BuildModel(input_dict, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=False, is_training=True)
+	    logits_test = self.BuildModel(input_dict, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=True, is_training=False)
 	    
 	    # Predictions
 	    pred_classes = tf.argmax(logits_test, axis=1)

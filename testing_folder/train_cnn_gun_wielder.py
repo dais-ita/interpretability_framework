@@ -11,7 +11,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # turn off repeated messages from Tenso
 
 
 ### Setup Sys path for easy imports
-base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
+base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
 
 #add all model folders to sys path to allow for easy import
 models_path = os.path.join(base_dir,"models")
@@ -70,7 +70,8 @@ input_image_width = dataset_json["image_x"]
 input_image_channels = dataset_json["image_channels"]
 
 ### instantiate dataset tool
-dataset_tool = DataSet(file_path,image_url_column,ground_truth_column) #instantiates a dataset tool
+csv_path = os.path.join(datasets_path,"dataset_csvs",file_path) 
+dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column) #instantiates a dataset tool
 dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
 dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
 
