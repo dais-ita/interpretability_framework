@@ -32,7 +32,11 @@ class SimpleCNN(object):
 		
 	### Required Model Functions
 	def InitaliseModel(self, model_dir="model_dir"):
-		self.model = tf.estimator.Estimator(self.model_fn,model_dir=model_dir)
+		opts = tf.GPUOptions(allow_growth = True)
+		conf = tf.ConfigProto(gpu_options=opts)
+		trainingConfig = tf.estimator.RunConfig(session_config=conf)
+		
+		self.model = tf.estimator.Estimator(self.model_fn,model_dir=model_dir,config=trainingConfig)
 	
 
 	def TrainModel(self, train_x, train_y, batch_size, num_steps):
@@ -73,7 +77,8 @@ class SimpleCNN(object):
 		    x=input_dict, y=None,
 		    batch_size=128, num_epochs=1, shuffle=False)
 		
-		return list(self.model.predict(input_fn))
+		predictions = self.model.predict(input_fn)
+		return list(predictions)
 
 
 	def SaveModel(self,save_dir):
@@ -136,8 +141,8 @@ class SimpleCNN(object):
 	    logits_test = self.BuildModel(input_dict, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=True, is_training=False)
 	    
 	    # Predictions
-	    pred_classes = tf.argmax(logits_test, axis=1)
-	    pred_probas = tf.nn.softmax(logits_test)
+	    pred_classes = tf.argmax(logits_test, axis=1, name="argmax")
+	    pred_probas = tf.nn.softmax(logits_test, name="softmax")
 	    
 	    # If prediction mode, early return
 	    if mode == tf.estimator.ModeKeys.PREDICT:
