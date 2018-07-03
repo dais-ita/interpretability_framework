@@ -13,6 +13,8 @@ import sys
 
 import numpy as np
 
+import dill
+
 ## Setup Sys path for easy imports
 base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
 
@@ -86,7 +88,7 @@ def LoadModelFromName(model_name,dataset_json):
 
 	model_path = os.path.join(models_path,model_name,trained_on_json["model_path"])
 	model_instance = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_path, additional_args=additional_args)
-	model_instance.LoadModel(trained_on_json["model_path"]) ## for this model, this call is redundant. For other models this may be necessary. 
+	model_instance.LoadModel(model_path) ## for this model, this call is redundant. For other models this may be necessary. 
 
 	return model_instance
 
@@ -133,7 +135,7 @@ def Predict():
 
 	labels = [label["label"] for label in dataset_json["labels"]]
 	labels.sort()
-
+	print("raw prediction:", prediction)
 	print("prediction:"+str(prediction[0])+" - "+labels[prediction[0]])
 	json_data = json.dumps({'prediction': labels[prediction[0]]})
 
