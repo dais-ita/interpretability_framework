@@ -3,6 +3,10 @@ from lime import lime_image
 
 from skimage.color import gray2rgb, rgb2gray
 
+from skimage.segmentation import mark_boundaries
+
+import cv2
+
 class LimeExplainer(object):
   """docstring for LimeExplainer"""
   def __init__(self, model):
@@ -20,10 +24,12 @@ class LimeExplainer(object):
     else: #if it doesn't, convert predictions to one hot vectors
       one_hot_predictions = []
       for prediction in predictions:
+        # print("explain prediciton", prediction)
         one_hot = [0] * self.model.n_classes
         one_hot[prediction] = 1
-        one_hot_predictions.append(one_hot)
-
+        one_hot_predictions.append(one_hot[:])
+        # print("one_hot_predictions[-1]", one_hot_predictions[-1])
+        
       return one_hot_predictions
 
   def MakeInputGray(self,X):
@@ -31,6 +37,10 @@ class LimeExplainer(object):
     
 
   def ClassifyWithLIME(self,x,num_samples=1000,labels = (1,),top_labels=None,class_names = None):
+    # print("lime labels",labels)
+    if(self.model.model_input_channels == 1 and x.shape[-1] == 3):
+      X = self.MakeInputGray(test_image)
+
     if(len(x.shape)== 4):
       print("classify function passed a 4d tensor, processing first element")
       x = x[0]
@@ -41,9 +51,55 @@ class LimeExplainer(object):
 
     explanation = explainer.explain_instance(x, self.PredictFunction,labels=labels,top_labels=top_labels, hide_color=0,num_samples = num_samples)
 
+    print("list(explanation.local_exp.keys())",list(explanation.local_exp.keys()))
+    print("explanation.local_exp[list(explanation.local_exp.keys())[0]].shape",explanation.local_exp[list(explanation.local_exp.keys())[0]])
+    print("explanation.segments.shape",explanation.segments.shape)
     return self.PredictFunction(np.array([x])), explanation
 
 
+  def Explain(self,input_image, additional_args = {}):
+
+    #load additional arguments or set to default
+    if("num_samples" in additional_args):
+      num_samples=additional_args["num_samples"]
+    else:
+      num_samples=30
+
+    if("num_features" in additional_args):
+      num_features=additional_args["num_features"]
+    else:
+      num_features=100
+
+    if("min_weight" in additional_args):
+      min_weight=additional_args["min_weight"]
+    else:
+      min_weight=0.01
+
+
+    prediction, explanation = self.ClassifyWithLIME(input_image,num_samples=num_samples,labels=list(range(self.model.n_classes)), top_labels=self.model.n_classes)
+
+    print("explanation prediction output",prediction)
+    predicted_class = np.argmax(prediction)
+    print("explanation predicted_class",predicted_class)
+    temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=False, num_features=num_features, hide_rest=False,min_weight=min_weight)
+
+    display_explanation_image = False
+
+    if(display_explanation_image):
+      cv2_image = cv2.cvtColor(temp, cv2.COLOR_RGB2BGR)
+      cv2.imshow("image 0",cv2_image)
+      cv2.waitKey(0)
+      cv2.destroyAllWindows()
+
+    # explanation_image = mark_boundaries(temp,mask)
+
+    explanation_image = temp
+
+    additional_outputs = {"temp_image":temp, "mask":mask}
+
+    explanation_text = "Evidence towards predicted class shown in green"
+    return explanation_image, explanation_text, predicted_class, additional_outputs
+    
 
 if __name__ == '__main__':
   from CNN import SimpleCNN
