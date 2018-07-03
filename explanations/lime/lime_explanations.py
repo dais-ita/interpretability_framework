@@ -103,6 +103,7 @@ class LimeExplainer(object):
 
 if __name__ == '__main__':
   import os
+  import sys
   ### Setup Sys path for easy imports
   base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
   base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
@@ -128,8 +129,9 @@ if __name__ == '__main__':
   model_input_channels = 1
   n_classes = 10 
 
+  additional_args = {}
 
-  cnn_model = SimpleCNN(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes)
+  cnn_model = SimpleCNN(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir ="mnist", additional_args = additional_args )
 
   test_image = mnist.test.images[:1]
     

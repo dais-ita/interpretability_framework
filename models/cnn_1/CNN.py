@@ -182,7 +182,9 @@ if __name__ == '__main__':
 	batch_size = 128
 	num_train_steps = 200
 
-	cnn_model = SimpleCNN(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, learning_rate = learning_rate)
+	additional_args = {"learning_rate":learning_rate}
+
+	cnn_model = SimpleCNN(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir ="mnist", additional_args = additional_args )
 
 	verbose_every = 10
 	for step in range(verbose_every,num_train_steps+1,verbose_every):
@@ -202,3 +204,4 @@ if __name__ == '__main__':
 	
 
 	print(mnist.test.labels[:5])
+	
