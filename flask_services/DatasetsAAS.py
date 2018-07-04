@@ -16,8 +16,28 @@ import random
 import numpy as np
 
 
-## Setup Sys path for easy imports
-base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
+
+### Setup Sys path for easy imports
+# base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
+# base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
+
+def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+	cwd = os.getcwd()
+	split_cwd = cwd.split("/")
+
+	base_path_list = []
+	for i in range(1, len(split_cwd)):
+		if(split_cwd[-i] == base_dir_name):
+			base_path_list = split_cwd[:-i+1]
+
+	if(base_path_list == []):
+		raise IOError('base project path could not be constructed. Are you running within: '+base_dir_name)
+
+	base_dir_path = "/".join(base_path_list)
+
+	return base_dir_path
+
+base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
 
 #add dataset folder to sys path to allow for easy import
 datasets_path = os.path.join(base_dir,"datasets")
@@ -64,10 +84,12 @@ def LoadDatasetTool(dataset_name):
 	label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
 
 	### instantiate dataset tool
-	dataset_tool = DataSet(file_path,image_url_column,ground_truth_column) #instantiates a dataset tool
+	csv_path = os.path.join(datasets_path,"dataset_csvs",file_path)
+	dataset_images_dir_path =  os.path.join(datasets_path,"dataset_images")
+	dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
 	dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
 	
-	# !!! We should save the split during training/a global set to be used in all training and we should load the same split when reusing the dataset
+	#TODO We should save the split during training/a global set to be used in all training and we should load the same split when reusing the dataset
 	dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
 
 	return dataset_tool,label_names
