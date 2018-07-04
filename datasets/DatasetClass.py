@@ -10,12 +10,14 @@ import cv2
 
 class DataSet(object):
 	"""docstring for DataSet"""
-	def __init__(self, file_path, image_url_column, ground_truth_column):
+	def __init__(self, file_path, image_url_column, ground_truth_column, explicit_path_suffix =""):
 		super(DataSet, self).__init__()
 		self.file_path = file_path
 		self.image_url_column = image_url_column
 		self.ground_truth_column = ground_truth_column
 		
+		self.explicit_path_suffix = explicit_path_suffix #if not empty, this will be added to the urls found in the csv
+
 		self.data = [] #all x-y pairs from the dataset
 		self.ground_truth_labels = {} #the set of ground truth labels and how many examples of each are present in the data
 		self.one_hot_list = [] #the order for one hot encoding of labels
@@ -32,7 +34,10 @@ class DataSet(object):
 		with open(self.file_path,"r") as csv_file:
 			csv_reader = csv.DictReader(csv_file)
 			for row in csv_reader:
-				data.append( (row[self.image_url_column],row[self.ground_truth_column]) )
+				if(self.explicit_path_suffix != ""):
+					data.append( (os.path.join(self.explicit_path_suffix, row[self.image_url_column]),row[self.ground_truth_column]) )
+				else:
+					data.append( (row[self.image_url_column],row[self.ground_truth_column]) )
 
 		print("total data points loaded: "+str(len(data)))
 		return data
