@@ -37,15 +37,21 @@ class LimeExplainer(object):
     
 
   def ClassifyWithLIME(self,x,num_samples=1000,labels = (1,),top_labels=None,class_names = None):
-    # print("lime labels",labels)
-    if(self.model.model_input_channels == 1 and x.shape[-1] == 3):
-      X = self.MakeInputGray(test_image)
-
     if(len(x.shape)== 4):
       print("classify function passed a 4d tensor, processing first element")
       x = x[0]
 
+    if(self.model.model_input_channels == 1 and x.shape[-1] == 3):
+      print("input is 3 channel and model is single channel, converting to 1 channel")
+      x = self.MakeInputGray(x)
+
+    if(self.model.model_input_channels == 3 and x.shape[-1] == 1):
+      print("input is single channel and model is 3 channel, converting to 3 channel")
+      x = self.MakeInputRGB(x)
+
+    
     x = x.reshape(self.model.model_input_dim_height,self.model.model_input_dim_height,self.model.model_input_channels)
+    
     
     explainer = lime_image.LimeImageExplainer()
 
@@ -104,9 +110,31 @@ class LimeExplainer(object):
 if __name__ == '__main__':
   import os
   import sys
+  
+
   ### Setup Sys path for easy imports
-  base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
-  base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
+  # base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
+  # base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
+
+  def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+    cwd = os.getcwd()
+    split_cwd = cwd.split("/")
+
+    base_path_list = []
+    for i in range(1, len(split_cwd)):
+      if(split_cwd[-i] == base_dir_name):
+        base_path_list = split_cwd[:-i+1]
+
+    if(base_path_list == []):
+      raise IOError('base project path could not be constructed. Are you running within: '+base_dir_name)
+
+    base_dir_path = "/".join(base_path_list)
+
+    return base_dir_path
+
+  base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+
+
   #add all model folders to sys path to allow for easy import
   models_path = os.path.join(base_dir,"models")
 
@@ -137,21 +165,20 @@ if __name__ == '__main__':
     
   lime_explainer = LimeExplainer(cnn_model)
 
-
-  if(test_image.shape[-1] == 3 and cnn_model.model_input_channels == 1):
-      X = lime_explainer.MakeInputGray(test_image)
-
+  additional_args = {
+  "num_samples":1000,
+  "num_features":100,
+  "min_weight":0.01
+  }
+  explanation_image, explanation_text, predicted_class, additional_outputs = lime_explainer.Explain(test_image,additional_args)
+  
   # prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,labels=list(range(n_classes)),num_samples=10,top_labels=n_classes)
-  prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,num_samples=1000,labels=list(range(n_classes)), top_labels=n_classes)
+  # prediction, explanation = lime_explainer.ClassifyWithLIME(test_image,num_samples=1000,labels=list(range(n_classes)), top_labels=n_classes)
 
   predicted_class = np.argmax(prediction)
   print("predicted_class",predicted_class)
   print("mnist.test.labels[:1]",mnist.test.labels[:1])
 
+  print(explanation_text)
+  cv2.imshow("explanation",explanation_image)
   
-
-  for i in range(n_classes):
-    temp, mask = explanation.get_image_and_mask(i, positive_only=False, num_features=100, hide_rest=False,min_weight=0.001)
-    
-    imgplot = plt.imshow(mark_boundaries(temp, mask))
-    plt.show()

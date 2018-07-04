@@ -41,12 +41,11 @@ class SimpleCNN(object):
 
 	def TrainModel(self, train_x, train_y, batch_size, num_steps):
 		# Define the input function for training
-
 		if(type(train_x) != dict):
 			input_dict = {"input":train_x}
 		else:
 			input_dict = train_x
-
+		
 		input_fn = tf.estimator.inputs.numpy_input_fn(
 		    x=input_dict, y=train_y,
 		    batch_size=batch_size, num_epochs=None, shuffle=True)
@@ -95,7 +94,6 @@ class SimpleCNN(object):
 		with tf.variable_scope('ConvNet', reuse=reuse):
 			#TF Estimator input is a dict, in case of multiple inputs
 			x = x_dict['input']
-
 
 			# Incase of flat input vector reshape to match picture format [Height x Width x Channel]
 			# Tensor input become 4-D: [Batch Size, Height, Width, Channel]
