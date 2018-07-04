@@ -34,7 +34,8 @@
 			{"type":"dense",
 			"name":"logits"}
 		],
-		"description":"A simple tensorflow estimator API based CNN."
+		"description":"A simple tensorflow estimator API based CNN.",
+		"license":"apache 2"
 		}
 
 	]
