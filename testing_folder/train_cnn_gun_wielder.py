@@ -91,8 +91,11 @@ input_image_width = dataset_json["image_x"]
 input_image_channels = dataset_json["image_channels"]
 
 ### instantiate dataset tool
-csv_path = os.path.join(datasets_path,"dataset_csvs",file_path) 
-dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column) #instantiates a dataset tool
+csv_path = os.path.join(datasets_path,"dataset_csvs",file_path)
+dataset_images_dir_path =  os.path.join(datasets_path,"dataset_images")
+
+dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
+
 dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
 dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
 

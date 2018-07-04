@@ -5,6 +5,7 @@ observations = []
 
 image_dir = "dataset_images"
 dataset_folder = "wielder_non-wielder"
+use_explicit = False
 
 dataset_folder_path = os.path.join(image_dir,dataset_folder)
 
@@ -16,9 +17,12 @@ for class_folder in class_folders:
 	images = os.listdir(class_folder_path)
 
 	for image in images:
-		image_path = os.path.join(class_folder_path,image)
-
-		observations.append((str(os.path.abspath(image_path)),str(class_folder)))
+		image_path = os.path.join(dataset_folder,class_folder,image)
+		
+		if(use_explicit):
+			observations.append((str(os.path.abspath(image_path)),str(class_folder)))
+		else:
+			observations.append((str(image_path),str(class_folder)))
 
 
 output_string = "image_path,label\n"

@@ -40,7 +40,6 @@ class SimpleCNN(object):
 	
 
 	def TrainModel(self, train_x, train_y, batch_size, num_steps):
-		# Define the input function for training
 		if(type(train_x) != dict):
 			input_dict = {"input":train_x}
 		else:
@@ -130,13 +129,14 @@ class SimpleCNN(object):
 	    # Build the neural network
 	    # Because Dropout have different behavior at training and prediction time, we
 	    # need to create 2 distinct computation graphs that still share the same weights.
+	    
 	    if(type(features) != dict):
 	    	input_dict = {"input":features}
 	    else:
 	    	input_dict = features
 
-	    logits_train = self.BuildModel(input_dict, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=False, is_training=True)
-	    logits_test = self.BuildModel(input_dict, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=True, is_training=False)
+	    logits_train = self.BuildModel(features, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=False, is_training=True)
+	    logits_test = self.BuildModel(features, self.model_input_dim_height, self.model_input_dim_height, self.model_input_channels, self.n_classes, self.dropout, reuse=True, is_training=False)
 	    
 	    # Predictions
 	    pred_classes = tf.argmax(logits_test, axis=1, name="argmax")
