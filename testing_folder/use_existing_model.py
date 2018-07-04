@@ -11,8 +11,29 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # turn off repeated messages from Tenso
 
 
 ### Setup Sys path for easy imports
-base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
-base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
+# base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
+# base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
+
+def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+	cwd = os.getcwd()
+	split_cwd = cwd.split("/")
+
+	base_path_list = []
+	for i in range(1, len(split_cwd)):
+		if(split_cwd[-i] == base_dir_name):
+			base_path_list = split_cwd[:-i+1]
+
+	if(base_path_list == []):
+		raise IOError('base project path could not be constructed. Are you running within: '+base_dir_name)
+
+	base_dir_path = "/".join(base_path_list)
+
+	return base_dir_path
+
+base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+
+
+
 
 #add all model folders to sys path to allow for easy import
 models_path = os.path.join(base_dir,"models")
