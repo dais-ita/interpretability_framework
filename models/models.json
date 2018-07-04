@@ -6,7 +6,21 @@
 		"trained_on":[
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"gun_wielding_image_classification",
-			"test_accuracy":0.921875
+			"test_accuracy":0.921875,
+			"training_time":0,
+			"training_steps":200
+			},
+			{"dataset_name":"Traffic Congestion Image Classification",
+			"model_path":"traffic_congestion_image_classification",
+			"test_accuracy":0.9140625,
+			"training_time":0,
+			"training_steps":200
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"traffic_congestion_image_classification_(Resized)",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":200
 			}
 		],
 		"layers":[
@@ -35,7 +49,10 @@
 			"name":"logits"}
 		],
 		"additional_arguments":[
-			{"name":"",
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
 			"description":""
 			}
 		],

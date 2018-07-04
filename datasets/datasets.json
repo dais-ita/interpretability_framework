@@ -2,10 +2,11 @@
 
 	{
 		"dataset_name":"Gun Wielding Image Classification",
+		"download_link":"",
 		"folder":"wielder_non-wielder",
 		"labels":[
 					{"label":"gun_wielder","images":853},
-					{"label":"non_wielder","images":853}
+					{"label":"non-wielder","images":853}
 				],
 		"image_x":128,
 		"image_y":128,
@@ -14,6 +15,38 @@
 		"references":["http://sci2s.ugr.es/weapons-detection","http://www.di.ens.fr/willow/research/stillactions/"],
 		"description":"Image classification of people holding guns and people who aren't holding guns. Gun wielding images were taken from 'sci2s weapons-detection' dataset. Negative class examples taken from 'willow action image dataset'.",
 		"license":"apache 2"
+	},
+	{
+	"dataset_name":"Traffic Congestion Image Classification",
+	"download_link":"",
+	"folder":"congested_non-congested",
+	"labels":[
+				{"label":"congested","images":906},
+				{"label":"non-congested","images":1091}
+			],
+	"image_x":200,
+	"image_y":200,
+	"image_channels":3,
+	"ground_truth_csv_path":"congested_non-congested.csv",
+	"references":["https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk", "https://osf.io/wm3t9/"],
+	"description":"Image classification of traffic camera imagery collected from Transport for London's 'Jamcams' api. The specific set of images collected and labeled is hosted on OSF. The images have been cropped to remove logo and overlaid text.",
+	"license":"apache 2"
+	},
+	{
+	"dataset_name":"Traffic Congestion Image Classification (Resized)",
+	"download_link":"",
+	"folder":"congested_non-congested_resized",
+	"labels":[
+				{"label":"congested","images":906},
+				{"label":"non-congested","images":1091}
+			],
+	"image_x":128,
+	"image_y":128,
+	"image_channels":3,
+	"ground_truth_csv_path":"congested_non-congested_resized.csv",
+	"references":["https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk", "https://osf.io/wm3t9/"],
+	"description":"Resized version of the first traffic congestion image classification dataset.Image classification of traffic camera imagery collected from Transport for London's 'Jamcams' api. The specific set of images collected and labeled is hosted on OSF. The images have been cropped to remove logo and overlaid text.",
+	"license":"apache 2"
 	}
 
 ]}
