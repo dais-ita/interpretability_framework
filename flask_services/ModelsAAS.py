@@ -13,8 +13,6 @@ import sys
 
 import numpy as np
 
-import dill
-
 
 ### Setup Sys path for easy imports
 # base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
@@ -131,9 +129,11 @@ def GetAvailableModelsJson():
 
 
 def PredictImagePreProcess(image):
-	if(True):
+	if(True): #TODO 'cleverly' decide whether this should happen
 		image = image/255.0
 	
+	# Add any 'always happen' preprocessing steps e.g. check size and resize if needed etc
+
 	return image.astype(np.float32)
 
 @app.route("/models/predict", methods=['POST'])
