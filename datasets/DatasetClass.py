@@ -29,6 +29,7 @@ class DataSet(object):
 		self.live_test = []		
 
 	def ProduceData(self):
+		'''opens the CSV file passed to constructor and for each example in the CSV forms a tuple of path and label then returns these as a list'''
 		data = []
 
 		with open(self.file_path,"r") as csv_file:
@@ -44,6 +45,7 @@ class DataSet(object):
 
 
 	def CreateLiveDataSet(self, dataset_max_size = -1, even_examples=True, y_labels_to_use=[]):
+		'''prepares a "live dataset" which is a list of accepted images filtered by a set of labels to be used and optionally balanced to contain equal examples for each label'''
 		if len(self.data) == 0:
 			self.data = self.ProduceData()
 		
@@ -54,7 +56,9 @@ class DataSet(object):
 		return live_data
 
 	def SplitLiveData(self,train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1):
-		
+		'''creates a split of the dataset according to specified ratio. each subset is stored in class variables for access by the GetBatch function'''
+		#TODO save this split
+
 		total_examples = len(self.live_dataset)
 
 		remaining_index_set = set(range(total_examples))
@@ -411,8 +415,13 @@ class DataSet(object):
 		else:
 			with open(output_path,"w") as csv_ouput_file:
 				csv_ouput_file.write(output_string)
-		
+	
+
 	def ImageResize(self,image_dir,output_dir,target_width,target_height=-1,crop={'x1':-1,'x2':-1,'y1':-1,'y2':-1}):
+		'''use once to create a new directory (images are copied) containing images of desired target width and height
+		if a target width is specified, height will be sized accordingly. 
+		Before resizing images can be cropped by passing the bounding box for the crop.'''
+		
 		image_folders = os.listdir(image_dir)
 
 		if(not os.path.exists(output_dir)):
@@ -430,7 +439,7 @@ class DataSet(object):
 				
 				crop_x1 = max(0,crop["x1"])
 				crop_y1 = max(0,crop["y1"])
-
+				
 				if(crop["x2"] == -1):
 					crop_x2 = image_array.shape[0]
 				else:
