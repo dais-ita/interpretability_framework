@@ -12,7 +12,8 @@
 		"image_channels":3,
 		"ground_truth_csv_path":"wielder_non-wielder.csv",
 		"references":["http://sci2s.ugr.es/weapons-detection","http://www.di.ens.fr/willow/research/stillactions/"],
-		"description":"Image classification of people holding guns and people who aren't holding guns. Gun wielding images were taken from 'sci2s weapons-detection' dataset. Negative class examples taken from 'willow action image dataset'."
+		"description":"Image classification of people holding guns and people who aren't holding guns. Gun wielding images were taken from 'sci2s weapons-detection' dataset. Negative class examples taken from 'willow action image dataset'.",
+		"license":"apache 2"
 	}
 
 ]}
