@@ -46,18 +46,20 @@ class ConvFeatureDescriptor(object):
         if self.mode == 'images':
             return self.__features_from_images(data)
 
-    def __features_from_images(self, images):
+    def __features_from_images(self, images, batch=False):
         """ Computes feature vectors from arg `images` TODO: batch it so that sess isn't inefficient """
         codes = None
         with tf.Session() as sess:
-            for i in range(0, images.shape[0]):
-                img = images[i]
-                codes_batch = self.__process_features(sess, img)
-                if codes is None:
-                    codes = codes_batch
-                else:
-                    codes = np.concatenate((codes, codes_batch))
-
+	    if batch:
+		for i in range(0, images.shape[0]):
+	            img = images[i]
+	            codes_batch = self.__process_features(sess, img)
+	            if codes is None:
+	                codes = codes_batch
+	            else:
+                        codes = np.concatenate((codes, codes_batch))
+	    else:
+    		codes = self.convolve_features(sess,images)
         return codes
 
     def __process_features(self, sess, img):
