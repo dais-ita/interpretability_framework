@@ -1,6 +1,7 @@
+import numpy as np
 import tensorflow as tf
 import random
-import ConvFeatureDescriptor
+from models.utils.ConvFeatureDescriptor import ConvFeatureDescriptor
 
 
 class ConvSVM(object):
@@ -34,7 +35,6 @@ class ConvSVM(object):
 
         self.input_ = None
         self.labels_ = None
-
 
         self.initialised = False
 
@@ -113,7 +113,7 @@ class ConvSVM(object):
 
 
     def TrainModel(self, train_x, train_y, batch_size, n_steps):
-        train_x = self.feature_desc.get_feature_vectors_from_images(train_x)
+        train_x = self.feature_desc.get_feature_vectors_from_images(train_x, batch=True)
         train_x = train_x.reshape(len(train_y), -1)
         if not self.initialised:
             self.InitialiseModel(train_x.shape[1])
@@ -135,7 +135,7 @@ class ConvSVM(object):
 
 
     def EvaluateModel(self, val_x, val_y, batch_size):
-        val_x = self.feature_desc.get_feature_vectors_from_images(val_x)
+        val_x = self.feature_desc.get_feature_vectors_from_images(val_x,batch=True)
         val_x = val_x.reshape(len(val_y), -1)
 
         acc = tf.reduce_mean(
@@ -162,25 +162,43 @@ class ConvSVM(object):
                         }
                     )
                 )
-            return tf.reduce_mean(accuracies)
+            return tf.reduce_mean(accuracies).eval()
 
     def Predict(self, predict_x):
+        if len(predict_x.shape) < 4:
+
+            predict_x = predict_x.reshape(1, 224, 224, 3)
+            batch = False
+        else:
+            batch = True
         n_samples = predict_x.shape[0]
-        predict_x = self.feature_desc.get_feature_vectors_from_images(predict_x)
+        
+        predict_x = self.feature_desc.get_feature_vectors_from_images(predict_x,batch=batch)
         predict_x = predict_x.reshape(n_samples, -1)
 
-        pred = self.GetPredictions()
+        if not self.initialised:
+            self.InitialiseModel(predict_x.shape[1])
+            self.saver = tf.train.Saver()
+            self.initialised = True
+
+        predictions = self.GetPredictions()
         with tf.Session() as sess:
             self.LoadModel(sess)
-            pred = sess.run(
-                pred,
+            predictions = sess.run(
+                predictions,
                 feed_dict={
                     self.input_: predict_x
                 }
             )
-            pred[pred == 1] = 0
-            pred *= -1
-            return pred
+            predictions[predictions == 1] = 0
+            predictions *= -1
+            one_hot = []
+            for y in predictions:
+                if y == 0:
+                     one_hot.append([1,0])
+                else:
+                     one_hot.append([0,1])   
+            return np.asarray(one_hot)
 
     def SaveModel(self,sess):
         self.saver.save(sess, self.model_dir)
@@ -192,15 +210,8 @@ class ConvSVM(object):
 
 if __name__ == '__main__':
 
-    import csv
+
     import numpy as np
-    #
-    # with open('labels_wvnw') as f:
-    #     reader = csv.reader(f, delimiter='\n')
-    #     labels = np.array([each for each in reader]).squeeze()
-    # with open('codes_wvnw') as f:
-    #     codes = np.fromfile(f, dtype=np.float32)
-    #     codes = codes.reshape((len(labels), -1))
 
     import os
     from tensorflow_vgg import vgg16, utils
@@ -232,7 +243,6 @@ if __name__ == '__main__':
 
     labels_vecs = lb.transform(labels)
     labels_vecs[labels_vecs == 0] -= 1
-    labels_vecs[0]
 
     from sklearn.model_selection import StratifiedShuffleSplit
 
@@ -244,10 +254,6 @@ if __name__ == '__main__':
     half_val_len = int(len(val_idx) / 2)
     val_idx, test_idx = val_idx[:half_val_len], val_idx[half_val_len:]
 
-    # min_c = np.min(codes)
-    # max_c = np.max(codes)
-
-    # codes = ((codes - min_c)/(max_c - min_c))
 
     train_x, train_y = images[train_idx], labels_vecs[train_idx]
     val_x, val_y = images[val_idx], labels_vecs[val_idx]
@@ -278,18 +284,16 @@ if __name__ == '__main__':
         additional_args,
         n_classes,
     )
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        for step in range(10, 200+1, 10):
-            print("")
-            print("training")
-            print("step:", step)
-            svm_model.TrainModel(train_x, train_y, batch_size, 50)
-            print("")
-            print("evaluation")
-            print(svm_model.EvaluateModel(val_x, val_y, batch_size).eval())
-            print("")
+    for step in range(10, 200+1, 10):
+        print("")
+        print("training")
+        print("step:", step)
+        svm_model.TrainModel(train_x, train_y, batch_size, 50)
+        print("")
+        print("evaluation")
+        print(svm_model.EvaluateModel(val_x, val_y, batch_size))
+        print("")
 
-        test_y[test_y==1]=0
-        test_y *= -1
-        print(test_y == svm_model.Predict(test_x))
+    test_y[test_y==1]=0
+    test_y *= -1
+    print(test_y == svm_model.Predict(test_x))
