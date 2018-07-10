@@ -58,8 +58,26 @@
 		],
 		"description":"A simple tensorflow estimator API based CNN.",
 		"license":"apache 2"
+		},
+		{"model_name":"conv_svm",
+		"script_name":"ConvSVM",
+		"class_name":"ConvSVM",
+		"trained_on":[
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"wielder_non-wielder",
+			"test_accuracy":0.707721,
+			"training_time":0,
+			"training_steps":200
+			}
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"alpha",
+			"description":"coefficient of l2 norm of weights in loss function, higher values prioritise smaller weights over higher accuracy i.e. less overfitting"
+			}
+		]
 		}
-
 	]
-
 }
