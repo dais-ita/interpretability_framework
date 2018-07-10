@@ -138,12 +138,21 @@ def PredictImagePreProcess(image):
 
 @app.route("/models/predict", methods=['POST'])
 def Predict():
-	dataset_json = json.loads(request.form["selected_dataset_json"])
+	raw_json = json.loads(request.data)
 
-	input_image = PredictImagePreProcess(readb64(request.form["input"]))
-	model_name = request.form["selected_model"]
+	dataset_json = raw_json[u'selected_dataset_json']
+
+	input_image = PredictImagePreProcess(readb64(raw_json[u'input']))
+	model_name = raw_json[u'selected_model']
 
 	dataset_name = dataset_json["dataset_name"]
+        
+	# dataset_json = json.loads(request.form["selected_dataset_json"])
+
+	# input_image = PredictImagePreProcess(readb64(request.form["input"]))
+	# model_name = request.form["selected_model"]
+
+	# dataset_name = dataset_json["dataset_name"]
 
 	if(not model_name in loaded_models):
 		loaded_models[model_name] = {}
