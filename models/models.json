@@ -28,14 +28,14 @@
 			"name":"reshaped_input_1"},
 			
 			{"type":"conv2d",
-			"name":"reshaped_input_1"},
+			"name":"conv_1"},
 			{"type":"max_pooling2d",
-			"name":"reshaped_input_1"},
+			"name":"max_pool_1"},
 			
 			{"type":"conv2d",
-			"name":"reshaped_input_1"},
+			"name":"conv_2"},
 			{"type":"max_pooling2d",
-			"name":"reshaped_input_1"},
+			"name":"max_pool_2"},
 			
 			{"type":"flatten",
 			"name":"feature_vector_1"},

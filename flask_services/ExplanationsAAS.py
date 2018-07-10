@@ -165,11 +165,13 @@ def ImagePreProcess(image):
 
 @app.route("/explanations/explain", methods=['POST'])
 def Explain():
-	dataset_json = json.loads(request.form["selected_dataset_json"])
-	model_json = json.loads(request.form["selected_model_json"])
-	explanation_json = json.loads(request.form["selected_explanation_json"])
+	raw_json = json.loads(request.data)
 
-	input_image = ImagePreProcess(readb64(request.form["input"],False))
+	dataset_json = json.loads(raw_json["selected_dataset_json"])
+	model_json = json.loads(raw_json["selected_model_json"])
+	explanation_json = json.loads(raw_json["selected_explanation_json"])
+
+	input_image = ImagePreProcess(readb64(raw_json["input"],False))
 
 	
 	dataset_name = dataset_json["dataset_name"]
