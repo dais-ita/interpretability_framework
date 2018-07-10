@@ -78,5 +78,6 @@
 			"description":"coefficient of l2 norm of weights in loss function, higher values prioritise smaller weights over higher accuracy i.e. less overfitting"
 			}
 		]
+		}
 	]
 }
