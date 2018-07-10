@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import random
-from models.utils.ConvFeatureDescriptor import ConvFeatureDescriptor
+from utils.ConvFeatureDescriptor import ConvFeatureDescriptor
 
 
 class ConvSVM(object):
@@ -219,6 +219,7 @@ if __name__ == '__main__':
 
 
     datadir = "/home/c1435690/Projects/DAIS-ITA/Datasets/resized_wielder_non-wielder/"
+    datadir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo/datasets/dataset_images/wielder_non-wielder"
     contents = os.listdir(datadir)
     classes = [each for each in contents if os.path.isdir(datadir + each)]
 
