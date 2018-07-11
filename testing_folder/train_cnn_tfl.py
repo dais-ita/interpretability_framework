@@ -73,7 +73,7 @@ with open(data_json_path,"r") as f:
 
 
 ### get dataset details
-dataset_name = "Traffic Congestion Image Classification (Resized)"
+dataset_name = "Traffic Congestion Image Classification"
 dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
 
 
@@ -142,7 +142,7 @@ additional_args = {"learning_rate":learning_rate}
 
 ### load trained model
 
-model_save_path = os.path.join(models_path,model_json["model_name"],dataset_name.lower().replace(" ","_"))
+model_save_path = os.path.join(models_path,model_json["model_name"],"saved_models",dataset_name.lower().replace(" ","_"))
 training_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args=additional_args)
 
 

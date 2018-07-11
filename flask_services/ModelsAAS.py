@@ -138,15 +138,28 @@ def PredictImagePreProcess(image):
 
 @app.route("/models/predict", methods=['POST'])
 def Predict():
+	# print("request.data:",request.data)
+
 	raw_json = json.loads(request.data)
+	
+	dataset_json = json.loads(raw_json['selected_dataset_json'])
 
-	dataset_json = raw_json[u'selected_dataset_json']
+	input_image = PredictImagePreProcess(readb64(raw_json['input']))
 
-	input_image = PredictImagePreProcess(readb64(raw_json[u'input']))
-	model_name = raw_json[u'selected_model']
+
+	display_input_image = False
+
+	if(display_input_image):
+		# cv2_image = cv2.cvtColor(x[0], cv2.COLOR_RGB2BGR)
+		cv2.imshow("image 0",input_image)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()
+
+
+	model_name = raw_json['selected_model']
 
 	dataset_name = dataset_json["dataset_name"]
-        
+
 	# dataset_json = json.loads(request.form["selected_dataset_json"])
 
 	# input_image = PredictImagePreProcess(readb64(request.form["input"]))
