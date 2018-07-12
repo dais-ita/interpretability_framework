@@ -1,8 +1,23 @@
+import os
+import sys
+
+def get_dir_path(dir_name):
+    base_path = os.getcwd().split("/")
+    while base_path[-1] != str(dir_name):
+        base_path = base_path[:-1]
+    return "/".join(base_path) + "/"
+
+models_path = os.path.join(get_dir_path("p5_afm_2018_demo"),"models")
+folders = os.listdir(models_path)
+for folder in folders:
+    folder_path = os.path.join(models_path, folder)
+    if os.path.isdir(folder_path) and not folder_path in sys.path:
+        sys.path.append(folder_path)
+
 import numpy as np
 import tensorflow as tf
 import random
-from models.utils.ConvFeatureDescriptor import ConvFeatureDescriptor
-
+import ConvFeatureDescriptor
 
 class ConvSVM(object):
     """A linear SVM using features extracted from the convolutional layers of a pre-trained NN"""
@@ -15,10 +30,10 @@ class ConvSVM(object):
         if model_input_dim_height != 224 or model_input_dim_width != 224 or model_input_channels != 3:
             raise Exception("The input dimensions cannot be used with VGG")
         self.n_classes = n_classes
-        self.model_dir = model_dir
+        self.checkpoint_path = os.path.join(model_dir,"checkpoints")
 
         self.sess = tf.Session()
-
+        
 
         if "learning_rate" in addit_args:
             self.learning_rate = addit_args["learning_rate"]
@@ -31,7 +46,7 @@ class ConvSVM(object):
             self.alpha = addit_args["alpha"]
 
 
-        self.feature_desc = ConvFeatureDescriptor.ConvFeatureDescriptor(10)
+        self.feature_desc = ConvFeatureDescriptor.ConvFeatureDescriptor(mode='images')
 
         self.input_ = None
         self.labels_ = None
@@ -113,7 +128,7 @@ class ConvSVM(object):
 
 
     def TrainModel(self, train_x, train_y, batch_size, n_steps):
-        train_x = self.feature_desc.get_feature_vectors_from_images(train_x, batch=True)
+        train_x = self.feature_desc.get_feature_vectors(train_x, batch=True)
         train_x = train_x.reshape(len(train_y), -1)
         if not self.initialised:
             self.InitialiseModel(train_x.shape[1])
@@ -135,7 +150,7 @@ class ConvSVM(object):
 
 
     def EvaluateModel(self, val_x, val_y, batch_size):
-        val_x = self.feature_desc.get_feature_vectors_from_images(val_x,batch=True)
+        val_x = self.feature_desc.get_feature_vectors(val_x,batch=True)
         val_x = val_x.reshape(len(val_y), -1)
 
         acc = tf.reduce_mean(
@@ -173,7 +188,7 @@ class ConvSVM(object):
             batch = True
         n_samples = predict_x.shape[0]
         
-        predict_x = self.feature_desc.get_feature_vectors_from_images(predict_x,batch=batch)
+        predict_x = self.feature_desc.get_feature_vectors(predict_x,batch=batch)
         predict_x = predict_x.reshape(n_samples, -1)
 
         if not self.initialised:
@@ -201,24 +216,37 @@ class ConvSVM(object):
             return np.asarray(one_hot)
 
     def SaveModel(self,sess):
-        self.saver.save(sess, self.model_dir)
+        self.saver.save(sess, os.path.join(self.checkpoint_path,"wvnw_svm.ckpt"))
 
     def LoadModel(self,sess):
-        self.saver.restore(sess, self.model_dir)
+        self.saver.restore(sess, os.path.join(self.checkpoint_path,"wvnw_svm.ckpt"))
 
 
 
 if __name__ == '__main__':
+    dim_height = 224
+    dim_width = 224
+    input_channels = 3
+    n_classes = 2
+    additional_args = {
+        'learning_rate': 0.01,
+        'alpha': 0.0001
+    }
+    batch_size = 70
 
-
-    import numpy as np
-
-    import os
-    from tensorflow_vgg import vgg16, utils
+    svm_model = ConvSVM(
+        dim_height,
+        dim_width,
+        input_channels,
+        os.path.join(models_path,"svm"),
+        additional_args,
+        n_classes,
+    )
+    from tensorflow_vgg import vgg16, utils as vgg_utils
     from tqdm import tqdm
 
 
-    datadir = "/home/c1435690/Projects/DAIS-ITA/Datasets/resized_wielder_non-wielder/"
+    datadir = "../../datasets/dataset_images/resized_wielder_non-wielder/"
     contents = os.listdir(datadir)
     classes = [each for each in contents if os.path.isdir(datadir + each)]
 
@@ -230,7 +258,7 @@ if __name__ == '__main__':
         class_path = datadir + each
         files = os.listdir(class_path)
         for ii, file in enumerate(files, 1):
-            img = utils.load_image(os.path.join(class_path, file))
+            img = vgg_utils.load_image(os.path.join(class_path, file))
             batch.append(img.reshape((1, 224, 224, 3)))
             labels.append(each)
 
@@ -266,24 +294,7 @@ if __name__ == '__main__':
     print("Validation shapes (x,y):", val_x.shape, val_y.shape)
     print("Test shapes (x,y):", test_x.shape, test_y.shape)
 
-    dim_height = 224
-    dim_width = 224
-    input_channels = 3
-    n_classes = 2
-    additional_args = {
-        'learning_rate': 0.01,
-        'alpha': 0.0001
-    }
-    batch_size = 70
 
-    svm_model = ConvSVM(
-        dim_height,
-        dim_width,
-        input_channels,
-        "checkpoints/wvnw_svm.ckpt",
-        additional_args,
-        n_classes,
-    )
     for step in range(10, 200+1, 10):
         print("")
         print("training")
