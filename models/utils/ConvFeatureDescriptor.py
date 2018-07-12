@@ -4,15 +4,30 @@ import tensorflow as tf
 
 from urllib.request import urlretrieve
 from os.path import isfile
+import sys
 from os import mkdir
 from tqdm import tqdm
 
 try:
-    from utils.model_utils.tensorflow_vgg import vgg16, utils
+    from tensorflow_vgg import vgg16, utils
 except ImportError as error:
     print("`tensorflow_vgg not found.` Please ensure submodule \\"
           "https://github.com/machrisaa/tensorflow-vgg is installed.")
 
+def get_dir_path(dir_name):
+    base_path = os.getcwd().split("/")
+    while base_path[-1] != str(dir_name):
+        base_path = base_path[:-1]
+    return "/".join(base_path) + "/"
+
+root_dir = get_dir_path("p5_afm_2018_demo")
+
+models_path = os.path.join(root_dir,"models")
+folders = os.listdir(models_path)
+for folder in folders:
+    folder_path = os.path.join(models_path, folder)
+    if os.path.isdir(folder_path) and not folder_path in sys.path:
+        sys.path.append(folder_path)
 
 class ConvFeatureDescriptor(object):
     """
@@ -33,18 +48,18 @@ class ConvFeatureDescriptor(object):
         self.y_dim = y_dim
         self.channels = channels
 
-        self.__download_vggnet() if not isfile(".utils/model_utils/tensorflow_vgg/vgg16.npy") else print("VGG parameters found.")
+        self.__download_vggnet() if not isfile(os.path.join(models_path,"utils/tensorflow_vgg/vgg16.npy")) else print("VGG parameters found.")
         self.model = vgg16.Vgg16()
         self.input = tf.placeholder(tf.float32, [None, self.x_dim, self.y_dim, self.channels], name="input_image")
 
         self.model.build(self.input)
 
-    def get_feature_vectors(self, data):
+    def get_feature_vectors(self, data, batch = False):
 
         if self.mode == 'file':
             return self.__features_from_file(data)
         if self.mode == 'images':
-            return self.__features_from_images(data)
+            return self.__features_from_images(data, batch)
 
     def __features_from_images(self, images, batch=False):
         """ Computes feature vectors from arg `images` TODO: batch it so that sess isn't inefficient """
@@ -59,7 +74,7 @@ class ConvFeatureDescriptor(object):
                     else:
                         codes = np.concatenate((codes, codes_batch))
                 else:
-                    codes = self.convolve_features(sess, images)
+                    codes = self.__process_features(sess, images)
         return codes
 
     def __process_features(self, sess, img):
@@ -110,7 +125,7 @@ class ConvFeatureDescriptor(object):
         with DLProgress(unit="B", unit_scale=True, miniters=1, desc="VGG16 params") as progress:
             urlretrieve(
                 "https://s3.amazonaws.com/content.udacity-data.com/nd101/vgg16.npy",
-                "./utils/model_utils/tensorflow_vgg/vgg16.npy",
+                "../utils/tensorflow_vgg/vgg16.npy",
                 progress.hook
             )
 
