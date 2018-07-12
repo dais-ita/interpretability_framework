@@ -7,6 +7,8 @@ from os.path import isfile
 from os import mkdir
 from tqdm import tqdm
 
+
+
 try:
     from utils.model_utils.tensorflow_vgg import vgg16, utils
 except ImportError as error:
@@ -46,25 +48,29 @@ class ConvFeatureDescriptor(object):
         if self.mode == 'images':
             return self.__features_from_images(data)
 
-    def __features_from_images(self, images, batch=False):
-        """ Computes feature vectors from arg `images` TODO: batch it so that sess isn't inefficient """
+    def __features_from_images(self, data):
+        """
+            img: array of images
+        """
         codes = None
         with tf.Session() as sess:
-            if batch:
-                for i in range(0, images.shape[0]):
-                    img = images[i]
-                    codes_batch = self.__process_features(sess, img)
-                    if codes is None:
-                        codes = codes_batch
-                    else:
-                        codes = np.concatenate((codes, codes_batch))
-                else:
-                    codes = self.convolve_features(sess, images)
+            # test
+            codes = self.__process_features(sess, data)
+
+            # for i in range(0, data.shape[0]):
+            #     # TODO: figure out a placeholder so that sess.run is only run once per call.
+            #     codes_batch = self.__process_features(sess, data[i])
+            #     if codes is None:
+            #         codes = codes_batch
+            #     else:
+            #         codes = np.concatenate((codes, codes_batch))
+
         return codes
 
     def __process_features(self, sess, img):
         feed_dict = {self.input: img}
         codes_batch = sess.run(self.model.pool5, feed_dict=feed_dict)
+
         return codes_batch
 
     def __features_from_file(self, datadir):
