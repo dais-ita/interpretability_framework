@@ -6,6 +6,7 @@
 		"trained_on":[
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
+			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
 			"test_accuracy":0.921875,
 			"training_time":0,
 			"training_steps":200
