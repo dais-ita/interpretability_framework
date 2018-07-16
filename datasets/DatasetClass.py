@@ -72,9 +72,9 @@ class DataSet(object):
 
         print("total data points loaded: ")
 
-        print("training:",len(dataset_tool.live_training))
-        print("validation:",len(dataset_tool.live_validation))
-        print("test:",len(dataset_tool.live_test))
+        print("training:",len(self.live_training))
+        print("validation:",len(self.live_validation))
+        print("test:",len(self.live_test))
         
 
     def CreateLiveDataSet(self, dataset_max_size=-1, even_examples=True, y_labels_to_use=[]):

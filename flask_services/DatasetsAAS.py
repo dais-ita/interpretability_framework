@@ -75,7 +75,7 @@ def GetDatasetJsonFromName(dataset_name):
 	return [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
 
 
-def LoadDatasetTool(dataset_name):
+def LoadDatasetTool(dataset_name, model_name = ""):
 	dataset_json = GetDatasetJsonFromName(dataset_name)
 	### gather required information about the dataset
 	file_path = dataset_json["ground_truth_csv_path"]
@@ -89,8 +89,18 @@ def LoadDatasetTool(dataset_name):
 	dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
 	dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
 	
-	#TODO We should save the split during training/a global set to be used in all training and we should load the same split when reusing the dataset
-	dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
+	if(model_name == ""):
+		training_split_file = dataset_json["default_training_allocation_path"]
+		training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
+		dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
+	else:
+		#TODO allow for passing the model name and load the specific split from the models training(replace the code below with solution)
+		training_split_file = dataset_json["default_training_allocation_path"]
+		training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
+		dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
+
+	#Code to create new split if required
+	#dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
 
 	return dataset_tool,label_names
 
@@ -113,9 +123,9 @@ def EncodeSpecificImage(dataset_name,image_name):
 
 
 
-def EncodeTestImages(dataset_name,num_images=1):
+def EncodeTestImages(dataset_name,num_images=1, model_name = ""):
 	if(not dataset_name in dataset_tools):
-		dataset_tool, label_names = LoadDatasetTool(dataset_name)
+		dataset_tool, label_names = LoadDatasetTool(dataset_name,model_name)
 		dataset_tools[dataset_name] = {"dataset_tool":dataset_tool,"label_names":label_names}
 
 	label_names = dataset_tools[dataset_name]["label_names"]
