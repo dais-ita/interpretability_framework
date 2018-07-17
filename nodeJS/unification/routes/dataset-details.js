@@ -1,0 +1,61 @@
+// *******************************************************************************
+// * (C) Copyright IBM Corporation 2018
+// * All Rights Reserved
+// *******************************************************************************
+
+let express = require('express');
+let router = express.Router();
+var request = require('request-promise');
+let config = require('../config');
+let fn = require('./functions-general');
+let parmType = null;
+let parmDs = null;
+
+router.get('/', function (req, res) {
+    parmType = req.query.type;
+    parmDs = req.query.dataset;
+
+    const options = {
+        method: 'GET',
+        uri: fn.getDatasetsAllUrl(config)
+    };
+
+    request(options)
+        .then(function (response) {
+            // Success
+            let result = JSON.parse(response);
+            let matchedDs = null;
+
+            for (let i in result.datasets) {
+                let thisDs = result.datasets[i];
+
+                if (thisDs.dataset_name == parmDs) {
+                    matchedDs = thisDs;
+                }
+            }
+
+            if (matchedDs == null) {
+                console.log("Error - no dataset matches '" + parmDs + "'");
+            }
+
+            if (parmType != "json") {
+                res.render("dataset-individual", {
+                    "title": "Dataset details",
+                    "dataset": matchedDs,
+                    "parameters": {},
+                    "chosen_dataset": req.session.chosen_dataset,
+                    "chosen_model": req.session.chosen_model,
+                    "chosen_explanation": req.session.chosen_explanation
+                });
+            } else {
+                res.json(matchedDs);
+            }
+        })
+        .catch(function (err) {
+            // Error
+            console.log(err);
+            return res.sendStatus(500);
+        })
+});
+
+module.exports = router;

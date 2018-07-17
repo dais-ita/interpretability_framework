@@ -1,0 +1,46 @@
+mixin model-details(mod)
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    h2 #{mod.model_name}
+
+    table(border=1)
+        tbody
+        -for (var prop in mod)
+            tr
+            -if (prop != "model_name")
+                td #{prop}
+                -if (prop == "layers")
+                    td
+                        ul
+                            -for (var i in mod[prop])
+                                -var thisLayer = mod[prop][i]
+                                li #{thisLayer.type} - #{thisLayer.name}
+                -else
+                    -if (prop == "additional_arguments")
+                        td
+                            ul
+                            -for (var i in mod[prop])
+                                -var thisAa = mod[prop][i]
+                                li #{thisAa.name} - #{thisAa.description}
+                    -else
+                        -if (prop == "trained_on")
+                            td
+                                -for (var i in mod[prop])
+                                    -var thisTo = mod[prop][i]
+                                    hr
+                                    ul
+                                        -for (var j in thisTo)
+                                            li #{j} - #{thisTo[j]}
+                        -else
+                            td #{mod[prop]}
+        tr
+            td Actions
+            td
+                ul
+                    li: a(href ='/model-use?model=' + mod.model_name) use this model
+                    -if (mod.model_name == chosen_model)
+                        li: a(href ='/model-use?model=none') clear this model

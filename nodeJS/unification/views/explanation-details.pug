@@ -1,0 +1,52 @@
+mixin explanation-details(exp)
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    h2 #{exp.explanation_name}
+
+    table(border=1)
+        tbody
+            -for (var prop in exp)
+                tr
+                    -if (prop != "dataset_name")
+                        td #{prop}
+                        -if (prop == "compatible_datasets")
+                            td
+                                ul
+                                -for (var i in exp[prop])
+                                    -var thisItem = exp[prop][i]
+                                    li #{thisItem.dataset_name} [
+                                        a(href ='/dataset-details?dataset=' + thisItem.dataset_name) details
+                                        | ] [
+                                        a(href ='/dataset-use?dataset=' + thisItem.dataset_name) use dataset
+                                        | ]
+                        -else
+                            -if (prop == "compatible_models")
+                                td
+                                    ul
+                                    -for (var i in exp[prop])
+                                        -var thisItem = exp[prop][i]
+                                        li #{thisItem.model_name} [
+                                            a(href ='/model-details?model=' + thisItem.model_name) details
+                                            | ] [
+                                            a(href ='/model-use?model=' + thisItem.model_name) use model
+                                            | ]
+                            -else
+                                -if (prop == "additional_arguments")
+                                    td
+                                        ul
+                                            -for (var i in exp[prop])
+                                                -var thisItem = exp[prop][i]
+                                                li #{thisItem.name} - #{thisItem.description}
+                                -else
+                                    td #{exp[prop]}
+            tr
+                td Actions
+                td
+                    ul
+                        li: a(href ='/explanation-use?explanation=' + exp.explanation_name) use this explanation
+                        -if (exp.explanation_name == chosen_explanation)
+                            li: a(href ='/explanation-use?explanation=none') clear this explanation

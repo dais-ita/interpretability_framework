@@ -1,0 +1,30 @@
+mixin dataset-details(ds)
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    h2 #{ds.dataset_name}
+
+    table(border=1)
+        tbody
+            -for (var prop in ds)
+                tr
+                    -if (prop != "dataset_name")
+                        td #{prop}
+                        -if (prop == "labels")
+                            td
+                                ul
+                                -for (var i in ds[prop])
+                                    -var thisLabel = ds[prop][i]
+                                    li #{thisLabel.label} (#{thisLabel.images} images)
+                        -else
+                            td #{ds[prop]}
+            tr
+                td Actions
+                td
+                    ul
+                        li: a(href ='/dataset-use?dataset=' + ds.dataset_name) use this dataset
+                        -if (ds.dataset_name == chosen_dataset)
+                            li: a(href ='/dataset-use?dataset=none') clear this dataset

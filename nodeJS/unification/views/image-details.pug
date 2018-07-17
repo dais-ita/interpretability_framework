@@ -1,0 +1,35 @@
+extends layout
+
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    div
+        -var encImg = image.input
+
+        h1 Parameters
+        table(border=1)
+            tbody
+                tr
+                    td Dataset
+                    td #{parameters.dataset}
+                tr
+                    td Image
+                    td #{parameters.image}
+
+        h1 Result
+        table(border=1)
+                tbody
+                    tr
+                        td Image name
+                        td #{image.image_name}
+                    tr
+                        td Image
+                        td
+                            img(alt='Test image', src='data:img/jpg;base64,' + encImg)
+                    tr
+                        td Ground truth
+                        td #{image.ground_truth}

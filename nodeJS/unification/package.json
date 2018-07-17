@@ -1,0 +1,22 @@
+{
+  "name": "P5_demo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "express-session": "~1.15.6",
+    "get-json": "~1.0.0",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0",
+    "promise": "^8.0.1",
+    "pug": "2.0.0-beta11",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2",
+    "request-promise-core": "~1.1.1"
+  }
+}
