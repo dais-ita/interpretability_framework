@@ -5,7 +5,7 @@
 
 let express = require('express');
 let router = express.Router();
-var request = require('request-promise');
+let request = require('request-promise');
 let config = require('../config');
 let fn = require('./functions-general');
 let parmType = null;
@@ -24,15 +24,7 @@ router.get('/', function (req, res) {
         .then(function (response) {
             // Success
             let result = JSON.parse(response);
-            let matchedModel = null;
-
-            for (let i in result.models) {
-                let thisMod = result.models[i];
-
-                if (thisMod.model_name == parmModel) {
-                    matchedModel = thisMod;
-                }
-            }
+            let matchedModel = fn.matchedModel(parmModel, result);
 
             if (matchedModel == null) {
                 console.log("Error - no model matches '" + parmModel + "'");
@@ -48,7 +40,7 @@ router.get('/', function (req, res) {
                     "chosen_explanation": req.session.chosen_explanation
                 });
             } else {
-                res.json(result);
+                res.json(matchedModel);
             }
         })
         .catch(function (err) {

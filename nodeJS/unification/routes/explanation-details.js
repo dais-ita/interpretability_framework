@@ -5,7 +5,7 @@
 
 let express = require('express');
 let router = express.Router();
-var request = require('request-promise');
+let request = require('request-promise');
 let config = require('../config');
 let fn = require('./functions-general');
 let parmType = null;
@@ -24,15 +24,7 @@ router.get('/', function (req, res) {
         .then(function (response) {
             // Success
             let result = JSON.parse(response);
-            let matchedExp = null;
-
-            for (let i in result.explanations) {
-                let thisExp = result.explanations[i];
-
-                if (thisExp.explanation_name == parmExp) {
-                    matchedExp = thisExp;
-                }
-            }
+            let matchedExp = fn.matchedExplanation(parmExp, result);
 
             if (matchedExp == null) {
                 console.log("Error - no explanation matches '" + parmExp + "'");

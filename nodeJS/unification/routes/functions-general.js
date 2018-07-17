@@ -71,6 +71,35 @@ function httpPost(hostname, port, path, encoding, payload, passedRes) {
 }
 
 module.exports = {
+    httpImageJson: function(config, fn, request, parmDsName, parmModName, parmExpName, parmImgName, dsJson, modJson, expJson, tgtFn) {
+        if (parmDsName == null) {
+            console.log("No dataset specified");
+            return {};
+        } else {
+            const options = {
+                method: 'GET'
+            };
+
+            if (parmImgName == null) {
+                options.uri = fn.getDatasetsRandomTestImageUrl(config, parmDsName);
+            } else {
+                options.uri = fn.getDatasetsSpecificTestImageUrl(config, parmDsName, parmImgName);
+            }
+
+            request(options)
+                .then(function (response) {
+                    // Success
+                    let result = JSON.parse(response);
+
+                    tgtFn(config, fn, request, parmDsName, parmModName, parmExpName, dsJson, modJson, expJson, result);
+                })
+                .catch(function (err) {
+                    // Error
+                    console.log(err);
+                    return {};
+                })
+        }
+    },
     getDatasetsAllUrl: function(config) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
@@ -137,5 +166,53 @@ module.exports = {
             config.urls.explanations.paths.list;
 
         return url;
+    },
+    getExplanationsExplainUrl: function(config) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.explanations.port +
+            config.urls.explanations.paths.root +
+            config.urls.explanations.paths.explain;
+
+        return url;
+    },
+    matchedDataset: function(dsName, dsJson) {
+        let matchedDs = null;
+
+        for (let i in dsJson.datasets) {
+            let thisDs = dsJson.datasets[i];
+
+            if (thisDs.dataset_name == dsName) {
+                matchedDs = thisDs;
+            }
+        }
+
+        return matchedDs;
+    },
+    matchedModel: function(modName, modJson) {
+        let matchedModel = null;
+
+        for (let i in modJson.models) {
+            let thisMod = modJson.models[i];
+
+            if (thisMod.model_name == modName) {
+                matchedModel = thisMod;
+            }
+        }
+
+        return matchedModel;
+    },
+    matchedExplanation: function(expName, expJson) {
+        let matchedExp = null;
+
+        for (let i in expJson.explanations) {
+            let thisExp = expJson.explanations[i];
+
+            if (thisExp.explanation_name == expName) {
+                matchedExp = thisExp;
+            }
+        }
+
+        return matchedExp;
     }
 };
