@@ -1,4 +1,6 @@
 import tensorflow as tf
+import os
+import sys
 from models.utils.ConvFeatureDescriptor import ConvFeatureDescriptor
 
 
@@ -25,11 +27,12 @@ class RandomForest(object):
         )
 
         self.model = tf.contrib.tensor_forest.client.random_forest.TensorForestEstimator(params)
+        self.descriptor = ConvFeatureDescriptor(batch_size=128, x_dim=self.x_dim, y_dim=self.y_dim)
 
     def TrainModel(self, x_train, y_train, batch_size, num_steps):
 
         descriptor = ConvFeatureDescriptor(batch_size=batch_size, x_dim=self.x_dim, y_dim=self.y_dim)
-        x_train = descriptor.get_feature_vectors(x_train) # Apply VGG16 feature detection to input data
+        x_train = descriptor.get_feature_vectors(x_train)  # Apply VGG16 feature detection to input data
 
         self.model.fit(x=x_train, y=y_train)
 
@@ -44,3 +47,10 @@ class RandomForest(object):
 
         return self.model.predict(x=x_predict)
 
+#
+# if __name__ == "__main__":
+#
+#     base_path = os.getcwd().split("/")
+#     while base_path[-1] != str("p5_afm_2018_demo"):
+#         base_path = base_path[:-1]
+#     sys.path.append(os.path.join("/".join(base_path) + "/models"))
