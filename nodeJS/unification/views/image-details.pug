@@ -33,3 +33,8 @@ block content
                     tr
                         td Ground truth
                         td #{image.ground_truth}
+
+        -if ((chosen_model != null) && (chosen_explanation != null))
+            a(href='/explanations-explain?dataset=' + parameters.dataset + '&model=' + chosen_model + '&explanation=' + chosen_explanation + '&image=' + image.image_name) Explain this image using #{chosen_model} with #{chosen_explanation}
+        -else
+            | Choose a model and an explanation type to see an explanation for this image

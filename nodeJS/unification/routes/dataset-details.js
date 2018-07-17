@@ -5,7 +5,7 @@
 
 let express = require('express');
 let router = express.Router();
-var request = require('request-promise');
+let request = require('request-promise');
 let config = require('../config');
 let fn = require('./functions-general');
 let parmType = null;
@@ -24,15 +24,7 @@ router.get('/', function (req, res) {
         .then(function (response) {
             // Success
             let result = JSON.parse(response);
-            let matchedDs = null;
-
-            for (let i in result.datasets) {
-                let thisDs = result.datasets[i];
-
-                if (thisDs.dataset_name == parmDs) {
-                    matchedDs = thisDs;
-                }
-            }
+            let matchedDs = fn.matchedDataset(parmDs, result);
 
             if (matchedDs == null) {
                 console.log("Error - no dataset matches '" + parmDs + "'");

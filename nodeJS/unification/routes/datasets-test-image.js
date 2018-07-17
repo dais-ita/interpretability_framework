@@ -5,7 +5,7 @@
 
 let express = require('express');
 let router = express.Router();
-var request = require('request-promise');
+let request = require('request-promise');
 let config = require('../config');
 let fn = require('./functions-general');
 let parmType = null;

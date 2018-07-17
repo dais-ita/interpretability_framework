@@ -5,7 +5,7 @@
 
 let express = require('express');
 let router = express.Router();
-var request = require('request-promise');
+let request = require('request-promise');
 let config = require('../config');
 let fn = require('./functions-general');
 let parmType = null;
@@ -22,6 +22,8 @@ router.get('/', function (req, res) {
         .then(function (response) {
             // Success
             let result = JSON.parse(response);
+
+            req.session.all_models = result;
 
             if (parmType != "json") {
                 res.render("model-list", {
