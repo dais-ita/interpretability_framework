@@ -11,7 +11,7 @@ mixin explanation-details(exp)
         tbody
             -for (var prop in exp)
                 tr
-                    -if (prop != "dataset_name")
+                    -if (prop != "explanation_name")
                         td #{prop}
                         -if (prop == "compatible_datasets")
                             td

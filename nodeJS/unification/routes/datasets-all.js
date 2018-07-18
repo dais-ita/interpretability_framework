@@ -23,16 +23,16 @@ router.get('/', function (req, res) {
             // Success
             let result = JSON.parse(response);
 
-            req.session.all_datasets = result;
+//            req.session.all_datasets = result;
 
             if (parmType != "json") {
                 res.render("dataset-list", {
                     "title": "Datasets - all",
                     "datasets": result,
-                    "parameters": {},
-                    "chosen_dataset": req.session.chosen_dataset,
-                    "chosen_model": req.session.chosen_model,
-                    "chosen_explanation": req.session.chosen_explanation
+                    "parameters": {}
+//                    "chosen_dataset": req.session.chosen_dataset,
+//                    "chosen_model": req.session.chosen_model,
+//                    "chosen_explanation": req.session.chosen_explanation
                 });
             } else {
                 res.json(result);

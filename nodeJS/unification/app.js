@@ -5,12 +5,13 @@
 
 var createError = require('http-errors');
 var express = require('express');
-var session = require('express-session');
+//var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
+var oiRouter = require('./routes/OLD_index');
 var dsaRouter = require('./routes/datasets-all');
 var dsdRouter = require('./routes/dataset-details');
 var dstRouter = require('./routes/datasets-test-image');
@@ -38,9 +39,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
+//app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 
 app.use('/', indexRouter);
+app.use('/OLD_index', oiRouter);
 app.use('/datasets-all', dsaRouter);
 app.use('/dataset-details', dsdRouter);
 app.use('/datasets-test-image', dstRouter);

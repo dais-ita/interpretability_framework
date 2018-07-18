@@ -7,6 +7,8 @@ block content
     //- * All Rights Reserved
     //- *******************************************************************************
 
+    script(src="/js/P5.js")
+
     div
         h1 Parameters
         table(border=1)
@@ -25,15 +27,21 @@ block content
                     td #{parameters.image}
 
         h1 Result
-        table(border=1)
-            tbody
-                tr
-                    td Explanation text
-                    td #{explanation.explanation_text}
-                tr
-                    td Explanation image
-                    td
-                        img(alt='Explanation image', src='data:img/jpg;base64,' + explanation.explanation_image)
-                tr
-                    td Prediction
-                    td #{explanation.prediction}
+        div(id='explanations')
+        #{explanation.explanation_text}
+            table(border=1, id='exp_table')
+                tbody
+                    tr
+                        td Time
+                        td Prediction
+                        td Explanation image
+                    tr
+                        td #{explanation.explanation_time}
+                        td #{explanation.prediction}
+                        td
+                            img(alt='Explanation image', src='data:img/jpg;base64,' + explanation.explanation_image)
+        br
+        -if ((chosen_model != null) && (chosen_explanation != null))
+            a(href='javascript:reExplain("/explanations-explain?type=json&dataset=' + parameters.dataset + '&model=' + parameters.model + '&explanation=' + parameters.explanation + '&image=' + parameters.image + '");') Re-explain this image using #{chosen_model} with #{chosen_explanation}
+        -else
+            | Choose a model and an explanation type to be able to re-explain this image

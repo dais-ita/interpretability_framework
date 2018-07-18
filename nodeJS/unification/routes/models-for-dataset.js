@@ -29,14 +29,14 @@ router.get('/', function (req, res) {
                 // Success
                 let result = JSON.parse(response);
 
-                if (parmType != "") {
+                if (parmType != "json") {
                     res.render("model-list", {
                         "title": "Models - for dataset",
                         "models": result,
-                        "parameters": { "dataset": parmDsName },
-                        "chosen_dataset": req.session.chosen_dataset,
-                        "chosen_model": req.session.chosen_model,
-                        "chosen_explanation": req.session.chosen_explanation
+                        "parameters": { "dataset": parmDsName }
+//                        "chosen_dataset": req.session.chosen_dataset,
+//                        "chosen_model": req.session.chosen_model,
+//                        "chosen_explanation": req.session.chosen_explanation
                     });
                 } else {
                     res.json(result)
