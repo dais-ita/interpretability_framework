@@ -23,16 +23,16 @@ router.get('/', function (req, res) {
             // Success
             let result = JSON.parse(response);
 
-            req.session.all_explanations = result;
+//            req.session.all_explanations = result;
 
             if (parmType != "json") {
                 res.render("explanation-list", {
                     "title": "Explanations - all",
                     "explanations": result,
-                    "parameters": {},
-                    "chosen_dataset": req.session.chosen_dataset,
-                    "chosen_model": req.session.chosen_model,
-                    "chosen_explanation": req.session.chosen_explanation
+                    "parameters": {}
+//                    "chosen_dataset": req.session.chosen_dataset,
+//                    "chosen_model": req.session.chosen_model,
+//                    "chosen_explanation": req.session.chosen_explanation
                 });
             } else {
                 res.json(result);

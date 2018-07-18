@@ -34,10 +34,10 @@ router.get('/', function (req, res) {
                 res.render("dataset-individual", {
                     "title": "Dataset details",
                     "dataset": matchedDs,
-                    "parameters": {},
-                    "chosen_dataset": req.session.chosen_dataset,
-                    "chosen_model": req.session.chosen_model,
-                    "chosen_explanation": req.session.chosen_explanation
+                    "parameters": {}
+//                    "chosen_dataset": req.session.chosen_dataset,
+//                    "chosen_model": req.session.chosen_model,
+//                    "chosen_explanation": req.session.chosen_explanation
                 });
             } else {
                 res.json(matchedDs);

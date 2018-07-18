@@ -179,8 +179,8 @@ module.exports = {
     matchedDataset: function(dsName, dsJson) {
         let matchedDs = null;
 
-        for (let i in dsJson.datasets) {
-            let thisDs = dsJson.datasets[i];
+        for (let i in dsJson) {
+            let thisDs = dsJson[i];
 
             if (thisDs.dataset_name == dsName) {
                 matchedDs = thisDs;
@@ -192,8 +192,8 @@ module.exports = {
     matchedModel: function(modName, modJson) {
         let matchedModel = null;
 
-        for (let i in modJson.models) {
-            let thisMod = modJson.models[i];
+        for (let i in modJson) {
+            let thisMod = modJson[i];
 
             if (thisMod.model_name == modName) {
                 matchedModel = thisMod;
@@ -205,8 +205,8 @@ module.exports = {
     matchedExplanation: function(expName, expJson) {
         let matchedExp = null;
 
-        for (let i in expJson.explanations) {
-            let thisExp = expJson.explanations[i];
+        for (let i in expJson) {
+            let thisExp = expJson[i];
 
             if (thisExp.explanation_name == expName) {
                 matchedExp = thisExp;
