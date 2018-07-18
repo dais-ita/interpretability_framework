@@ -87,7 +87,7 @@ class LimeExplainer(object):
     print("explanation prediction output",prediction)
     predicted_class = np.argmax(prediction)
     print("explanation predicted_class",predicted_class)
-    temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=False, num_features=num_features, hide_rest=False,min_weight=min_weight)
+    temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=False, num_features=num_features, hide_rest=False,)(=min_weight)
 
     display_explanation_image = False
 
