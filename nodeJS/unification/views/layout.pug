@@ -1,0 +1,37 @@
+// *******************************************************************************
+// * (C) Copyright IBM Corporation 2018
+// * All Rights Reserved
+// *******************************************************************************
+
+doctype html
+html
+  meta(charset='utf-8')
+  head
+    title=title
+  body()
+  div
+    a(href='/') home
+    | &nbsp;&nbsp;|&nbsp;&nbsp;
+    a(href='/README.md') README
+      br
+    | (dataset =&nbsp;
+    -if (chosen_dataset == null)
+        | none
+    -else
+        a(href='/dataset-details?dataset=' + chosen_dataset) #{chosen_dataset}
+    | ,
+    | model =&nbsp;
+    -if (chosen_model == null)
+        | none
+    -else
+        a(href='/model-details?model=' + chosen_model) #{chosen_model}
+
+    | ,
+    | explanation =&nbsp;
+    -if (chosen_explanation == null)
+        | none
+    -else
+        a(href='/explanation-details?explanation=' + chosen_explanation) #{chosen_explanation}
+    | )
+    hr
+    block content

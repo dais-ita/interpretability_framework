@@ -1,0 +1,19 @@
+extends layout
+include dataset-details.pug
+
+block content
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    div
+        h1 Parameters
+        table(border=1)
+            tbody
+                tr
+                    td (none)
+
+        -for (var ds in datasets.datasets)
+            -var thisDs = datasets.datasets[ds]
+            +dataset-details(thisDs)

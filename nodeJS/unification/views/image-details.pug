@@ -1,0 +1,40 @@
+extends layout
+
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    div
+        -var encImg = image.input
+
+        h1 Parameters
+        table(border=1)
+            tbody
+                tr
+                    td Dataset
+                    td #{parameters.dataset}
+                tr
+                    td Image
+                    td #{parameters.image}
+
+        h1 Result
+        table(border=1)
+                tbody
+                    tr
+                        td Image name
+                        td #{image.image_name}
+                    tr
+                        td Image
+                        td
+                            img(alt='Test image', src='data:img/jpg;base64,' + encImg)
+                    tr
+                        td Ground truth
+                        td #{image.ground_truth}
+
+        -if ((chosen_model != null) && (chosen_explanation != null))
+            a(href='/explanations-explain?dataset=' + parameters.dataset + '&model=' + chosen_model + '&explanation=' + chosen_explanation + '&image=' + image.image_name) Explain this image using #{chosen_model} with #{chosen_explanation}
+        -else
+            | Choose a model and an explanation type to see an explanation for this image
