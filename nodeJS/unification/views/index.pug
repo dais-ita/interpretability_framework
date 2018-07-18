@@ -1,0 +1,135 @@
+extends layout
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    div The following requests are supported by this end point:
+        table(border='1', align=left)
+            tr
+                th Request
+                th JSON version
+                th Status
+                th Description
+            tr
+                td
+                    a(href='/datasets-all') /datasets-all
+                td
+                    a(href='/datasets-all?type=json') /datasets-all?type=json
+                td WORKING
+                td Executes DatasetsAAS.py /get_available
+            -if (chosen_dataset == null)
+                tr
+                    td /datasets-test-image (random)
+                    td /datasets-test-image?type=json
+                    td WORKING
+                    td Executes DatasetsAAS.py /test_image/(dataset_name)
+                        br
+                        | (Choose a dataset to enable this action)
+                tr
+                    td /datasets-test-image (non-wielder)
+                    td /datasets-test-image?type=json
+                    td WORKING
+                    td Executes DatasetsAAS.py /test_image/specific?dataset=dataset_name&image_name=image_name
+                        br
+                        | (Choose a dataset to enable this action)
+                tr
+                    td /datasets-test-image (gun wielder)
+                    td /datasets-test-image?type=json
+                    td WORKING
+                    td Executes DatasetsAAS.py /test_image/specific?dataset=dataset_name&image_name=image_name
+                        br
+                        | (Choose a dataset to enable this action)
+            -else
+                tr
+                    td
+                        a(href='/datasets-test-image?dataset=' + chosen_dataset) /datasets-test-image (random)
+                    td
+                        a(href='/datasets-test-image?type=json&dataset=' + chosen_dataset) /datasets-test-image?type=json
+                    td WORKING
+                    td Executes DatasetsAAS.py /test_image/(dataset_name)
+                tr
+                    td
+                        a(href='/datasets-test-image?dataset=' + chosen_dataset + '&image=01591_non-wielder.jpg') /datasets-test-image (non-wielder)
+                    td
+                        a(href='/datasets-test-image?type=json&dataset=' + chosen_dataset + '&image=01591_non-wielder.jpg') /datasets-test-image?type=json
+                    td WORKING
+                    td Executes DatasetsAAS.py /test_image/specific?dataset=dataset_name&image_name=image_name
+                tr
+                    td
+                        a(href='/datasets-test-image?dataset=' + chosen_dataset + '&image=01377_non-wielder.jpg') /datasets-test-image (non-wielder)
+                    td
+                        a(href='/datasets-test-image?type=json&dataset=' + chosen_dataset + '&image=01377_non-wielder.jpg') /datasets-test-image?type=json
+                    td WORKING
+                    td Executes DatasetsAAS.py /test_image/specific?dataset=dataset_name&image_name=image_name
+                tr
+                    td
+                        a(href='/datasets-test-image?dataset=' + chosen_dataset + '&image=00277_gun_wielder.jpg') /datasets-test-image (gun wielder)
+                    td
+                        a(href='/datasets-test-image?type=json&dataset=' + chosen_dataset + '&image=00277_gun_wielder.jpg') /datasets-test-image?type=json
+                    td WORKING
+                    td Executes DatasetsAAS.py /test_image/specific?dataset=dataset_name&image_name=image_name
+            tr
+                td
+                    a(href='/models-all') /models-all
+                td
+                    a(href='/models-all?type=json') /models-all?type=json
+                td WORKING
+                td Executes ModelsAAS.py /get_available
+            -if (chosen_dataset == null)
+                tr
+                    td /models-for-dataset
+                    td /models-for-dataset?type=json
+                    td WORKING
+                    td Executes ModelsAAS.py /get_available_for_dataset/(dataset_name)
+                        br
+                        | (Choose a dataset to enable this action)
+            -else
+                tr
+                    td
+                        a(href='/models-for-dataset?dataset=' + chosen_dataset) /models-for-dataset
+                    td
+                        a(href='/models-for-dataset?type=json&dataset=' + chosen_dataset) /models-for-dataset?type=json
+                    td WORKING
+                    td Executes ModelsAAS.py /get_available_for_dataset/(dataset_name)
+                        br
+                        | (Choose a dataset to enable this action)
+            tr
+                td
+                    a(href='/models-predict?dataset=' + chosen_dataset) /models-predict
+                td
+                    a(href='/models-predict?type=json&dataset=Gun Wielding Image Classification') /models-predict?type=json
+                td IN PROGRESS
+                td Executes ModelsAAS.py /predict
+            tr
+                td
+                    a(href='/explanations-all') /explanations-all
+                td
+                    a(href='/explanations-all?type=json') /explanations-all?type=json
+                td WORKING
+                td Executes ExplanationAAS.py /get_available
+            tr
+                td
+                    a(href='/explanations-for-filter?filter=tbc') /explanations-for-filter
+                td
+                    a(href='/explanations-for-filter?type=json&filter=tbc') /explanations-for-filter?type=json
+                td IN PROGRESS
+                td Executes ExplanationAAS.py /get_available_for_filter/(filter_name)
+            -if ((chosen_dataset == null) || (chosen_model == null) || (chosen_explanation == null))
+                tr
+                    td /explanations-explain
+                    td /explanations/explain?type=json
+                    td IN PROGRESS
+                    td Executes ExplanationAAS.py /explain
+                        br
+                        | (Choose a dataset, model and explanation to enable this action)
+            -else
+                tr
+                    td
+                        a(href='/explanations-explain?dataset=' + chosen_dataset + '&model=' + chosen_model + '&explanation=' + chosen_explanation + '&image=01591_non-wielder.jpg') /explanations-explain
+                    td
+                        a(href='/explanations-explain?type=json&dataset=' + chosen_dataset + '&model=' + chosen_model + '&explanation=' + chosen_explanation + '&image=01591_non-wielder.jpg') /explanations/explain?type=json
+                    td IN PROGRESS
+                    td Executes ExplanationAAS.py /explain
