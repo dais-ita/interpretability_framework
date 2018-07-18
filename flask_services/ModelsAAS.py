@@ -13,6 +13,17 @@ import sys
 
 import numpy as np
 
+import zipfile
+
+
+def zipdir(path, zip_path):
+    ziph = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
+    
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file))
+
+    ziph.close()
 
 ### Setup Sys path for easy imports
 # base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
@@ -135,6 +146,27 @@ def PredictImagePreProcess(image):
 	# Add any 'always happen' preprocessing steps e.g. check size and resize if needed etc
 
 	return image.astype(np.float32)
+
+@app.route("/models/archive", methods=['get'])
+def GetModelZip():
+	# raw_json = json.loads(request.data)
+
+	dataset_name = request.args.get("selected_dataset_name")
+	model_name = request.args.get("selected_model_name")
+
+	# dataset_name = json.loads(raw_json['selected_dataset_name'])
+	# model_name = json.loads(raw_json['selected_model_name'])
+
+	trained_model_file_name = dataset_name.replace(" ","_")+".zip"
+
+	trained_model_dir_path = os.path.join(models_path,model_name,"saved_models",dataset_name.replace(" ","_"))
+	zipped_model_path = os.path.join(models_path,model_name,"saved_models","zipped_models",trained_model_file_name)
+	if(not os.path.exists(zipped_model_path)):
+		zipdir(trained_model_dir_path, zipped_model_path)
+
+	return send_file(zipped_model_path, attachment_filename=trained_model_file_name)
+	
+
 
 @app.route("/models/predict", methods=['POST'])
 def Predict():
