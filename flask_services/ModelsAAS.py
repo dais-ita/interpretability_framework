@@ -15,15 +15,22 @@ import numpy as np
 
 import zipfile
 
+import shutil
+
+
 
 def zipdir(path, zip_path):
-    ziph = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
-    
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            ziph.write(os.path.join(root, file))
+	shutil.make_archive(zip_path, 'zip', path)
+	
+	# print("Zipping:",path, "To location:",zip_path)
+	# # ziph = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
+	# ziph = zipfile.ZipFile(zip_path, mode='w')
 
-    ziph.close()
+	# for root, dirs, files in os.walk(path):
+	# 	for file in files:
+	# 		ziph.write(os.path.join(root, file),compression=zipfile.ZIP_STORED)
+
+	# ziph.close()
 
 ### Setup Sys path for easy imports
 # base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
@@ -146,6 +153,7 @@ def PredictImagePreProcess(image):
 	# Add any 'always happen' preprocessing steps e.g. check size and resize if needed etc
 
 	return image.astype(np.float32)
+
 
 @app.route("/models/archive", methods=['get'])
 def GetModelZip():
