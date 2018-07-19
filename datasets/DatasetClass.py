@@ -571,7 +571,7 @@ if __name__ == '__main__':
                                            save_images=True, image_dir=output_dir, batch_size=30,
                                            filter_size=(300, 300, 3))
 
-    file_path = "wielder_non-wielder.csv"
+    file_path = "congested_non-congested_resized.csv"
     image_url_column = "image_path"
     ground_truth_column = "label"
 
@@ -581,7 +581,7 @@ if __name__ == '__main__':
     
     dataset_tool.SplitLiveData()
 
-    x, y = dataset_tool.GetBatch(batch_size=128, even_examples=True, y_labels_to_use=["non-wielder", "gun_wielder"],
+    x, y = dataset_tool.GetBatch(batch_size=128, even_examples=True, y_labels_to_use=["congested", "non-congested"],
                                  split_batch=True, split_one_hot=True)
 
     print(len(x))
@@ -596,7 +596,7 @@ if __name__ == '__main__':
 
     dataset_tool = dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
     
-    training_split_file = "wielder_non-wielder_train_split.csv"
+    training_split_file = "congested_non-congested_resized_train_split.csv"
     training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
     dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
 
