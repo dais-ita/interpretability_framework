@@ -163,6 +163,32 @@ def ImagePreProcess(image):
 	return image.astype(np.float32)
 
 
+def CreateAttributionMap(attribution_slice,slice_weights):
+	output_map = np.array(attribution_slice).astype(np.float32)
+
+	for region_weight in slice_weights:
+		print(region_weight[0],region_weight[1])
+
+		output_map[output_map == region_weight[0]] = region_weight[1]
+
+	return output_map
+
+
+@app.route("/explanations/attribution_map", methods=['POST'])
+def GetAttributionMap():
+	raw_json = json.loads(request.data)
+
+	attribution_slices = json.loads(raw_json["attribution_slices"])
+	attribution_slice_weights = json.loads(raw_json["attribution_slice_weights"])
+
+	attribution_map = CreateAttributionMap(attribution_slices,attribution_slice_weights)
+
+	json_data = json.dumps({'attribution_map': attribution_map.tolist()})
+
+	return json_data
+
+	
+
 @app.route("/explanations/explain", methods=['POST'])
 def Explain():
 	raw_json = json.loads(request.data)
@@ -209,6 +235,14 @@ def Explain():
 
 	explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
 	
+
+	##### testing attribution maps
+	# if("attribution_slices" in additional_outputs.keys() and "attribution_slice_weights" in additional_outputs.keys() ):
+	# 	attribution_map = CreateAttributionMap(additional_outputs["attribution_slices"],additional_outputs["attribution_slice_weights"])
+	# # print("")
+	# print(attribution_map)
+	# print("")
+
 	#TODO check if this is needed
 	if(True):
 		explanation_image_255 = explanation_image*255
@@ -231,7 +265,7 @@ def Explain():
 
 	print("prediction:"+str(labels[int(prediction)]))#+" - "+labels[prediction)
 	# json_data = json.dumps({'prediction': labels[prediction[0]],"explanation_text":explanation_text,"explanation_image":encoded_explanation_image})
-	json_data = json.dumps({'prediction': labels[int(prediction)],"explanation_text":explanation_text,"explanation_image":encoded_explanation_image})
+	json_data = json.dumps({'prediction': labels[int(prediction)],"explanation_text":explanation_text,"explanation_image":encoded_explanation_image, "additional_outputs":additional_outputs})
 
 	return json_data
 
