@@ -57,9 +57,22 @@ class LimeExplainer(object):
 
     explanation = explainer.explain_instance(x, self.PredictFunction,labels=labels,top_labels=top_labels, hide_color=0,num_samples = num_samples)
 
+
     print("list(explanation.local_exp.keys())",list(explanation.local_exp.keys()))
+    print("")
+    
     print("explanation.local_exp[list(explanation.local_exp.keys())[0]].shape",explanation.local_exp[list(explanation.local_exp.keys())[0]])
+    print("")
+    
+    print("explanation.local_exp[list(explanation.local_exp.keys())[0]].shape",explanation.local_exp[list(explanation.local_exp.keys())[1]])
+    print("")
+    
     print("explanation.segments.shape",explanation.segments.shape)
+    print("")
+    
+    print("np.unique(explanation.segments)",np.unique(explanation.segments))
+    print("")
+    
     return self.PredictFunction(np.array([x])), explanation
 
 
@@ -101,7 +114,7 @@ class LimeExplainer(object):
 
     explanation_image = temp
 
-    additional_outputs = {"temp_image":temp, "mask":mask}
+    additional_outputs = {"default_visualisation":temp, "mask":mask, "attribution_slices":explanation.segments, "attribution_slice_weights":explanation.local_exp[predicted_class]}
 
     explanation_text = "Evidence towards predicted class shown in green"
     return explanation_image, explanation_text, predicted_class, additional_outputs

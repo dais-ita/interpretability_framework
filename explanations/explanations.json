@@ -14,10 +14,27 @@
 		"modality":"imagery",
 		"description":"A local (example specific) decision-boundary explanation of evidence towards classes",
 		"additional_arguments":[
-			{"name":"learning_rate",
+			{"name":"num_samples",
 			"description":""
 			},
-			{"name":"dropout",
+			{"name":"num_features",
+			"description":""
+			},
+			{"name":"min_weight",
+			"description":""
+			}
+		],
+		"additional_outputs":[
+			{"name":"default_visualisation",
+			"description":""
+			},
+			{"name":"mask",
+			"description":""
+			},
+			{"name":"attribution_slices",
+			"description":""
+			},
+			{"name":"attribution_slice_weights",
 			"description":""
 			}
 		],
