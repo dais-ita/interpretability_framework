@@ -101,7 +101,7 @@ dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) 
 
 
 ### get example batch and display an image
-display_example_image = False
+display_example_image = True
 
 if(display_example_image):
 	##select the source for the example
@@ -133,7 +133,7 @@ cnn_model = SimpleCNN(input_image_height, input_image_width, input_image_channel
 
 ### train model
 batch_size = 128
-num_train_steps = 200
+num_train_steps = 0
 
 #load all train images as model handels batching
 source = "train"

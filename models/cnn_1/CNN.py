@@ -171,6 +171,7 @@ class SimpleCNN(object):
         return self.model.get_variable_value(name)
     
     def FetchAllVariableValues(self):
+        print([n.name for n in tf.get_default_graph().as_graph_def().node])
         available_variables = self.model.get_variable_names()
         var_value_dict = {}
         for var in available_variables:
