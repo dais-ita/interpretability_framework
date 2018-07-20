@@ -74,6 +74,7 @@ def readb64(base64_string,convert_colour=True):
     	return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
     else:
     	return np.array(pimg) 
+
 def encIMG64(image,convert_colour = False):
     if(convert_colour):
         image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
@@ -167,8 +168,7 @@ def CreateAttributionMap(attribution_slice,slice_weights):
 	output_map = np.array(attribution_slice).astype(np.float32)
 
 	for region_weight in slice_weights:
-		print(region_weight[0],region_weight[1])
-
+		# print(region_weight[0],region_weight[1])
 		output_map[output_map == region_weight[0]] = region_weight[1]
 
 	return output_map
@@ -197,15 +197,8 @@ def Explain():
 	model_json = json.loads(raw_json["selected_model_json"])
 	explanation_json = json.loads(raw_json["selected_explanation_json"])
 
-	input_image = ImagePreProcess(readb64(raw_json["input"],False))
+	input_image = ImagePreProcess(readb64(raw_json["input"],convert_colour=False))
 
-	# dataset_json = json.loads(request.form["selected_dataset_json"])
-	# model_json = json.loads(request.form["selected_model_json"])
-	# explanation_json = json.loads(request.form["selected_explanation_json"])
-
-	# input_image = ImagePreProcess(readb64(request.form["input"],False))
-
-	
 	dataset_name = dataset_json["dataset_name"]
 	model_name = model_json["model_name"]
 	explanation_name = explanation_json["explanation_name"]
@@ -232,6 +225,13 @@ def Explain():
 	
 	#TODO allow for better handling of additonal arguments
 	additional_args = {"num_samples":100,"num_features":300,"min_weight":0.01}
+
+	display_explanation_input = True
+	if(display_explanation_input):
+		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
+		cv2.imshow("image: input_image",cv2_image)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()
 
 	explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
 	

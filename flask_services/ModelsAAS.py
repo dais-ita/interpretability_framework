@@ -70,11 +70,14 @@ for model_folder in model_folders:
 app = Flask(__name__)
 
 
-def readb64(base64_string):
+def readb64(base64_string,convert_colour=True):
     sbuf = StringIO()
     sbuf.write(base64.b64decode(base64_string))
     pimg = Image.open(sbuf)
-    return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
+    if(convert_colour):
+    	return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
+    else:
+    	return np.array(pimg) 
 
 def encIMG64(image,convert_colour = False):
     if(convert_colour):
@@ -184,14 +187,13 @@ def Predict():
 	
 	dataset_json = json.loads(raw_json['selected_dataset_json'])
 
-	input_image = PredictImagePreProcess(readb64(raw_json['input']))
+	input_image = PredictImagePreProcess(readb64(raw_json['input'],convert_colour=False))
 
 
-	display_input_image = False
-
-	if(display_input_image):
-		# cv2_image = cv2.cvtColor(x[0], cv2.COLOR_RGB2BGR)
-		cv2.imshow("image 0",input_image)
+	display_prediction_input = True
+	if(display_prediction_input):
+		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
+		cv2.imshow("prediciton image: input_image",cv2_image)
 		cv2.waitKey(0)
 		cv2.destroyAllWindows()
 
@@ -200,18 +202,14 @@ def Predict():
 
 	dataset_name = dataset_json["dataset_name"]
 
-	# dataset_json = json.loads(request.form["selected_dataset_json"])
-
-	# input_image = PredictImagePreProcess(readb64(request.form["input"]))
-	# model_name = request.form["selected_model"]
-
-	# dataset_name = dataset_json["dataset_name"]
 
 	if(not model_name in loaded_models):
 		loaded_models[model_name] = {}
 
 	if(not dataset_name in loaded_models[model_name] ):
 		loaded_models[model_name][dataset_name] = LoadModelFromName(model_name,dataset_json)
+
+
 
 	prediction = loaded_models[model_name][dataset_name].Predict(np.array([input_image]))
 
