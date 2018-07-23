@@ -17,6 +17,7 @@ import numpy as np
 
 import math
 
+import shutil
 
 
 ### Setup Sys path for easy imports
@@ -220,6 +221,23 @@ def ServeSpecificImages():
 def GetAvailableDatasetsJson():
 	return json.dumps(datasets_json)
 
+
+def zipdir(path, zip_path):
+	shutil.make_archive(zip_path, 'zip', path)
+	
+@app.route("/datasets/archive", methods=['get'])
+def GetModelZip():
+	# raw_json = json.loads(request.data)
+
+	dataset_folder_name = request.args.get("dataset_folder_name")
+	print("sending:",dataset_folder_name)
+	dataset_dir_path = os.path.join(datasets_path,"dataset_images",dataset_folder_name)
+	zipped_model_path = os.path.join(datasets_path,"dataset_images","dataset_archives",dataset_folder_name+".zip")
+	if(not os.path.exists(zipped_model_path)):
+		zipdir(dataset_dir_path, zipped_model_path[:-4])
+
+	return send_file(zipped_model_path, attachment_filename=dataset_folder_name+".zip", as_attachment=True)
+	
 
 
 if __name__ == "__main__":
