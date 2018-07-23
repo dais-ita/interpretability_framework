@@ -223,10 +223,17 @@ def Explain():
 
 	explanation_instance = loaded_explanations[explanation_name][model_name][dataset_name]
 	
-	#TODO allow for better handling of additonal arguments
-	additional_args = {"num_samples":100,"num_features":300,"min_weight":0.01}
+	#TODO allow for better handling of additonal arguments, currently additional arguments for ALL explanations must be placed here
+	additional_args = {
+	"num_samples":100,
+	"num_features":300,
+	"min_weight":0.01, 
+	"model_name":model_name, 
+	"dataset_name":dataset_name, 
+	"num_background_samples":200
+	}
 
-	display_explanation_input = True
+	display_explanation_input = False
 	if(display_explanation_input):
 		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
 		cv2.imshow("image: input_image",cv2_image)
@@ -244,10 +251,12 @@ def Explain():
 	# print("")
 
 	#TODO check if this is needed
-	if(True):
+	if(explanation_image.max() <=1):
 		explanation_image_255 = explanation_image*255
+	else:
+		explanation_image_255 = explanation_image
 
-	encoded_explanation_image = encIMG64(explanation_image_255,True)
+	encoded_explanation_image = encIMG64(explanation_image_255,False)
 
 	### test images by displaying pre and post encoding
 	display_encoded_image = False

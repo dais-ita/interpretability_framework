@@ -18,10 +18,12 @@ class LimeExplainer(object):
       X = self.MakeInputGray(X)
     
     predictions = list(self.model.Predict(X))
-
+    print("explanation - predictions: ",predictions)
+    
     if(predictions[0].size == self.model.n_classes): #check if model prediction function returns one hot vector predictions
       return predictions
     else: #if it doesn't, convert predictions to one hot vectors
+      print("creating one-hot predections")
       one_hot_predictions = []
       for prediction in predictions:
         # print("explain prediciton", prediction)
@@ -29,7 +31,7 @@ class LimeExplainer(object):
         one_hot[prediction] = 1
         one_hot_predictions.append(one_hot[:])
         # print("one_hot_predictions[-1]", one_hot_predictions[-1])
-        
+      print("explanation - one_hot_predictions: ",one_hot_predictions)
       return one_hot_predictions
 
   def MakeInputGray(self,X):
@@ -114,6 +116,7 @@ class LimeExplainer(object):
     # explanation_image = mark_boundaries(temp,mask)
 
     explanation_image = temp
+    explanation_image = cv2.cvtColor(temp,cv2.COLOR_BGR2RGB)
 
     additional_outputs = {"default_visualisation":temp.tolist(), "mask":mask.tolist(), "attribution_slices":explanation.segments.tolist(), "attribution_slice_weights":explanation.local_exp[predicted_class]}
 

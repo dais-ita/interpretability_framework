@@ -40,7 +40,7 @@ class SimpleCNN(object):
 
         self.model = tf.estimator.Estimator(self.model_fn, model_dir=model_dir, config=trainingConfig)
 
-    def TrainModel(self, train_x, train_y, batch_size, num_steps):
+    def TrainModel(self, train_x, train_y, batch_size, num_steps,val_x=None,val_y=None):
         if (type(train_x) != dict):
             input_dict = {"input": train_x}
         else:
@@ -75,7 +75,9 @@ class SimpleCNN(object):
             batch_size=128, num_epochs=1, shuffle=False)
 
         predictions = self.model.predict(input_fn)
-        return list(predictions)
+        r_val = list(predictions)
+        
+        return r_val
 
     def SaveModel(self, save_dir):
         print("model is automatically saved in " + str(self.model_dir))
