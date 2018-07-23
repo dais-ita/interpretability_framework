@@ -19,7 +19,7 @@
 			"training_steps":200
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
-			"model_path":"saved_models/traffic_congestion_image_classification_(Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
 			"test_accuracy":0,
 			"training_time":0,
@@ -92,6 +92,20 @@
 			"test_accuracy":0.7468,
 			"training_time":0,
 			"training_steps":500
+			},
+			{"dataset_name":"Traffic Congestion Image Classification",
+			"model_path":"saved_models/traffic_congestion_image_classification",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":200
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":200
 			}
 		],
 		"layers":[
@@ -140,6 +154,20 @@
 			"test_accuracy":0.7468,
 			"training_time":0,
 			"training_steps":500
+			},
+			{"dataset_name":"Traffic Congestion Image Classification",
+			"model_path":"saved_models/traffic_congestion_image_classification",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":200
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":200
 			}
 		],
 		"layers":[
