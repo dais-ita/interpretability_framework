@@ -1,5 +1,3 @@
-import shap
-
 import sys
 import os
 import json
@@ -36,6 +34,7 @@ base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
 
 
 
+
 #add all model folders to sys path to allow for easy import
 models_path = os.path.join(base_dir,"models")
 
@@ -44,14 +43,6 @@ model_folders = os.listdir(models_path)
 for model_folder in model_folders:
 	model_path = os.path.join(models_path,model_folder)
 	sys.path.append(model_path)
-
-
-
-#add dataset folder to sys path to allow for easy import
-datasets_path = os.path.join(base_dir,"datasets")
-sys.path.append(datasets_path)
-###
-
 
 
 #add all explanation folders to sys path to allow for easy import
@@ -64,6 +55,10 @@ for explanation_folder in explanation_folders:
 	sys.path.append(explanation_path)
 
 
+#add dataset folder to sys path to allow for easy import
+datasets_path = os.path.join(base_dir,"datasets")
+sys.path.append(datasets_path)
+###
 
 
 #import dataset tool
@@ -84,13 +79,7 @@ dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dat
 
 
 ### gather required information about the dataset
-if("default_training_allocation_path" in dataset_json.keys()):
-	file_path = dataset_json["default_training_allocation_path"]
-	load_split = True
-else:
-	file_path = dataset_json["ground_truth_csv_path"]
-	load_split = False
-
+file_path = dataset_json["ground_truth_csv_path"]
 image_url_column = "image_path"
 ground_truth_column = "label"
 label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
@@ -103,18 +92,10 @@ input_image_channels = dataset_json["image_channels"]
 
 ### instantiate dataset tool
 csv_path = os.path.join(datasets_path,"dataset_csvs",file_path)
-print(csv_path)
 dataset_images_dir_path =  os.path.join(datasets_path,"dataset_images")
-
 dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
-
 dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
-
-
-if(load_split):
-	dataset_tool.ProduceDataFromTrainingSplitFile(csv_path,explicit_path_suffix =dataset_images_dir_path)
-else:
-	dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
+dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
 
 
 ### get example batch and display an image
@@ -138,7 +119,7 @@ if(display_example_image):
 
 ### instantiate the model
 model_json_path = os.path.join(models_path,"models.json")
-print("model_json_path",model_json_path)
+
 
 models_json = None
 with open(model_json_path,"r") as f:
@@ -147,8 +128,9 @@ with open(model_json_path,"r") as f:
 
 model_name = "keras_cnn"
 
+
 model_json = [model for model in models_json["models"] if model["model_name"] == model_name ][0]
-print("selecting model:" + model_json["model_name"])
+print("selecting first model:" + model_json["model_name"])
 
 print(model_json["script_name"]+"."+model_json["class_name"])
 ModelModule = __import__(model_json["script_name"]) 
@@ -163,8 +145,7 @@ additional_args = {"learning_rate":learning_rate}
 ### load trained model
 trained_on_json = [dataset for dataset in model_json["trained_on"] if dataset["dataset_name"] == dataset_name][0]
 
-print("trained_on_json['model_path']",trained_on_json["model_path"])
-model_load_path = os.path.join(models_path,model_name,trained_on_json["model_path"])
+model_load_path = os.path.join(models_path,model_json["model_name"],trained_on_json["model_path"])
 cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_load_path, additional_args=additional_args)
 cnn_model.LoadModel(model_load_path) ## for this model, this call is redundant. For other models this may be necessary. 
 
@@ -186,39 +167,24 @@ print(test_y)
 
 
 
+### use LIME to explain a classification
+print("Generating LIME explanation")
+from lime_explanations import LimeExplainer
 
-####SHAP
-from shap_explanation import ShapExplainer
+from skimage.segmentation import mark_boundaries
+import matplotlib.pyplot as plt
 
-shap_explainer = ShapExplainer(cnn_model)
+lime_explainer = LimeExplainer(cnn_model)
 
-source = "train"
-train_x, train_y = dataset_tool.GetBatch(batch_size = 1024,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
+test_image = test_x[0]
+test_label = test_y[0]
 
-# select a set of background examples to take an expectation over
 
-additional_args = {
-	"num_background_samples":200,
-	"background_image_pool":train_x,
-	"min_weight":0.001
-}
+explanation_image, explanation_text, prediction, additional_outputs = lime_explainer.Explain(test_image)
 
-input_image = test_x[11:12]
-
-explanation_image, explanation_text, predicted_class, additional_outputs = shap_explainer.Explain(input_image, additional_args = additional_args)
-
+predicted_class = label_names[int(prediction)]
+print("explantion prediction class:"+ predicted_class)
 cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
 cv2.imshow("image 0",cv2_image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
-# e = shap.DeepExplainer(cnn_model.model, background)
-# shap_values = e.shap_values(test_x[11:12])
-
-# print(type(shap_values))
-
-# print(len(shap_values))
-# # print(test_x[:1])
-# # print(np.multiply(test_x[:1],255.0))
-
-# shap.image_plot(shap_values, np.multiply(test_x[11:12],255.0))

@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 
 
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # turn off repeated messages from Tensorflow RE GPU allocation
 
 
@@ -80,10 +81,17 @@ dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dat
 
 
 ### gather required information about the dataset
-file_path = dataset_json["ground_truth_csv_path"]
+if("default_training_allocation_path" in dataset_json.keys()):
+	file_path = dataset_json["default_training_allocation_path"]
+	load_split = True
+else:
+	file_path = dataset_json["ground_truth_csv_path"]
+	load_split = False
+
 image_url_column = "image_path"
 ground_truth_column = "label"
 label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
+label_names.sort()
 print(label_names)
 
 input_image_height = dataset_json["image_y"]
@@ -97,11 +105,16 @@ dataset_images_dir_path =  os.path.join(datasets_path,"dataset_images")
 dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
 
 dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
-dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
+
+
+if(load_split):
+	dataset_tool.ProduceDataFromTrainingSplitFile(csv_path,explicit_path_suffix =dataset_images_dir_path)
+else:
+	dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
 
 
 ### get example batch and display an image
-display_example_image = True
+display_example_image = False
 
 if(display_example_image):
 	##select the source for the example
@@ -120,47 +133,72 @@ if(display_example_image):
 
 
 ### instantiate the model
+model_json_path = os.path.join(models_path,"models.json")
+
+models_json = None
+with open(model_json_path,"r") as f:
+	models_json = json.load(f)
+
+model_name = "cnn_1"
+
+
+model_json = [model for model in models_json["models"] if model["model_name"] == model_name ][0]
+print("selecting first model:" + model_json["model_name"])
+
+print(model_json["script_name"]+"."+model_json["class_name"])
+ModelModule = __import__(model_json["script_name"]) 
+ModelClass = getattr(ModelModule, model_json["class_name"])
+
 n_classes = len(label_names) 
 learning_rate = 0.001
 
-model_save_path = os.path.join(models_path,"cnn_1","saved_models",dataset_name.lower().replace(" ","_"))
-
-print("model_save_path",model_save_path)
-
 additional_args = {"learning_rate":learning_rate}
 
-cnn_model = SimpleCNN(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args = additional_args)
+### load trained model
+trained_on_json = [dataset for dataset in model_json["trained_on"] if dataset["dataset_name"] == dataset_name][0]
+
+model_save_path = os.path.join(models_path,model_json["model_name"],"saved_models","TEST_"+trained_on_json["dataset_name"].lower().replace(" ","_"))
+cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args=additional_args)
+
+
+
 
 ### train model
 batch_size = 128
-num_train_steps = 0
+num_train_steps = 500
 
 #load all train images as model handels batching
 source = "train"
 train_x, train_y = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True, split_one_hot = True, batch_source = source)
 
 print("num train examples: "+str(len(train_x)))
+
 train_y = dataset_tool.ConvertOneHotToClassNumber(train_y) #convert one hot vectors to class numbers as per model requirement
 
 #validate on 128 images only
 source = "validation"
-val_x, val_y = dataset_tool.GetBatch(batch_size = 128,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
+val_x, val_y = dataset_tool.GetBatch(batch_size = 256,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
 print("num validation examples: "+str(len(val_x)))
 val_y = dataset_tool.ConvertOneHotToClassNumber(val_y) 
 
 
-verbose_every = 10
-for step in range(verbose_every,num_train_steps+1,verbose_every):
-	print("")
-	print("training")
-	print("step:",step)
-	cnn_model.TrainModel(train_x, train_y, batch_size, verbose_every)
+model_validates_during_test = False
+if(model_validates_during_test):
+	cnn_model.TrainModel(train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
+else:
+	verbose_every = 10
+	for step in range(verbose_every,num_train_steps+1,verbose_every):
+		print("")
+		print("training")
+		print("step:",step)
+		cnn_model.TrainModel(train_x, train_y, batch_size, verbose_every)
 
-	print("")
-	print("evaluation")
-	print(cnn_model.EvaluateModel(val_x, val_y, batch_size))
-	print("")
+		print("")
+		print("evaluation")
+		print(cnn_model.EvaluateModel(val_x, val_y, batch_size))
+		print("")
 
+cnn_model.SaveModel(model_save_path)
 
 ### test the model
 source = "test"
@@ -178,22 +216,22 @@ print(test_y)
 
 
 
-### use LIME to explain a classification
-print("Generating LIME explanation")
-from lime_explanations import LimeExplainer
+# ### use LIME to explain a classification
+# print("Generating LIME explanation")
+# from lime_explanations import LimeExplainer
 
-from skimage.segmentation import mark_boundaries
-import matplotlib.pyplot as plt
+# from skimage.segmentation import mark_boundaries
+# import matplotlib.pyplot as plt
 
-lime_explainer = LimeExplainer(cnn_model)
+# lime_explainer = LimeExplainer(cnn_model)
 
-test_image = test_x[0]
-test_label = test_y[0]
+# test_image = test_x[0]
+# test_label = test_y[0]
 
 
-explanation_image, explanation_text, prediction, additional_outputs = lime_explainer.Explain(test_image)
+# explanation_image, explanation_text, prediction, additional_outputs = lime_explainer.Explain(test_image)
 
-cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
-cv2.imshow("image 0",cv2_image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+# cv2.imshow("image 0",cv2_image)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()

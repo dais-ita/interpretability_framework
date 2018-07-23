@@ -190,7 +190,7 @@ def Predict():
 	input_image = PredictImagePreProcess(readb64(raw_json['input'],convert_colour=False))
 
 
-	display_prediction_input = True
+	display_prediction_input = False
 	if(display_prediction_input):
 		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
 		cv2.imshow("prediciton image: input_image",cv2_image)
@@ -212,7 +212,7 @@ def Predict():
 
 
 	prediction = loaded_models[model_name][dataset_name].Predict(np.array([input_image]))
-
+	
 	labels = [label["label"] for label in dataset_json["labels"]]
 	labels.sort()
 	print("raw prediction:", prediction)
