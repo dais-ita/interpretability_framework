@@ -67,7 +67,7 @@
 		"class_name":"ConvSVM",
 		"trained_on":[
 			{"dataset_name":"Gun Wielding Image Classification",
-			"model_path":"wielder_non-wielder",
+			"model_path":"saved_models/wielder_non-wielder",
 			"test_accuracy":0.707721,
 			"training_time":0,
 			"training_steps":200

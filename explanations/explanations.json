@@ -4,6 +4,7 @@
 		"script_name":"lime_explanations",
 		"class_name":"LimeExplainer",
 		"compatible_models":[
+			{"model_name":"conv_svm"},
 			{"model_name":"cnn_1"},
 			{"model_name":"keras_cnn"},
 			{"model_name":"keras_vgg"}
