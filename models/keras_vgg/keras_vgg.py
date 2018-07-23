@@ -10,12 +10,12 @@ from keras.models import model_from_json
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 
-class KerasCNN(object):
+class KerasVGG(object):
     """A simple CNN model implemented using the Tensorflow estimator API"""
 
     def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,
                  additional_args={}):
-        super(KerasCNN, self).__init__()
+        super(KerasVGG, self).__init__()
         self.model_input_dim_height = model_input_dim_height
         self.model_input_dim_width = model_input_dim_width
         self.model_input_channels = model_input_channels
@@ -113,18 +113,21 @@ class KerasCNN(object):
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout):
         model = Sequential()
-        model.add(Conv2D(32, kernel_size=(5, 5), strides=(1, 1),
-                         activation='relu',kernel_initializer=keras.initializers.glorot_uniform(),
-                         input_shape=[model_input_dim_height, model_input_dim_width, model_input_channels], name="conv_1"))
-        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2),name="max_pool_1"))
-        model.add(Conv2D(64, (3, 3), activation='relu',name="conv_2"))
-        model.add(MaxPooling2D(pool_size=(2, 2),name="max_pool_2"))
-        model.add(Flatten(name="feature_vector_1"))
-        model.add(Dense(1048, activation='relu', name="fully_connected_1"))
+        
+        model.add(Conv2D(32, (3, 3), activation='relu', input_shape=[model_input_dim_height, model_input_dim_width, model_input_channels], name="conv_1"))
+        model.add(Conv2D(32, (3, 3), activation='relu', name="conv_2"))
+        model.add(MaxPooling2D(pool_size=(2, 2),name="max_pool_1"))
         model.add(Dropout(dropout,name="dropout_1"))
-        # model.add(Dense(n_classes, activation='relu',name="logits"))
-        model.add(Dense(n_classes, activation='softmax',name="class_prob"))
 
+        model.add(Conv2D(64, (3, 3), activation='relu', name="conv_3"))
+        model.add(Conv2D(64, (3, 3), activation='relu', name="conv_4"))
+        model.add(MaxPooling2D(pool_size=(2, 2),name="max_pool_2"))
+        model.add(Dropout(dropout,name="dropout_2"))
+
+        model.add(Flatten(name="feature_vector_1"))
+        model.add(Dense(256, activation='relu',name="fully_connected_1"))
+        model.add(Dropout(dropout,name="dropout_3"))
+        model.add(Dense(n_classes, activation='softmax',name="class_prob"))
         return model
         
 
