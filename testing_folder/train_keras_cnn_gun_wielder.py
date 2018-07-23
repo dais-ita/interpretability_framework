@@ -5,7 +5,7 @@ import json
 import cv2
 
 import numpy as np
-
+import random
 
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # turn off repeated messages from Tensorflow RE GPU allocation
@@ -77,6 +77,9 @@ with open(data_json_path,"r") as f:
 
 ### get dataset details
 dataset_name = "Traffic Congestion Image Classification"
+# dataset_name = "Traffic Congestion Image Classification (Resized)"
+# dataset_name = "Gun Wielding Image Classification"
+
 dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
 
 
@@ -138,7 +141,10 @@ models_json = None
 with open(model_json_path,"r") as f:
 	models_json = json.load(f)
 
+
 model_name = "keras_cnn"
+# model_name = "cnn_1"
+model_name = "keras_vgg"
 
 
 model_json = [model for model in models_json["models"] if model["model_name"] == model_name ][0]
@@ -154,8 +160,8 @@ learning_rate = 0.001
 additional_args = {"learning_rate":learning_rate}
 
 ### load trained model
-
 model_save_path = os.path.join(models_path,model_json["model_name"],"saved_models","test_"+dataset_name.lower().replace(" ","_"))
+model_save_path = os.path.join(models_path,model_json["model_name"],"saved_models",dataset_name.lower().replace(" ","_"))
 cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args=additional_args)
 
 
@@ -168,19 +174,26 @@ num_train_steps = 200
 #load all train images as model handels batching
 source = "train"
 train_x, train_y = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True, split_one_hot = True, batch_source = source)
+random.shuffle(train_x)
 
 print("num train examples: "+str(len(train_x)))
 
-# train_y = dataset_tool.ConvertOneHotToClassNumber(train_y) #convert one hot vectors to class numbers as per model requirement
 
 #validate on 128 images only
 source = "validation"
 val_x, val_y = dataset_tool.GetBatch(batch_size = 256,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
 print("num validation examples: "+str(len(val_x)))
-# val_y = dataset_tool.ConvertOneHotToClassNumber(val_y) 
 
 
-model_validates_during_test = True
+if(model_name == "cnn_1"):
+	train_y = dataset_tool.ConvertOneHotToClassNumber(train_y) #convert one hot vectors to class numbers as per model requirement
+	val_y = dataset_tool.ConvertOneHotToClassNumber(val_y) 
+	model_validates_during_test = False
+
+else:
+	model_validates_during_test = True
+
+
 if(model_validates_during_test):
 	cnn_model.TrainModel(train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
 else:

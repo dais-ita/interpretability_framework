@@ -114,10 +114,10 @@
 			"name":"dropout_1"},
 
 			{"type":"dense",
-			"name":"logits"},
+			"name":"fully_connected_2"},
 
-			{"type":"dense",
-			"name":"softmax"}
+			{"type":"softmax",
+			"name":"class_prob"}
 		],
 		"additional_arguments":[
 			{"name":"learning_rate",
@@ -128,6 +128,62 @@
 			}
 		],
 		"description":"A simple keras based CNN.",
+		"license":"apache 2"
+		},
+		{"model_name":"keras_vgg",
+		"script_name":"keras_vgg",
+		"class_name":"KerasVGG",
+		"trained_on":[
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"saved_models/gun_wielding_image_classification",
+			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
+			"test_accuracy":0.7468,
+			"training_time":0,
+			"training_steps":500
+			}
+		],
+		"layers":[
+			{"type":"conv2d",
+			"name":"conv_1"},
+			{"type":"conv2d",
+			"name":"conv_2"},
+			{"type":"max_pooling2d",
+			"name":"max_pool_1"},
+			{"type":"dropout",
+			"name":"dropout_1"},
+
+			{"type":"conv2d",
+			"name":"conv_3"},
+			{"type":"conv2d",
+			"name":"conv_4"},
+			{"type":"max_pooling2d",
+			"name":"max_pool_2"},
+			{"type":"dropout",
+			"name":"dropout_2"},
+			
+			{"type":"flatten",
+			"name":"feature_vector_1"},
+			
+			{"type":"dense",
+			"name":"fully_connected_1"},
+			{"type":"dropout",
+			"name":"dropout_3"},
+
+			{"type":"dense",
+			"name":"fully_connected_2"},
+
+			{"type":"softmax",
+			"name":"class_prob"}
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
+			"description":""
+			}
+		],
+		"description":"A keras based VGG-like CNN.",
 		"license":"apache 2"
 		}
 	]
