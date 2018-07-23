@@ -193,7 +193,7 @@ class ShapExplainer(object):
     explanation_image = self.GenerateShapExplanationImage(input_image,explanation)
 
     ## for testing:
-    shap.image_plot(shap_values, np.multiply(input_image,255.0))
+    # shap.image_plot(shap_values, np.multiply(input_image,255.0))
 
       
     additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values]}

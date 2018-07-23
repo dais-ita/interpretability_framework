@@ -76,8 +76,8 @@ with open(data_json_path,"r") as f:
 
 
 ### get dataset details
-dataset_name = "Traffic Congestion Image Classification"
-# dataset_name = "Traffic Congestion Image Classification (Resized)"
+# dataset_name = "Traffic Congestion Image Classification"
+dataset_name = "Traffic Congestion Image Classification (Resized)"
 # dataset_name = "Gun Wielding Image Classification"
 
 dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
@@ -144,7 +144,7 @@ with open(model_json_path,"r") as f:
 
 model_name = "keras_cnn"
 # model_name = "cnn_1"
-model_name = "keras_vgg"
+# model_name = "keras_vgg"
 
 
 model_json = [model for model in models_json["models"] if model["model_name"] == model_name ][0]
@@ -155,7 +155,7 @@ ModelModule = __import__(model_json["script_name"])
 ModelClass = getattr(ModelModule, model_json["class_name"])
 
 n_classes = len(label_names) 
-learning_rate = 0.001
+learning_rate = 0.00001
 
 additional_args = {"learning_rate":learning_rate}
 
@@ -169,7 +169,7 @@ cnn_model = ModelClass(input_image_height, input_image_width, input_image_channe
 
 ### train model
 batch_size = 128
-num_train_steps = 200
+num_train_steps = 50
 
 #load all train images as model handels batching
 source = "train"
