@@ -13,6 +13,7 @@
 		"image_channels":3,
 		"ground_truth_csv_path":"wielder_non-wielder.csv",
 		"default_training_allocation_path":"wielder_non-wielder_train_split.csv",
+		"interesting_images":["00048_gun_wielder.jpg","01061_non-wielder.jpg", "00073_gun_wielder.jpg", "00454_gun_wielder.jpg"],
 		"references":["http://sci2s.ugr.es/weapons-detection","http://www.di.ens.fr/willow/research/stillactions/"],
 		"description":"Image classification of people holding guns and people who aren't holding guns. Gun wielding images were taken from 'sci2s weapons-detection' dataset. Negative class examples taken from 'willow action image dataset'.",
 		"license":"apache 2"
@@ -30,6 +31,7 @@
 	"image_channels":3,
 	"ground_truth_csv_path":"congested_non-congested.csv",
 	"default_training_allocation_path":"congested_non-congested_train_split.csv",
+	"interesting_images":["00140_congested.jpg","00182_congested.jpg","00605_congested.jpg","01989_non-congested.jpg","01708_non-congested.jpg"],
 	"references":["https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk", "https://osf.io/wm3t9/"],
 	"description":"Image classification of traffic camera imagery collected from Transport for London's 'Jamcams' api. The specific set of images collected and labeled is hosted on OSF. The images have been cropped to remove logo and overlaid text.",
 	"license":"apache 2"
@@ -47,6 +49,7 @@
 	"image_channels":3,
 	"ground_truth_csv_path":"congested_non-congested_resized.csv",
 	"default_training_allocation_path":"congested_non-congested_resized_train_split.csv",
+	"interesting_images":["00140_congested.jpg","00182_congested.jpg","00605_congested.jpg","01989_non-congested.jpg","01708_non-congested.jpg"],
 	"references":["https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk", "https://osf.io/wm3t9/"],
 	"description":"Resized version of the first traffic congestion image classification dataset.Image classification of traffic camera imagery collected from Transport for London's 'Jamcams' api. The specific set of images collected and labeled is hosted on OSF. The images have been cropped to remove logo and overlaid text.",
 	"license":"apache 2"
