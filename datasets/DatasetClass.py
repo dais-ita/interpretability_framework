@@ -535,6 +535,22 @@ class DataSet(object):
         return "/".join(relative_path_list)
 
 if __name__ == '__main__':
+    dataset_folder = "cifar10"
+
+    labels = ["airplane",
+                "automobile",
+                "bird",
+                "cat",
+                "deer",
+                "dog",
+                "frog",
+                "horse",
+                "ship",
+                "truck"]
+   
+    
+
+
     def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
         cwd = os.getcwd()
         split_cwd = cwd.split("/")
@@ -558,7 +574,7 @@ if __name__ == '__main__':
     create_filtered_live_set = False
 
     if create_filtered_live_set:  # create and save a resized dataset if needed
-        file_path = "wielder_non-wielder.csv"
+        file_path = dataset_folder+".csv"
         image_url_column = "image_path"
         ground_truth_column = "label"
 
@@ -567,11 +583,11 @@ if __name__ == '__main__':
         output_dir = "dataset"
         print("resizing")
 
-        dataset_tool.CreateFilteredLiveCSV("live_dataset.csv", y_labels_to_use=["non-wielder", "gun_wielder"],
+        dataset_tool.CreateFilteredLiveCSV("live_dataset.csv", y_labels_to_use=labels,
                                            save_images=True, image_dir=output_dir, batch_size=30,
                                            filter_size=(300, 300, 3))
 
-    file_path = "congested_non-congested_resized.csv"
+    file_path = dataset_folder+".csv"
     image_url_column = "image_path"
     ground_truth_column = "label"
 
@@ -581,7 +597,7 @@ if __name__ == '__main__':
     
     dataset_tool.SplitLiveData()
 
-    x, y = dataset_tool.GetBatch(batch_size=128, even_examples=True, y_labels_to_use=["congested", "non-congested"],
+    x, y = dataset_tool.GetBatch(batch_size=128, even_examples=True, y_labels_to_use=labels,
                                  split_batch=True, split_one_hot=True)
 
     print(len(x))
@@ -596,7 +612,7 @@ if __name__ == '__main__':
 
     dataset_tool = dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
     
-    training_split_file = "congested_non-congested_resized_train_split.csv"
+    training_split_file = dataset_folder+"_train_split.csv"
     training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
     dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
 
