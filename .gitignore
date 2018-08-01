@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#SVM weights too large to upload via git
+/models/svm/checkpoints
+
+#ignore tensorflow_vgg
+/models/svm/utils/tensorflow_vgg
