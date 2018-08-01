@@ -228,8 +228,11 @@ class DataSet(object):
     def LoadImagesfromURLs(self, urls):
         images = []
         for url in urls:
-            # print(url)
-            images.append(self.ImageFromURL(url))
+            ifu = self.ImageFromURL(url);
+            if not ifu is None:
+                images.append(ifu)
+            else:
+                print('Ignoring image: ' + url);
         # print(images[-1].shape)
 
         # print(images[-1])

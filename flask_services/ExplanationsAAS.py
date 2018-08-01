@@ -165,11 +165,19 @@ def ImagePreProcess(image):
 
 @app.route("/explanations/explain", methods=['POST'])
 def Explain():
-	dataset_json = json.loads(request.form["selected_dataset_json"])
-	model_json = json.loads(request.form["selected_model_json"])
-	explanation_json = json.loads(request.form["selected_explanation_json"])
+	raw_json = json.loads(request.data)
 
-	input_image = ImagePreProcess(readb64(request.form["input"],False))
+	dataset_json = json.loads(raw_json["selected_dataset_json"])
+	model_json = json.loads(raw_json["selected_model_json"])
+	explanation_json = json.loads(raw_json["selected_explanation_json"])
+
+	input_image = ImagePreProcess(readb64(raw_json["input"],False))
+
+	# dataset_json = json.loads(request.form["selected_dataset_json"])
+	# model_json = json.loads(request.form["selected_model_json"])
+	# explanation_json = json.loads(request.form["selected_explanation_json"])
+
+	# input_image = ImagePreProcess(readb64(request.form["input"],False))
 
 	
 	dataset_name = dataset_json["dataset_name"]
@@ -197,7 +205,7 @@ def Explain():
 	explanation_instance = loaded_explanations[explanation_name][model_name][dataset_name]
 	
 	#TODO allow for better handling of additonal arguments
-	additional_args = {"num_samples":200,"num_features":300,"min_weight":0.01}
+	additional_args = {"num_samples":100,"num_features":300,"min_weight":0.01}
 
 	explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
 	

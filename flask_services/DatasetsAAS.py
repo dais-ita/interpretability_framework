@@ -1,4 +1,4 @@
-from flask import Flask, Response ,send_file , send_from_directory
+from flask import Flask, Response ,send_file , send_from_directory ,request
 import os
 
 import cv2
@@ -94,6 +94,24 @@ def LoadDatasetTool(dataset_name):
 
 	return dataset_tool,label_names
 
+def EncodeSpecificImage(dataset_name,image_name):
+	dataset_json = GetDatasetJsonFromName(dataset_name)
+	
+	image_name_split = image_name.split("_")
+	label = image_name_split[1].replace(".jpg","")
+	image_id = image_name_split[0]
+
+	dataset_path = os.path.join(datasets_path,"dataset_images",dataset_json["folder"])
+	label_folder_path = os.path.join(dataset_path,label)
+	image_path = os.path.join(label_folder_path,image_name)
+
+	img = cv2.imread(image_path)
+
+	enc_image = encIMG64(img,convert_colour=False)
+
+	return enc_image, label, image_name
+
+
 
 def EncodeTestImages(dataset_name,num_images=1):
 	if(not dataset_name in dataset_tools):
@@ -103,12 +121,14 @@ def EncodeTestImages(dataset_name,num_images=1):
 	label_names = dataset_tools[dataset_name]["label_names"]
 	source = "test"
 
-	x, y = dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = len(label_names),even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source)
+	x, y, batch = dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = len(label_names),even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
 
 	random_i = random.randint(0,len(x)-1)
 
-	enc_image = encIMG64(x[random_i]*255,convert_colour=True)
+	img_path = list(batch[random_i])[0]
+	img_name = img_path.split("/")[-1]
 
+	enc_image = encIMG64(x[random_i]*255,convert_colour=True)
 
 	### test images by displaying pre and post encoding
 	display_example_image = False
@@ -130,14 +150,25 @@ def EncodeTestImages(dataset_name,num_images=1):
 
 
 	
-	return enc_image, y[random_i]
+	return enc_image, y[random_i], img_name
 
 
 
 @app.route("/datasets/test_image/<string:dataset_name>", methods=['GET'])
 def ServeTestImages(dataset_name):
-	enc_x, y = EncodeTestImages(dataset_name)
-	response_dict = {"input":enc_x,"ground_truth":y}
+	enc_x, y, img_name = EncodeTestImages(dataset_name)
+	response_dict = {"input":enc_x,"ground_truth":y, "image_name":img_name}
+
+	return json.dumps(response_dict)
+
+
+@app.route("/datasets/test_image/specific", methods=['GET'])
+def ServeSpecificImages():
+	dataset_name = request.args["dataset"]
+	image_name = request.args["image_name"]
+
+	enc_x, y, img_name = EncodeSpecificImage(dataset_name,image_name)
+	response_dict = {"input":enc_x,"ground_truth":y, "image_name":img_name}
 
 	return json.dumps(response_dict)
 
