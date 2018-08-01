@@ -5,19 +5,19 @@
 		"class_name":"SimpleCNN",
 		"trained_on":[
 			{"dataset_name":"Gun Wielding Image Classification",
-			"model_path":"gun_wielding_image_classification",
+			"model_path":"saved_models/gun_wielding_image_classification",
 			"test_accuracy":0.921875,
 			"training_time":0,
 			"training_steps":200
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
-			"model_path":"traffic_congestion_image_classification",
+			"model_path":"saved_models/traffic_congestion_image_classification",
 			"test_accuracy":0.9140625,
 			"training_time":0,
 			"training_steps":200
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
-			"model_path":"traffic_congestion_image_classification_(Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(Resized)",
 			"test_accuracy":0,
 			"training_time":0,
 			"training_steps":200
@@ -28,14 +28,14 @@
 			"name":"reshaped_input_1"},
 			
 			{"type":"conv2d",
-			"name":"reshaped_input_1"},
+			"name":"conv_1"},
 			{"type":"max_pooling2d",
-			"name":"reshaped_input_1"},
+			"name":"max_pool_1"},
 			
 			{"type":"conv2d",
-			"name":"reshaped_input_1"},
+			"name":"conv_2"},
 			{"type":"max_pooling2d",
-			"name":"reshaped_input_1"},
+			"name":"max_pool_2"},
 			
 			{"type":"flatten",
 			"name":"feature_vector_1"},

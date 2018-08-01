@@ -17,11 +17,18 @@ for folder in folders:
 import numpy as np
 import tensorflow as tf
 import random
-import ConvFeatureDescriptor
+from utils.ConvFeatureDescriptor import ConvFeatureDescriptor
 
 class ConvSVM(object):
-    """A linear SVM using features extracted from the convolutional layers of a pre-trained NN"""
-
+    """
+    A linear SVM using features extracted from the convolutional layers of a 
+    pre-trained Convolutional NN.
+    The dimensions of the input images, the number of channels in the input 
+    images (grayscale or RGB) and the directory in which the model is found 
+    must be specified beforehand
+    The model currently uses a VGG16 architecture for feature description
+    """
+    
     def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, model_dir, addit_args, n_classes=2):
         super(ConvSVM, self).__init__()
         self.model_input_dim_height = model_input_dim_height
@@ -40,23 +47,44 @@ class ConvSVM(object):
         else:
             print("No learning rate specified in additional_args\nUsing default value of 0.001")
             self.learning_rate = 0.001
+            
         self.optim = tf.train.GradientDescentOptimizer(self.learning_rate)
-
+        
+#        alpha is a term used when calculating the loss to weight the influence
+#        of model weight distances on the total loss
         if "alpha" in addit_args:
             self.alpha = addit_args["alpha"]
 
-
-        self.feature_desc = ConvFeatureDescriptor.ConvFeatureDescriptor(mode='images')
-
+#        the feature descriptor object uses a vgg16 net to transform images 
+#        into feature space
+        self.feature_desc = ConvFeatureDescriptor()
+        
+#        The placeholders for feature vector and label respectively
+#        these are initialised using self.InitialiseModel, which is called later
         self.input_ = None
         self.labels_ = None
 
+#        whether the model variables and placeholders have been defined yet
         self.initialised = False
 
+#        the tensorflow saver object used for model checkpointing
         self.saver = None
 
 
     def InitialiseModel(self, n_features):
+        """
+        This method initialises the ConvSVM models placeholders and variables.
+        This is not done in __init__ because the dimensionality of the feature
+        vector must be specified, this is not determined until the vgg16 model
+        is ran on an input image.
+        n_features depends on the convolutional and pooling layers used to 
+        transform the input image
+        """
+        
+#        TODO: n_fetaures could be determined intuitively from the input 
+#        dimensions so long as the architecture of the ConvFeatureDescriptors 
+#        Network was exposed
+#        Might be better?
         self.input_ = tf.placeholder(
             name="in_",
             shape=[None, n_features],
@@ -85,6 +113,12 @@ class ConvSVM(object):
 
 
     def Output(self):
+        """
+        Returns the 'logits' of the SVM model, such that when parsed these return
+        a label
+        Defined as:
+            y_guess = Wx + b
+        """
         mdl_out = tf.subtract(
             tf.matmul(
                 self.input_,
@@ -96,10 +130,33 @@ class ConvSVM(object):
 
 
     def GetPredictions(self):
+        """
+        Formats the outputs of the model into a label/list of labels denoting
+        what class the model 'believes' the function belongs to
+        """
         return tf.sign(self.Output())
 
+    def GetLoss(self, x, y):
+        """
+        Returns a value for the models loss at a point y
+        """
+        sample_loss = self.Loss()
+        feed_dict = {
+                self.input_ : x,
+                self.labels_: y
+        }
+        self.LoadModel(self.sess)
+        return self.sess.run(sample_loss, feed_dict)
 
     def Loss(self):
+        """
+        Returns the graph operation used to calculate the loss of the model at 
+        a sample
+        Defined as
+        max(0,1-(Wx+b)(y_actual)) + αΣW
+        α is a regularisation term used to realise preference between accuracy
+        and generality or robustness
+        """
         l2_norm = tf.reduce_sum(self.W)
         classif_term = tf.reduce_mean(
             tf.maximum(
@@ -122,37 +179,62 @@ class ConvSVM(object):
         )
         return loss
 
-    def get_batches(self, x, y, batch_size):
+    def _get_batches(self, x, y, batch_size):
+        """
+        Randomly samples feature vectors from a distribution
+        to return a batch
+        """
         idcs = random.sample(range(x.shape[0]),batch_size)
         return x[idcs], y[idcs]
 
 
     def TrainModel(self, train_x, train_y, batch_size, n_steps):
-        train_x = self.feature_desc.get_feature_vectors(train_x, batch=True)
+        """
+        Uses GD to optimise the models loss on evaluation data
+        """
+#        Transform the train images into feature space for processing by the SVM
+        train_x = self.feature_desc.get_feature_vectors(train_x)
+#        reshapes train_x to have shape (num_samples, num_features)
         train_x = train_x.reshape(len(train_y), -1)
+#        at this point we know the dimensionality of the feature space, and 
+#        therefore we can define the SVM
         if not self.initialised:
             self.InitialiseModel(train_x.shape[1])
+#            initialise the tf saver object for checkpointing
             self.saver = tf.train.Saver()
+#            this prevents initialising multiple times when using transfer learning
+#            or predicting with/evaluating the model
             self.initialised = True
-
-        with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
-            for i in range(n_steps):
-                x, y = self.get_batches(train_x, train_y, batch_size)
-                sess.run(
-                    self.optim.minimize(self.Loss()),
-                    feed_dict={
-                        self.input_: x,
-                        self.labels_: y
-                    }
-                )
-            self.SaveModel(sess)
+#            the variables need to be given initial values if they have not 
+#            been already
+            self.sess.run(tf.global_variables_initializer())
+        
+        for i in range(n_steps):
+#            get a randomly sampled batch of training data
+            x, y = self._get_batches(train_x, train_y, batch_size)
+            self.sess.run(
+#                    train to reduce loss
+                self.optim.minimize(self.Loss()),
+                feed_dict={
+                    self.input_: x,
+                    self.labels_: y
+                }
+            )
+        self.SaveModel(self.sess)
 
 
     def EvaluateModel(self, val_x, val_y, batch_size):
-        val_x = self.feature_desc.get_feature_vectors(val_x,batch=True)
+        """
+        By evaluating the loss at unseen data we define a metric for the 
+        effectiveness of the training, and therefore the models effectiveness
+        for classification
+        Accuracy is defined as:
+            Σ(Wx+b && y_actual)/n_samples
+        """
+        val_x = self.feature_desc.get_feature_vectors(val_x)
         val_x = val_x.reshape(len(val_y), -1)
 
+#        Define the graph operation for accuracy
         acc = tf.reduce_mean(
             tf.cast(
                 tf.equal(
@@ -163,32 +245,40 @@ class ConvSVM(object):
             )
         )
 
-        with tf.Session() as sess:
-            self.LoadModel(sess)
-            accuracies = []
-            for i in range(val_y.shape[0]//batch_size):
-                x, y = self.get_batches(val_x, val_y, batch_size)
-                accuracies.append(
-                    sess.run(
-                        acc,
-                        feed_dict={
-                            self.input_: x,
-                            self.labels_: y
-                        }
-                    )
+#        Load in the model weights
+        self.LoadModel(self.sess)
+        accuracies = []
+        for i in range(val_y.shape[0]//batch_size):
+#            Get the accuracy of each batch of evaluation data
+            x, y = self._get_batches(val_x, val_y, batch_size)
+            accuracies.append(
+                self.sess.run(
+                    acc,
+                    feed_dict={
+                        self.input_: x,
+                        self.labels_: y
+                    }
                 )
-            return tf.reduce_mean(accuracies).eval()
+            )
+#        Return mean accuracy on evaluation data
+        return tf.reduce_mean(accuracies).eval(session = self.sess)
 
     def Predict(self, predict_x):
+        """
+        Return the model output when given a set of unseen samples as input,
+        formatted to denote the models estimate for the actual class of each
+        of those samples
+        """
+        
+#        If the input is not in the format (Idx, X, Y, N_channels) format it to
+#        be such
         if len(predict_x.shape) < 4:
 
             predict_x = predict_x.reshape(1, 224, 224, 3)
-            batch = False
-        else:
-            batch = True
         n_samples = predict_x.shape[0]
         
-        predict_x = self.feature_desc.get_feature_vectors(predict_x,batch=batch)
+#        Convert into feature space
+        predict_x = self.feature_desc.get_feature_vectors(predict_x)
         predict_x = predict_x.reshape(n_samples, -1)
 
         if not self.initialised:
@@ -196,24 +286,29 @@ class ConvSVM(object):
             self.saver = tf.train.Saver()
             self.initialised = True
 
+#        Define the graph operation that predicts the class of each point
         predictions = self.GetPredictions()
-        with tf.Session() as sess:
-            self.LoadModel(sess)
-            predictions = sess.run(
-                predictions,
-                feed_dict={
-                    self.input_: predict_x
-                }
-            )
-            predictions[predictions == 1] = 0
-            predictions *= -1
-            one_hot = []
-            for y in predictions:
-                if y == 0:
-                     one_hot.append([1,0])
-                else:
-                     one_hot.append([0,1])   
-            return np.asarray(one_hot)
+        
+#        Load in the model weights
+        self.LoadModel(self.sess)
+#        Find the models prediction at each sample point
+        predictions = self.sess.run(
+            predictions,
+            feed_dict={
+                self.input_: predict_x
+            }
+        )
+        
+#        One hot encode the model for use with Explanations
+        predictions[predictions == 1] = 0
+        predictions *= -1
+        one_hot = []
+        for y in predictions:
+            if y == 0:
+                 one_hot.append([1,0])
+            else:
+                 one_hot.append([0,1])   
+        return np.asarray(one_hot)
 
     def SaveModel(self,sess):
         self.saver.save(sess, os.path.join(self.checkpoint_path,"wvnw_svm.ckpt"))
@@ -221,8 +316,24 @@ class ConvSVM(object):
     def LoadModel(self,sess):
         self.saver.restore(sess, os.path.join(self.checkpoint_path,"wvnw_svm.ckpt"))
 
+    def GetWeights(self):
+        """
+        Returns the weights of the SVM
+        """
+        
+#        TODO: decide whether Influence functions would need the weights of the
+#        Conv-Net
+        if not self.initialised:
+            self.LoadModel(self.sess)
+        return self.W
 
 
+
+"""
+The code below demonstrates the model being trained, and then tested using a 
+dataset of two classes of image, those containing people wielding guns, vs.
+those containing people not wielding guns
+"""
 if __name__ == '__main__':
     dim_height = 224
     dim_width = 224

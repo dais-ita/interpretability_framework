@@ -167,6 +167,16 @@ class SimpleCNN(object):
 
         return estim_specs
 
+    def GetLayerByName(self,name):
+        return self.model.get_variable_value(name)
+    
+    def FetchAllVariableValues(self):
+        available_variables = self.model.get_variable_names()
+        var_value_dict = {}
+        for var in available_variables:
+            var_value_dict[var] = self.model.get_variable_value(var)
+
+        return var_value_dict
 
 if __name__ == '__main__':
     from tensorflow.examples.tutorials.mnist import input_data
