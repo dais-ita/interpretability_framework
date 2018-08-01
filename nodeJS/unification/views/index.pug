@@ -1,0 +1,92 @@
+extends layout
+
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    section(class="jumbotron text-left")
+        div(id='div_settings')
+            h1(class="jumbotron-heading") Settings
+
+            div(id="settings_dataset")
+                | Selected Dataset: &nbsp;
+                -if(datasets != null)
+                    select(id="ds_list")
+                        -for(var i = 0;i<datasets.datasets.length;i++){
+                            -var dsName = datasets.datasets[i].dataset_name
+                            option(value=dsName) #{dsName}
+                        -}
+                    | &nbsp; &nbsp;
+                    button(id='ds_button', class="btn btn-primary my-2", onclick="javascript:useSelectedDataset();") &nbsp; Use dataset
+                -else
+                    | ERROR: No datasets available
+                br
+                br
+
+            div(id="settings_model", style={display: "none"})
+                | Selected Model: &nbsp;
+                select(id="mod_list")
+                | &nbsp; &nbsp;
+                button(id='mod_button', class="btn btn-primary my-2", onclick="javascript:useSelectedModel();") &nbsp; Use model
+
+        div(id="settings_image", style={display: "none"})
+            h1(class="jumbotron-heading") Image
+            | Choose an image:
+            br
+            |1. &nbsp; &nbsp;
+            button(id='img_random_button', class="btn btn-primary my-2", onclick="javascript:useRandomImage();") &nbsp; Use random image
+            | &nbsp; &nbsp; or
+            br
+            | 2.&nbsp; &nbsp;
+            input(id="img_input_name", type="text", value="00048_gun_wielder.jpg")
+            | &nbsp; &nbsp;
+            button(id='img_named_button', class="btn btn-primary my-2", onclick="javascript:useNamedImage();") &nbsp; Use this named image
+            | &nbsp; &nbsp; or
+            br
+            | 3. Choose a predefined image: &nbsp;
+            a(href="javascript:usePredefinedImage('01061_non-wielder.jpg')") 01061_non-wielder.jpg
+            |,&nbsp;
+            a(href="javascript:usePredefinedImage('00073_gun_wielder.jpg')") 00073_gun_wielder.jpg
+            | ,&nbsp;
+            a(href="javascript:usePredefinedImage('00454_gun_wielder.jpg')") 00454_gun_wielder.jpg
+            br
+            br
+
+            div(id='div_image', style={display: 'none'})
+                table(border=1)
+                    tbody
+                        tr
+                            td(class="info") Image name
+                            td(id='img_name')
+                        tr
+                            td Image
+                            td(id='img_image')
+                        tr
+                            td Ground truth
+                            td(id='img_groundtruth')
+
+        div(id='div_exps', style={display: 'none'})
+            h1(class="jumbotron-heading") Explanations
+
+            div(id="explanations_model")
+                | Selected Explanation: &nbsp;
+                select(id="exp_list")
+            br
+            button(id='exp_button', class="btn btn-primary my-2", onclick="javascript:explain();") Explain the specified image
+            div(id='in_progress', style={display: 'none'}) Explanation request in progress, please wait...
+            br
+            br
+
+            | Explanations are shown in reverse order (the most recent explanation at the top)
+            table(border=1, id='exp_table')
+                tbody
+                    tr
+                        td Type
+                        td Time
+                        td Duration (ms)
+                        td Prediction
+                        td Explanation text
+                        td Explanation image

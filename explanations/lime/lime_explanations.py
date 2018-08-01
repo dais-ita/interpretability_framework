@@ -18,10 +18,12 @@ class LimeExplainer(object):
       X = self.MakeInputGray(X)
     
     predictions = list(self.model.Predict(X))
-
+    print("explanation - predictions: ",predictions)
+    
     if(predictions[0].size == self.model.n_classes): #check if model prediction function returns one hot vector predictions
       return predictions
     else: #if it doesn't, convert predictions to one hot vectors
+      print("creating one-hot predections")
       one_hot_predictions = []
       for prediction in predictions:
         # print("explain prediciton", prediction)
@@ -29,12 +31,13 @@ class LimeExplainer(object):
         one_hot[prediction] = 1
         one_hot_predictions.append(one_hot[:])
         # print("one_hot_predictions[-1]", one_hot_predictions[-1])
-        
+      print("explanation - one_hot_predictions: ",one_hot_predictions)
       return one_hot_predictions
 
   def MakeInputGray(self,X):
     return np.array([rgb2gray(img) for img in X],np.float32).reshape(X.shape[0], self.model.model_input_dim_width * self.model.model_input_dim_height)
-    
+
+
 
   def ClassifyWithLIME(self,x,num_samples=1000,labels = (1,),top_labels=None,class_names = None):
     if(len(x.shape)== 4):
@@ -57,9 +60,22 @@ class LimeExplainer(object):
 
     explanation = explainer.explain_instance(x, self.PredictFunction,labels=labels,top_labels=top_labels, hide_color=0,num_samples = num_samples)
 
-    print("list(explanation.local_exp.keys())",list(explanation.local_exp.keys()))
-    print("explanation.local_exp[list(explanation.local_exp.keys())[0]].shape",explanation.local_exp[list(explanation.local_exp.keys())[0]])
-    print("explanation.segments.shape",explanation.segments.shape)
+
+    # print("list(explanation.local_exp.keys())",list(explanation.local_exp.keys()))
+    # print("")
+    
+    # print("explanation.local_exp[list(explanation.local_exp.keys())[0]].shape",explanation.local_exp[list(explanation.local_exp.keys())[0]])
+    # print("")
+    
+    # print("explanation.local_exp[list(explanation.local_exp.keys())[0]].shape",explanation.local_exp[list(explanation.local_exp.keys())[1]])
+    # print("")
+    
+    # print("explanation.segments.shape",explanation.segments.shape)
+    # print("")
+    
+    # print("np.unique(explanation.segments)",np.unique(explanation.segments))
+    # print("")
+    
     return self.PredictFunction(np.array([x])), explanation
 
 
@@ -100,12 +116,14 @@ class LimeExplainer(object):
     # explanation_image = mark_boundaries(temp,mask)
 
     explanation_image = temp
+    explanation_image = cv2.cvtColor(temp,cv2.COLOR_BGR2RGB)
 
-    additional_outputs = {"temp_image":temp, "mask":mask}
+    additional_outputs = {"default_visualisation":temp.tolist(), "mask":mask.tolist(), "attribution_slices":explanation.segments.tolist(), "attribution_slice_weights":explanation.local_exp[predicted_class]}
 
     explanation_text = "Evidence towards predicted class shown in green"
     return explanation_image, explanation_text, predicted_class, additional_outputs
-    
+  
+
 
 if __name__ == '__main__':
   import os

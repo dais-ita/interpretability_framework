@@ -1,0 +1,96 @@
+extends layout
+
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    script(src="/js/P5.js")
+
+    div(id='div_parms', style={display: 'none'})
+         h1 Parameters
+         table(border=1)
+             tbody
+                 tr
+                     td Dataset
+                     td #{parameters.dataset}
+                 tr
+                     td Image
+                     td #{parameters.image}
+
+    div(id='div_settings')
+        h1 Settings
+        | Selected Dataset: &nbsp;
+        -if(dataset_list != null)
+            select(id="ds_list")
+                -for(var i = 0;i<dataset_list.datasets.length;i++){
+                    -var dsName = dataset_list.datasets[i].dataset_name
+                    option(value="#{dsName}") #{dsName}
+                -}
+        -else
+            | ERROR: No datasets available
+        br
+        br
+        | Selected Model: &nbsp;
+        -if(model_list != null)
+            select(id="mod_list")
+                -for(var i = 0;i<model_list.models.length;i++){
+                    -var modName = model_list.models[i].model_name
+                    option(value="#{modName}") #{modName}
+                -}
+        -else
+            | ERROR: No models available
+
+    div(id='div_image', style={display: 'none'})
+        h1 Image
+        table(id='original', border=1)
+            tbody
+                tr
+                    td Image name
+                    td #{image.image_name}
+                tr
+                    td Image
+                    td
+                        img(alt='Test image', src='data:img/jpg;base64,' + image.input)
+                tr
+                    td Ground truth
+                    td #{image.ground_truth}
+
+    div(id='div_exps', style={display: 'none'})
+        h1 Explanations
+        | Using model #{chosen_model}
+        br
+        | Using explanation &nbsp;
+        -if (explanation_list != null)
+            select(id="exp_list")
+                -for(var i = 0;i<explanation_list.explanations.length;i++){
+                    -var expName = explanation_list.explanations[i].explanation_name
+                    - if (expName == chosen_explanation)
+                        option(value="#{expName}", selected="true") #{expName}
+                    - else
+                        option(value="#{expName}") #{expName}
+                -}
+        -else
+            | ERROR: No explanations available
+
+        br
+        | Explanations are shown in reverse order (the most recent explanation at the top)
+
+        br
+        br
+        button(id='exp_button', onclick="javascript:explain('/explanations-explain?type=json&dataset=" + parameters.dataset + "&model=" + chosen_model + "&explanation=" + chosen_explanation + "&image=" + image.image_name + "', '" + chosen_explanation + "');") Explain this image
+        div(id='in_progress', style={display: 'none'}) Explanation request in progress, please wait...
+        br
+        br
+
+        table(border=1, id='exp_table')
+                tbody
+                    tr
+                        td Type
+                        td Time
+                        td Duration (ms)
+                        td Prediction
+                        td Explanation text
+                        td Explanation image

@@ -13,6 +13,24 @@ import sys
 
 import numpy as np
 
+import zipfile
+
+import shutil
+
+
+
+def zipdir(path, zip_path):
+	shutil.make_archive(zip_path, 'zip', path)
+	
+	# print("Zipping:",path, "To location:",zip_path)
+	# # ziph = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
+	# ziph = zipfile.ZipFile(zip_path, mode='w')
+
+	# for root, dirs, files in os.walk(path):
+	# 	for file in files:
+	# 		ziph.write(os.path.join(root, file),compression=zipfile.ZIP_STORED)
+
+	# ziph.close()
 
 ### Setup Sys path for easy imports
 # base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
@@ -52,11 +70,14 @@ for model_folder in model_folders:
 app = Flask(__name__)
 
 
-def readb64(base64_string):
+def readb64(base64_string,convert_colour=True):
     sbuf = StringIO()
     sbuf.write(base64.b64decode(base64_string))
     pimg = Image.open(sbuf)
-    return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
+    if(convert_colour):
+    	return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
+    else:
+    	return np.array(pimg) 
 
 def encIMG64(image,convert_colour = False):
     if(convert_colour):
@@ -136,6 +157,28 @@ def PredictImagePreProcess(image):
 
 	return image.astype(np.float32)
 
+
+@app.route("/models/archive", methods=['get'])
+def GetModelZip():
+	# raw_json = json.loads(request.data)
+
+	dataset_name = request.args.get("dataset_name")
+	model_name = request.args.get("model_name")
+
+	# dataset_name = json.loads(raw_json['selected_dataset_name'])
+	# model_name = json.loads(raw_json['selected_model_name'])
+
+	trained_model_file_name = dataset_name.replace(" ","_")+".zip"
+
+	trained_model_dir_path = os.path.join(models_path,model_name,"saved_models",dataset_name.replace(" ","_"))
+	zipped_model_path = os.path.join(models_path,model_name,"saved_models","zipped_models",trained_model_file_name)
+	if(not os.path.exists(zipped_model_path)):
+		zipdir(trained_model_dir_path, zipped_model_path)
+
+	return send_file(zipped_model_path, attachment_filename=trained_model_file_name, as_attachment=True)
+	
+
+
 @app.route("/models/predict", methods=['POST'])
 def Predict():
 	# print("request.data:",request.data)
@@ -144,14 +187,13 @@ def Predict():
 	
 	dataset_json = json.loads(raw_json['selected_dataset_json'])
 
-	input_image = PredictImagePreProcess(readb64(raw_json['input']))
+	input_image = PredictImagePreProcess(readb64(raw_json['input'],convert_colour=False))
 
 
-	display_input_image = False
-
-	if(display_input_image):
-		# cv2_image = cv2.cvtColor(x[0], cv2.COLOR_RGB2BGR)
-		cv2.imshow("image 0",input_image)
+	display_prediction_input = False
+	if(display_prediction_input):
+		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
+		cv2.imshow("prediciton image: input_image",cv2_image)
 		cv2.waitKey(0)
 		cv2.destroyAllWindows()
 
@@ -160,12 +202,6 @@ def Predict():
 
 	dataset_name = dataset_json["dataset_name"]
 
-	# dataset_json = json.loads(request.form["selected_dataset_json"])
-
-	# input_image = PredictImagePreProcess(readb64(request.form["input"]))
-	# model_name = request.form["selected_model"]
-
-	# dataset_name = dataset_json["dataset_name"]
 
 	if(not model_name in loaded_models):
 		loaded_models[model_name] = {}
@@ -173,8 +209,10 @@ def Predict():
 	if(not dataset_name in loaded_models[model_name] ):
 		loaded_models[model_name][dataset_name] = LoadModelFromName(model_name,dataset_json)
 
-	prediction = loaded_models[model_name][dataset_name].Predict(np.array([input_image]))
 
+
+	prediction = loaded_models[model_name][dataset_name].Predict(np.array([input_image]))
+	
 	labels = [label["label"] for label in dataset_json["labels"]]
 	labels.sort()
 	print("raw prediction:", prediction)

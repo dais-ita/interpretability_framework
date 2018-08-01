@@ -15,6 +15,9 @@ import random
 
 import numpy as np
 
+import math
+
+import shutil
 
 
 ### Setup Sys path for easy imports
@@ -75,7 +78,7 @@ def GetDatasetJsonFromName(dataset_name):
 	return [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
 
 
-def LoadDatasetTool(dataset_name):
+def LoadDatasetTool(dataset_name, model_name = ""):
 	dataset_json = GetDatasetJsonFromName(dataset_name)
 	### gather required information about the dataset
 	file_path = dataset_json["ground_truth_csv_path"]
@@ -89,8 +92,18 @@ def LoadDatasetTool(dataset_name):
 	dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
 	dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
 	
-	#TODO We should save the split during training/a global set to be used in all training and we should load the same split when reusing the dataset
-	dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
+	if(model_name == ""):
+		training_split_file = dataset_json["default_training_allocation_path"]
+		training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
+		dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
+	else:
+		#TODO allow for passing the model name and load the specific split from the models training(replace the code below with solution)
+		training_split_file = dataset_json["default_training_allocation_path"]
+		training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
+		dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
+
+	#Code to create new split if required
+	#dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
 
 	return dataset_tool,label_names
 
@@ -98,9 +111,9 @@ def EncodeSpecificImage(dataset_name,image_name):
 	dataset_json = GetDatasetJsonFromName(dataset_name)
 	
 	image_name_split = image_name.split("_")
-	label = image_name_split[1].replace(".jpg","")
 	image_id = image_name_split[0]
-
+	label = image_name.replace(".jpg","").replace(image_id+"_","")
+	
 	dataset_path = os.path.join(datasets_path,"dataset_images",dataset_json["folder"])
 	label_folder_path = os.path.join(dataset_path,label)
 	image_path = os.path.join(label_folder_path,image_name)
@@ -113,22 +126,29 @@ def EncodeSpecificImage(dataset_name,image_name):
 
 
 
-def EncodeTestImages(dataset_name,num_images=1):
+def EncodeTestImages(dataset_name,num_images=1, model_name = ""):
 	if(not dataset_name in dataset_tools):
-		dataset_tool, label_names = LoadDatasetTool(dataset_name)
+		dataset_tool, label_names = LoadDatasetTool(dataset_name,model_name)
 		dataset_tools[dataset_name] = {"dataset_tool":dataset_tool,"label_names":label_names}
 
 	label_names = dataset_tools[dataset_name]["label_names"]
 	source = "test"
 
-	x, y, batch = dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = len(label_names),even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
+	x, y, batch = dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = math.ceil(num_images / 2.) * 2,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
 
-	random_i = random.randint(0,len(x)-1)
+	random_i_list = random.sample(list(range(0,len(x))),num_images)
 
-	img_path = list(batch[random_i])[0]
-	img_name = img_path.split("/")[-1]
+	enc_image_list = []
+	y_list = []
+	image_name_list = []
 
-	enc_image = encIMG64(x[random_i]*255,convert_colour=True)
+	for random_i in random_i_list:
+
+		img_path = list(batch[random_i])[0]
+		image_name_list.append( img_path.split("/")[-1] )
+
+		enc_image_list.append( encIMG64(x[random_i]*255,convert_colour=True) )
+		y_list.append( y[random_i] )
 
 	### test images by displaying pre and post encoding
 	display_example_image = False
@@ -150,16 +170,40 @@ def EncodeTestImages(dataset_name,num_images=1):
 
 
 	
-	return enc_image, y[random_i], img_name
+	return enc_image_list, y_list, image_name_list
 
 
 
 @app.route("/datasets/test_image/<string:dataset_name>", methods=['GET'])
-def ServeTestImages(dataset_name):
+def ServeTestImage(dataset_name):
 	enc_x, y, img_name = EncodeTestImages(dataset_name)
+	response_dict = {"input":enc_x[0],"ground_truth":y[0], "image_name":img_name[0]}
+
+	return json.dumps(response_dict)
+
+
+@app.route("/datasets/test_images/<string:dataset_name>", methods=['GET'])
+def Serve10TestImages(dataset_name):
+	num_images = 10
+
+	enc_x, y, img_name = EncodeTestImages(dataset_name,num_images)
 	response_dict = {"input":enc_x,"ground_truth":y, "image_name":img_name}
 
 	return json.dumps(response_dict)
+
+
+@app.route("/datasets/test_images", methods=['POST'])
+def ServeNTestImages():
+	raw_json = json.loads(request.data)
+
+	dataset_name = raw_json["dataset_name"]
+	num_images = raw_json["num_images"]
+
+	enc_x, y, img_name = EncodeTestImages(dataset_name,num_images)
+	response_dict = {"input":enc_x,"ground_truth":y, "image_name":img_name}
+
+	return json.dumps(response_dict)
+
 
 
 @app.route("/datasets/test_image/specific", methods=['GET'])
@@ -177,6 +221,23 @@ def ServeSpecificImages():
 def GetAvailableDatasetsJson():
 	return json.dumps(datasets_json)
 
+
+def zipdir(path, zip_path):
+	shutil.make_archive(zip_path, 'zip', path)
+	
+@app.route("/datasets/archive", methods=['get'])
+def GetModelZip():
+	# raw_json = json.loads(request.data)
+
+	dataset_folder_name = request.args.get("dataset_folder_name")
+	print("sending:",dataset_folder_name)
+	dataset_dir_path = os.path.join(datasets_path,"dataset_images",dataset_folder_name)
+	zipped_model_path = os.path.join(datasets_path,"dataset_images","dataset_archives",dataset_folder_name+".zip")
+	if(not os.path.exists(zipped_model_path)):
+		zipdir(dataset_dir_path, zipped_model_path[:-4])
+
+	return send_file(zipped_model_path, attachment_filename=dataset_folder_name+".zip", as_attachment=True)
+	
 
 
 if __name__ == "__main__":
