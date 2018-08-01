@@ -4,17 +4,23 @@ observations = []
 
 
 image_dir = "dataset_images"
-dataset_folder = "wielder_non-wielder"
+dataset_folder = "cifar10"
 use_explicit = False
 
 dataset_folder_path = os.path.join(image_dir,dataset_folder)
 
 class_folders = os.listdir(dataset_folder_path)
+class_folders = [calss_folder for calss_folder in class_folders if calss_folder[0] != "."]
+class_folders.sort()
+
 
 for class_folder in class_folders:
 	class_folder_path = os.path.join(dataset_folder_path,class_folder)
 
 	images = os.listdir(class_folder_path)
+	images = [img for img in images if img[0] != "."]
+	images.sort()
+
 
 	for image in images:
 		image_path = os.path.join(dataset_folder,class_folder,image)

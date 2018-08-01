@@ -4,7 +4,10 @@
 		"script_name":"lime_explanations",
 		"class_name":"LimeExplainer",
 		"compatible_models":[
-			{"model_name":"cnn_1"}
+			{"model_name":"conv_svm"},
+			{"model_name":"cnn_1"},
+			{"model_name":"keras_cnn"},
+			{"model_name":"keras_vgg"}
 				],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -14,10 +17,59 @@
 		"modality":"imagery",
 		"description":"A local (example specific) decision-boundary explanation of evidence towards classes",
 		"additional_arguments":[
-			{"name":"learning_rate",
+			{"name":"num_samples",
 			"description":""
 			},
-			{"name":"dropout",
+			{"name":"num_features",
+			"description":""
+			},
+			{"name":"min_weight",
+			"description":""
+			}
+		],
+		"additional_outputs":[
+			{"name":"default_visualisation",
+			"description":""
+			},
+			{"name":"mask",
+			"description":""
+			},
+			{"name":"attribution_slices",
+			"description":""
+			},
+			{"name":"attribution_slice_weights",
+			"description":""
+			}
+		],
+		"license":"apache 2"
+		},
+		{"explanation_name":"Shap",
+		"script_name":"shap_explanation",
+		"class_name":"ShapExplainer",
+		"compatible_models":[
+			{"model_name":"keras_cnn"},
+			{"model_name":"keras_vgg"}
+				],
+		"compatible_datasets":[
+			{"dataset_name":"Gun Wielding Image Classification"},
+			{"dataset_name":"Traffic Congestion Image Classification"},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)"}
+				],
+		"modality":"imagery",
+		"description":"",
+		"additional_arguments":[
+			{"name":"num_background_samples",
+			"description":""
+			},
+			{"name":"background_image_pool",
+			"description":""
+			},
+			{"name":"min_weight",
+			"description":""
+			}
+		],
+		"additional_outputs":[
+			{"name":"shap_values",
 			"description":""
 			}
 		],

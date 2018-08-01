@@ -145,9 +145,9 @@ learning_rate = 0.001
 additional_args = {"learning_rate":learning_rate}
 
 ### load trained model
-trained_on_json = [dataset for dataset in model["trained_on"] if dataset["dataset_name"] == dataset_name][0]
+trained_on_json = [dataset for dataset in model_json["trained_on"] if dataset["dataset_name"] == dataset_name][0]
 
-model_load_path = os.path.join(models_path,"cnn_1",trained_on_json["model_path"])
+model_load_path = os.path.join(models_path,model_json["model_name"],trained_on_json["model_path"])
 cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_load_path, additional_args=additional_args)
 cnn_model.LoadModel(model_load_path) ## for this model, this call is redundant. For other models this may be necessary. 
 

@@ -9,9 +9,8 @@ from os import mkdir
 from tqdm import tqdm
 
 
-
 try:
-    from tensorflow_vgg import vgg16, utils
+    from models.utils.tensorflow_vgg import vgg16, utils
 except ImportError as error:
     print("`tensorflow_vgg not found.` Please ensure submodule \\"
           "https://github.com/machrisaa/tensorflow-vgg is installed.")
@@ -45,12 +44,18 @@ class ConvFeatureDescriptor(object):
         """load the architecture + corresponding weights"""
         self.batch_size = batch_size
         self.verbose = verbose
-        self.mode = str(mode).lower() # 'FILE' or 'IMAGE'
+        self.mode = str(mode).lower()  # 'FILE' or 'IMAGE'
         self.x_dim = x_dim
         self.y_dim = y_dim
         self.channels = channels
 
+<<<<<<< HEAD
         self.__download_vggnet() if not isfile(os.path.join(models_path,"utils/tensorflow_vgg/vgg16.npy")) else print("VGG parameters found.")
+=======
+        file_path = os.path.abspath(__file__).rsplit('/',1)[0]
+
+        self.__download_vggnet() if not isfile(str(file_path) + "/tensorflow_vgg/vgg16.npy") else print("VGG parameters found.")
+>>>>>>> 88b6f7bc965e7db94624bd43d8f0ec2617b906da
         self.model = vgg16.Vgg16()
         self.input = tf.placeholder(tf.float32, [None, self.x_dim, self.y_dim, self.channels], name="input_image")
 

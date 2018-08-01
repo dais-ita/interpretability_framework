@@ -74,6 +74,7 @@ def readb64(base64_string,convert_colour=True):
     	return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
     else:
     	return np.array(pimg) 
+
 def encIMG64(image,convert_colour = False):
     if(convert_colour):
         image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
@@ -163,6 +164,31 @@ def ImagePreProcess(image):
 	return image.astype(np.float32)
 
 
+def CreateAttributionMap(attribution_slice,slice_weights):
+	output_map = np.array(attribution_slice).astype(np.float32)
+
+	for region_weight in slice_weights:
+		# print(region_weight[0],region_weight[1])
+		output_map[output_map == region_weight[0]] = region_weight[1]
+
+	return output_map
+
+
+@app.route("/explanations/attribution_map", methods=['POST'])
+def GetAttributionMap():
+	raw_json = json.loads(request.data)
+
+	attribution_slices = json.loads(raw_json["attribution_slices"])
+	attribution_slice_weights = json.loads(raw_json["attribution_slice_weights"])
+
+	attribution_map = CreateAttributionMap(attribution_slices,attribution_slice_weights)
+
+	json_data = json.dumps({'attribution_map': attribution_map.tolist()})
+
+	return json_data
+
+	
+
 @app.route("/explanations/explain", methods=['POST'])
 def Explain():
 	raw_json = json.loads(request.data)
@@ -171,15 +197,8 @@ def Explain():
 	model_json = json.loads(raw_json["selected_model_json"])
 	explanation_json = json.loads(raw_json["selected_explanation_json"])
 
-	input_image = ImagePreProcess(readb64(raw_json["input"],False))
+	input_image = ImagePreProcess(readb64(raw_json["input"],convert_colour=False))
 
-	# dataset_json = json.loads(request.form["selected_dataset_json"])
-	# model_json = json.loads(request.form["selected_model_json"])
-	# explanation_json = json.loads(request.form["selected_explanation_json"])
-
-	# input_image = ImagePreProcess(readb64(request.form["input"],False))
-
-	
 	dataset_name = dataset_json["dataset_name"]
 	model_name = model_json["model_name"]
 	explanation_name = explanation_json["explanation_name"]
@@ -204,16 +223,40 @@ def Explain():
 
 	explanation_instance = loaded_explanations[explanation_name][model_name][dataset_name]
 	
-	#TODO allow for better handling of additonal arguments
-	additional_args = {"num_samples":100,"num_features":300,"min_weight":0.01}
+	#TODO allow for better handling of additonal arguments, currently additional arguments for ALL explanations must be placed here
+	additional_args = {
+	"num_samples":100,
+	"num_features":300,
+	"min_weight":0.01, 
+	"model_name":model_name, 
+	"dataset_name":dataset_name, 
+	"num_background_samples":200
+	}
+
+	display_explanation_input = False
+	if(display_explanation_input):
+		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
+		cv2.imshow("image: input_image",cv2_image)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()
 
 	explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
 	
-	#TODO check if this is needed
-	if(True):
-		explanation_image_255 = explanation_image*255
 
-	encoded_explanation_image = encIMG64(explanation_image_255,True)
+	##### testing attribution maps
+	# if("attribution_slices" in additional_outputs.keys() and "attribution_slice_weights" in additional_outputs.keys() ):
+	# 	attribution_map = CreateAttributionMap(additional_outputs["attribution_slices"],additional_outputs["attribution_slice_weights"])
+	# # print("")
+	# print(attribution_map)
+	# print("")
+
+	#TODO check if this is needed
+	if(explanation_image.max() <=1):
+		explanation_image_255 = explanation_image*255
+	else:
+		explanation_image_255 = explanation_image
+
+	encoded_explanation_image = encIMG64(explanation_image_255,False)
 
 	### test images by displaying pre and post encoding
 	display_encoded_image = False
@@ -231,7 +274,7 @@ def Explain():
 
 	print("prediction:"+str(labels[int(prediction)]))#+" - "+labels[prediction)
 	# json_data = json.dumps({'prediction': labels[prediction[0]],"explanation_text":explanation_text,"explanation_image":encoded_explanation_image})
-	json_data = json.dumps({'prediction': labels[int(prediction)],"explanation_text":explanation_text,"explanation_image":encoded_explanation_image})
+	json_data = json.dumps({'prediction': labels[int(prediction)],"explanation_text":explanation_text,"explanation_image":encoded_explanation_image, "additional_outputs":additional_outputs})
 
 	return json_data
 

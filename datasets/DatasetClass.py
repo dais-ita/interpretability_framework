@@ -49,6 +49,34 @@ class DataSet(object):
         print("total data points loaded: " + str(len(data)))
         return data
 
+    def ProduceDataFromTrainingSplitFile(self,path_to_file, explicit_path_suffix = ""):
+        with open(path_to_file, "r") as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            for row in csv_reader:
+
+                if explicit_path_suffix != "":
+                   img_path = os.path.join(self.explicit_path_suffix, row["image_path"])
+                else:
+                   img_path = row["image_path"]
+
+                allocation = row["training_allocation"]
+
+                if(allocation == "train"):
+                    self.live_training.append((img_path,row["label"]))
+                elif(allocation == "validation"):
+                    self.live_validation.append((img_path,row["label"]))
+                elif(allocation == "test"):
+                    self.live_test.append((img_path,row["label"]))
+                else:
+                    print("allocation not recognised")
+
+        print("total data points loaded: ")
+
+        print("training:",len(self.live_training))
+        print("validation:",len(self.live_validation))
+        print("test:",len(self.live_test))
+        
+
     def CreateLiveDataSet(self, dataset_max_size=-1, even_examples=True, y_labels_to_use=[]):
         """
         prepares a "live dataset" which is a list of accepted images filtered by a set of labels to be used and
@@ -63,12 +91,16 @@ class DataSet(object):
 
         return live_data
 
-    def SplitLiveData(self, train_ratio=0.8, validation_ratio=0.1, test_ratio=0.1):
+    def SplitLiveData(self, train_ratio=0.8, validation_ratio=0.1, test_ratio=0.1, split_output_path=""):
         """
         creates a split of the dataset according to specified ratio. each subset is
         stored in class variables for access by the GetBatch function
         """
-        # TODO save this split
+        if(split_output_path == ""):
+            split_output_path = self.file_path.replace(".csv","_train_split.csv")
+
+        if len(self.live_dataset) == 0:
+            self.live_dataset = self.CreateLiveDataSet(even_examples=True, y_labels_to_use=[]) #default to use even examples and all labels
 
         total_examples = len(self.live_dataset)
 
@@ -91,6 +123,8 @@ class DataSet(object):
         self.live_training = full_source[train_index]
         self.live_validation = full_source[validation_index]
         self.live_test = full_source[list(remaining_index_set)]
+
+        self.OutputTrainingSplitAllocation(split_output_path)
 
     def GetBatch(self, batch_size=-1, even_examples=True, y_labels_to_use=[], split_batch=True, split_one_hot=True,
                  batch_source="full", return_batch_data=False):
@@ -124,6 +158,7 @@ class DataSet(object):
                 return self.SplitDataXY(batch, split_one_hot)
         else:
             return batch
+
 
     def FilterData(self, input_data, max_return_size=-1, even_examples=True, y_labels_to_use=[]):
         working_data = input_data
@@ -168,8 +203,12 @@ class DataSet(object):
 
         return working_data
 
+
     def FilterByLabels(self, data, labels_to_use):
-        return [d for d in data if d[1] in labels_to_use]
+        if(labels_to_use != []):
+            return [d for d in data if d[1] in labels_to_use]
+        else:
+            return data
 
     def GetLabelInformation(self, data):
         gt_info = {}
@@ -212,6 +251,7 @@ class DataSet(object):
 
         return x_vals, np.array(y_vals)
 
+
     def SaveLiveDataSet(self, csv_output_path, image_output_dir_path):
 
         if not os.path.exists(image_output_dir_path):
@@ -224,6 +264,25 @@ class DataSet(object):
         paths = self.SaveImages(x, image_output_dir_path, y_labels)
 
         self.SaveXY(paths, y, csv_output_path)
+
+
+    def OutputTrainingSplitAllocation(self, split_output_path):
+        output_string = "image_path,label,training_allocation\n"
+
+        for observation in self.live_training:
+            output_string += self.ExplicitToRelativePath(observation[0])+","+observation[1]+","+"train"+"\n"
+
+        for observation in self.live_validation:
+            output_string += self.ExplicitToRelativePath(observation[0])+","+observation[1]+","+"validation"+"\n"
+
+        for observation in self.live_test:
+            output_string += self.ExplicitToRelativePath(observation[0])+","+observation[1]+","+"test"+"\n"
+
+        print("saving training split to: ",split_output_path)
+        print("#training",str(len(self.live_training)),"#validation",str(len(self.live_validation)),"#test",str(len(self.live_test)))
+        with open(split_output_path,"w") as f: 
+            f.write(output_string[:-1])
+
 
     def LoadImagesfromURLs(self, urls):
         images = []
@@ -466,12 +525,56 @@ class DataSet(object):
     def ConvertOneHotToClassNumber(self, y_array):
         return np.array([np.argmax(y) for y in y_array], np.int32)
 
+    def ExplicitToRelativePath(self,explicit_path):
+        image_dir = "dataset_images"
+
+        split_path = explicit_path.split("/")
+
+        relative_path_list =  split_path[split_path.index(image_dir)+1:]
+
+        return "/".join(relative_path_list)
 
 if __name__ == '__main__':
+    dataset_folder = "cifar10"
+
+    labels = ["airplane",
+                "automobile",
+                "bird",
+                "cat",
+                "deer",
+                "dog",
+                "frog",
+                "horse",
+                "ship",
+                "truck"]
+   
+    
+
+
+    def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+        cwd = os.getcwd()
+        split_cwd = cwd.split("/")
+
+        base_path_list = []
+        for i in range(1, len(split_cwd)):
+            if(split_cwd[-i] == base_dir_name):
+                base_path_list = split_cwd[:-i+1]
+
+        if(base_path_list == []):
+            raise IOError('base project path could not be constructed. Are you running within: '+base_dir_name)
+
+        base_dir_path = "/".join(base_path_list)
+
+        return base_dir_path
+
+    base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+
+    datasets_path = os.path.join(base_dir,"datasets")
+
     create_filtered_live_set = False
 
     if create_filtered_live_set:  # create and save a resized dataset if needed
-        file_path = "wielder_non-wielder.csv"
+        file_path = dataset_folder+".csv"
         image_url_column = "image_path"
         ground_truth_column = "label"
 
@@ -480,16 +583,21 @@ if __name__ == '__main__':
         output_dir = "dataset"
         print("resizing")
 
-        dataset_tool.CreateFilteredLiveCSV("live_dataset.csv", y_labels_to_use=["non_wielder", "gun_wielder"],
+        dataset_tool.CreateFilteredLiveCSV("live_dataset.csv", y_labels_to_use=labels,
                                            save_images=True, image_dir=output_dir, batch_size=30,
                                            filter_size=(300, 300, 3))
 
-    file_path = "wielder_non-wielder.csv"
+    file_path = dataset_folder+".csv"
     image_url_column = "image_path"
     ground_truth_column = "label"
 
-    dataset_tool = DataSet(file_path, image_url_column, ground_truth_column)
-    x, y = dataset_tool.GetBatch(batch_size=128, even_examples=True, y_labels_to_use=["non_wielder", "gun_wielder"],
+    csv_path = os.path.join(datasets_path,"dataset_csvs",file_path)
+    dataset_images_dir_path =  os.path.join(datasets_path,"dataset_images")
+    dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
+    
+    dataset_tool.SplitLiveData()
+
+    x, y = dataset_tool.GetBatch(batch_size=128, even_examples=True, y_labels_to_use=labels,
                                  split_batch=True, split_one_hot=True)
 
     print(len(x))
@@ -501,3 +609,10 @@ if __name__ == '__main__':
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     print(y[0])
+
+    dataset_tool = dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
+    
+    training_split_file = dataset_folder+"_train_split.csv"
+    training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
+    dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
+
