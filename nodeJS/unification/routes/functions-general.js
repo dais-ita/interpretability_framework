@@ -90,8 +90,7 @@ module.exports = {
                 .then(function (response) {
                     // Success
                     let result = JSON.parse(response);
-
-                    tgtFn(config, fn, request, parmDsName, parmModName, parmExpName, dsJson, modJson, expJson, result);
+                    tgtFn(config, fn, request, parmDsName, parmModName, parmExpName, parmImgName, dsJson, modJson, expJson, result);
                 })
                 .catch(function (err) {
                     // Error

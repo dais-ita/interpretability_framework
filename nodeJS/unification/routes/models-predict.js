@@ -8,58 +8,76 @@ let router = express.Router();
 let request = require('request-promise');
 let config = require('../config');
 let fn = require('./functions-general');
-let parmType = null;
-let parmDsName = null;
-let parmImgName = null;
 
 router.get('/', function (req, res) {
-    parmType = req.query.type;
-    parmDsName = req.query.dataset;
-    parmImgName = req.query.image;
+    let parmType = req.query.type;
+    let parmDs = req.query.dataset;
+    let parmMod = req.query.model;
+    let parmImg = req.query.image;
 
-    let url = fn.getModelsPredictUrl(config);
+    getAllDatasets(res, parmType, parmDs, parmMod, parmImg);
+});
 
-    if (parmDsName == null) {
-        console.log("No dataset specified");
-        return res.sendStatus(500);
-    } else {
-        if (parmImgName == null) {
-            imgName = "random";
-        } else {
-            imgName = parmImgName;
-        }
+function getAllDatasets(res, parmType, parmDs, parmMod, parmImg) {
+    const options = {
+        method: 'GET',
+        uri: fn.getDatasetsAllUrl(config)
+    };
 
+    request(options)
+        .then(function (response) {
+            // Success
+            let datasets = JSON.parse(response);
+
+            prepareAndExecutePredict(res, datasets.datasets, parmType, parmDs, parmMod, parmImg);
+        })
+        .catch(function (err) {
+            // Error
+            console.log(err);
+        })
+}
+
+function prepareAndExecutePredict(res, datasets, parmType, parmDs, parmMod, parmImg) {
+    let dsJson = fn.matchedDataset(parmDs, datasets);
+
+    executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg);
+}
+
+function executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg) {
+    fn.httpImageJson(config, fn, request, parmDs, parmMod, null, parmImg, dsJson, null, null, function(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, imgJson) {
         const options = {
             method: 'POST',
-            uri: fn.getModelsPredictUrl(config, parmDsName, imgName)
+            uri: fn.getModelsPredictUrl(config),
+            body: {
+                "selected_dataset_json":
+                    JSON.stringify(dsJson),
+                "selected_model": parmMod,
+                "input": imgJson.input
+            },
+            json: true
         };
 
         request(options)
             .then(function (response) {
-                // Success
-                let result = JSON.parse(response);
+                let result = {
+                    "title": "Explanations-explain",
+                    "explanation": response,
+                    "parameters": {
+                        "type": parmType,
+                        "dataset": parmDs,
+                        "model": parmMod,
+                        "image": parmImg
+                    }
+                };
 
-                if (parmType != "json") {
-                    res.render("models-predict", {
-                        "title": "Models - predict",
-                        "dataset": dsName,
-                        "image": imgName,
-                        "models": result,
-                        "parameters": {
-                            "dataset": parmDataset,
-                            "image": parmImgName
-                        }
-                    });
-                } else {
-                    res.json(result);
-                }
+                res.json(result);
             })
             .catch(function (err) {
                 // Error
                 console.log(err);
                 return res.sendStatus(500);
             })
-    }
-});
+    })
+}
 
 module.exports = router;

@@ -10,15 +10,16 @@ let config = require('../config');
 let fn = require('./functions-general');
 
 router.get('/', function (req, res) {
+    let parmType = req.query.type;
     let parmDs = req.query.dataset;
     let parmMod = req.query.model;
     let parmExp = req.query.explanation;
     let parmImg = req.query.image;
 
-    getAllDatasets(res, parmDs, parmMod, parmExp, parmImg);
+    getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg);
 });
 
-function getAllDatasets(res, parmDs, parmMod, parmExp, parmImg) {
+function getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg) {
     const options = {
         method: 'GET',
         uri: fn.getDatasetsAllUrl(config)
@@ -29,7 +30,7 @@ function getAllDatasets(res, parmDs, parmMod, parmExp, parmImg) {
             // Success
             let datasets = JSON.parse(response);
 
-            getAllModels(res, datasets, parmDs, parmMod, parmExp, parmImg);
+            getAllModels(res, datasets, parmType, parmDs, parmMod, parmExp, parmImg);
         })
         .catch(function (err) {
             // Error
@@ -37,7 +38,7 @@ function getAllDatasets(res, parmDs, parmMod, parmExp, parmImg) {
         })
 }
 
-function getAllModels(res, datasets, parmDs, parmMod, parmExp, parmImg) {
+function getAllModels(res, datasets, parmType, parmDs, parmMod, parmExp, parmImg) {
     const options = {
         method: 'GET',
         uri: fn.getModelsAllUrl(config)
@@ -48,7 +49,7 @@ function getAllModels(res, datasets, parmDs, parmMod, parmExp, parmImg) {
             // Success
             let models = JSON.parse(response);
 
-            getAllExplanations(res, datasets, models, parmDs, parmMod, parmExp, parmImg);
+            getAllExplanations(res, datasets, models, parmType, parmDs, parmMod, parmExp, parmImg);
         })
         .catch(function (err) {
             // Error
@@ -56,7 +57,7 @@ function getAllModels(res, datasets, parmDs, parmMod, parmExp, parmImg) {
         })
 }
 
-function getAllExplanations(res, datasets, models, parmDs, parmMod, parmExp, parmImg) {
+function getAllExplanations(res, datasets, models, parmType, parmDs, parmMod, parmExp, parmImg) {
     const options = {
         method: 'GET',
         uri: fn.getExplanationsAllUrl(config)
@@ -72,7 +73,7 @@ function getAllExplanations(res, datasets, models, parmDs, parmMod, parmExp, par
             result.models = models.models;
             result.explanations = explanations.explanations;
 
-            prepareAndExecuteExplain(res, result, parmDs, parmMod, parmExp, parmImg)
+            prepareAndExecuteExplain(res, result, parmType, parmDs, parmMod, parmExp, parmImg)
         })
         .catch(function (err) {
             // Error
@@ -80,17 +81,16 @@ function getAllExplanations(res, datasets, models, parmDs, parmMod, parmExp, par
         })
 }
 
-function prepareAndExecuteExplain(res, allJson, parmDs, parmMod, parmExp, parmImg) {
-    let result = {};
+function prepareAndExecuteExplain(res, allJson, parmType, parmDs, parmMod, parmExp, parmImg) {
     let dsJson = fn.matchedDataset(parmDs, allJson.datasets);
     let modJson = fn.matchedModel(parmMod, allJson.models);
     let expJson = fn.matchedExplanation(parmExp, allJson.explanations);
 
-    executeExplain(res, dsJson, modJson, expJson, parmDs, parmMod, parmExp, parmImg);
+    executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod, parmExp, parmImg);
 }
 
-function executeExplain(res, dsJson, modJson, expJson, parmDs, parmMod, parmExp, parmImg) {
-    fn.httpImageJson(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, function(config, fn, request, parmDs, parmMod, parmExp, dsJson, modJson, expJson, imgJson) {
+function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod, parmExp, parmImg) {
+    fn.httpImageJson(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, function(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, imgJson) {
         const options = {
             method: 'POST',
             uri: fn.getExplanationsExplainUrl(config),
@@ -112,6 +112,7 @@ function executeExplain(res, dsJson, modJson, expJson, parmDs, parmMod, parmExp,
                     "title": "Explanations-explain",
                     "explanation": response,
                     "parameters": {
+                        "type": parmType,
                         "dataset": parmDs,
                         "model": parmMod,
                         "explanation": parmExp,

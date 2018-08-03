@@ -57,6 +57,11 @@ block content
                 tr
                     td Ground truth
                     td #{image.ground_truth}
+                tr
+                    td Actions
+                    td
+                        button(id='pred_button', onclick="javascript:predict('/models/predict?type=json&dataset=" + parameters.dataset + "&image=" + image.image_name + "');") Predict
+
 
     div(id='div_exps', style={display: 'none'})
         h1 Explanations

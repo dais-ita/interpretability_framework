@@ -13,17 +13,14 @@ var indexRouter = require('./routes/index');
 var dsaRouter = require('./routes/datasets-all');
 var dsdRouter = require('./routes/dataset-details');
 var dstRouter = require('./routes/datasets-test-image');
-var duRouter = require('./routes/dataset-use');
 var maRouter = require('./routes/models-all');
 var mdRouter = require('./routes/model-details');
 var mfdRouter = require('./routes/models-for-dataset');
-var muRouter = require('./routes/model-use');
 var mpRouter = require('./routes/models-predict');
 var xaRouter = require('./routes/explanations-all');
 var xdRouter = require('./routes/explanation-details');
 var xffRouter = require('./routes/explanations-for-filter');
 var xxRouter = require('./routes/explanations-explain');
-var xuRouter = require('./routes/explanation-use');
 
 var app = express();
 
@@ -43,16 +40,13 @@ app.use('/', indexRouter);
 app.use('/datasets-all', dsaRouter);
 app.use('/dataset-details', dsdRouter);
 app.use('/datasets-test-image', dstRouter);
-app.use('/dataset-use', duRouter);
 app.use('/models-all', maRouter);
 app.use('/model-details', mdRouter);
 app.use('/models-for-dataset', mfdRouter);
 app.use('/models-predict', mpRouter);
-app.use('/model-use', muRouter);
 app.use('/explanations-all', xaRouter);
 app.use('/explanation-details', xdRouter);
 app.use('/explanations-for-filter', xffRouter);
-app.use('/explanation-use', xuRouter);
 app.use('/explanations-explain', xxRouter);
 
 // catch 404 and forward to error handler

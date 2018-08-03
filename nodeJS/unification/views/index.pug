@@ -67,6 +67,11 @@ block content
                         tr
                             td Ground truth
                             td(id='img_groundtruth')
+                        tr
+                            td Actions
+                            td(id='img_predict')
+                                button(id='pred_button', class="btn btn-primary my-2", onclick="javascript:predict();") Predict
+                                div(id='pred_result')
 
         div(id='div_exps', style={display: 'none'})
             h1(class="jumbotron-heading") Explanations

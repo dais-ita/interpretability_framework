@@ -40,7 +40,11 @@ router.get('/', function (req, res) {
                     res.render("image-details", {
                         "title": "Datasets - test image",
                         "image": result,
-                        "parameters": {"dataset": parmDsName, "image": parmImgName}
+                        "parameters": {
+                            "type": parmType,
+                            "dataset": parmDsName,
+                            "image": parmImgName
+                        }
                     });
                 } else {
                     res.json(result);

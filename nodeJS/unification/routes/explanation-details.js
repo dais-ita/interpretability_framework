@@ -34,7 +34,10 @@ router.get('/', function (req, res) {
                 res.render("explanation-individual", {
                     "title": "Explanation details",
                     "explanation": matchedExp,
-                    "parameters": {}
+                    "parameters": {
+                        "type": parmType,
+                        "explanation": parmExp
+                    }
                 });
             } else {
                 res.json(matchedExp);
