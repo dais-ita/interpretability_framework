@@ -191,7 +191,11 @@ function explain() {
                 let cell5 = row.insertCell(4);
                 let cell6 = row.insertCell(5);
 
-                cell1.innerHTML = getSelectedExplanationName();
+                cell1.innerHTML = "";
+                cell1.innerHTML += "Dataset=" + getSelectedDatasetName() + "<br/>";
+                cell1.innerHTML += "Model=" + getSelectedModelName() + "<br/>";
+                cell1.innerHTML += "Explanation=" + getSelectedExplanationName() + "<br/>";
+
                 cell2.innerHTML = formattedDateTime();
                 cell3.innerHTML = Date.now() - ts;
                 cell4.innerHTML = jsExp.explanation.prediction;
