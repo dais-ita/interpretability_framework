@@ -34,7 +34,10 @@ router.get('/', function (req, res) {
                 res.render("dataset-individual", {
                     "title": "Dataset details",
                     "dataset": matchedDs,
-                    "parameters": {}
+                    "parameters": {
+                        "type": parmType,
+                        "dataset": parmDataset
+                    }
                 });
             } else {
                 res.json(matchedDs);

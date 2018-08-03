@@ -163,6 +163,7 @@ function explain() {
     let xmlHttp = new XMLHttpRequest();
     let tgtMsg = document.getElementById("in_progress");
     let tgtBut = document.getElementById("exp_button");
+    let tgtTbl = document.getElementById("exp_table");
     let ts = Date.now();
     let url = "";
 
@@ -178,10 +179,6 @@ function explain() {
 
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4) {
-            let tgtTbl = document.getElementById("exp_table");
-            let tgtBut = document.getElementById("exp_button");
-            let tgtMsg = document.getElementById("in_progress");
-
             if (xmlHttp.status == 200) {
                 let jsExp = JSON.parse(xmlHttp.responseText);
                 console.log(jsExp);
@@ -208,6 +205,37 @@ function explain() {
                 tgtBut.style.display = "block";
 
                 alert("The explanation failed - see server logs for details");
+            }
+        }
+    }
+
+    xmlHttp.open("GET", url, true);
+    xmlHttp.send(null);
+}
+
+function predict() {
+    let xmlHttp = new XMLHttpRequest();
+    let tgtMsg = document.getElementById("pred_result");
+    let url = "";
+
+    url += "/models-predict?";
+    url += "type=json";
+    url += "&dataset=" + getSelectedDatasetName();
+    url += "&model=" + getSelectedModelName();
+    url += "&image=" + getSelectedImageName() ;
+
+    tgtMsg.innerHTML = "Prediction in progress...";
+
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                let jsExp = JSON.parse(xmlHttp.responseText);
+                console.log(jsExp);
+
+                tgtMsg.innerHTML = jsExp.explanation.prediction;
+            } else {
+                alert("The predict request failed - see server logs for details");
+                tgtMsg.innerHTML = "Prediction failed";
             }
         }
     }

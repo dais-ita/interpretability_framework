@@ -27,7 +27,9 @@ router.get('/', function (req, res) {
                 res.render("dataset-list", {
                     "title": "Datasets - all",
                     "datasets": result,
-                    "parameters": {}
+                    "parameters": {
+                        "type": parmType
+                    }
                 });
             } else {
                 res.json(result);

@@ -27,7 +27,9 @@ router.get('/', function (req, res) {
                 res.render("explanation-list", {
                     "title": "Explanations - all",
                     "explanations": result,
-                    "parameters": {}
+                    "parameters": {
+                        "type": parmType
+                    }
                 });
             } else {
                 res.json(result);
