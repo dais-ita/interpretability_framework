@@ -19,17 +19,21 @@ function populateExplanations() {
     url += "&model=" + getSelectedModelName();
 
     xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            let jsExps = JSON.parse(xmlHttp.responseText);
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                let jsExps = JSON.parse(xmlHttp.responseText);
 
-            let eXl = document.getElementById("exp_list");
-            clearAllOptions(eXl);
+                let eXl = document.getElementById("exp_list");
+                clearAllOptions(eXl);
 
-            for (let i in jsExps.explanations) {
-                let thisExp = jsExps.explanations[i];
-                let option = document.createElement("option");
-                option.text = thisExp.explanation_name;
-                eXl.add(option);
+                for (let i in jsExps.explanations) {
+                    let thisExp = jsExps.explanations[i];
+                    let option = document.createElement("option");
+                    option.text = thisExp.explanation_name;
+                    eXl.add(option);
+                }
+            } else {
+                alert("The list of explanation types failed to be retrieved - see server logs for details");
             }
         }
     }
@@ -42,20 +46,24 @@ function populateModels(url) {
     let xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            let jsMods = JSON.parse(xmlHttp.responseText);
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                let jsMods = JSON.parse(xmlHttp.responseText);
 
-            let eSm = document.getElementById("settings_model");
-            let eMl = document.getElementById("mod_list");
-            clearAllOptions(eMl);
+                let eSm = document.getElementById("settings_model");
+                let eMl = document.getElementById("mod_list");
+                clearAllOptions(eMl);
 
-            eSm.style.display = "block";
+                eSm.style.display = "block";
 
-            for (let i in jsMods.models) {
-                let thisMod = jsMods.models[i];
-                let option = document.createElement("option");
-                option.text = thisMod.model_name;
-                eMl.add(option);
+                for (let i in jsMods.models) {
+                    let thisMod = jsMods.models[i];
+                    let option = document.createElement("option");
+                    option.text = thisMod.model_name;
+                    eMl.add(option);
+                }
+            } else {
+                alert("The list of models failed to be retrieved - see server logs for details");
             }
         }
     }
@@ -126,20 +134,24 @@ function requestImage(url) {
     let xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            let jsImg = JSON.parse(xmlHttp.responseText);
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                let jsImg = JSON.parse(xmlHttp.responseText);
 
-            let eDi = document.getElementById("div_image");
-            let eIn = document.getElementById("img_name");
-            let eIi = document.getElementById("img_image");
-            let eIg = document.getElementById("img_groundtruth");
-            let eDe = document.getElementById("div_exps");
+                let eDi = document.getElementById("div_image");
+                let eIn = document.getElementById("img_name");
+                let eIi = document.getElementById("img_image");
+                let eIg = document.getElementById("img_groundtruth");
+                let eDe = document.getElementById("div_exps");
 
-            eDi.style.display = "block";
-            eIn.innerHTML = jsImg.image_name;
-            eIi.innerHTML = "<img alt='" + jsImg.image_name + "' src='data:img/jpg;base64," + jsImg.input + "'/>";
-            eIg.innerHTML = jsImg.ground_truth;
-            eDe.style.display = "block";
+                eDi.style.display = "block";
+                eIn.innerHTML = jsImg.image_name;
+                eIi.innerHTML = "<img alt='" + jsImg.image_name + "' src='data:img/jpg;base64," + jsImg.input + "'/>";
+                eIg.innerHTML = jsImg.ground_truth;
+                eDe.style.display = "block";
+            } else {
+                alert("The image failed to be retrieved - see server logs for details");
+            }
         }
     }
 
@@ -165,30 +177,38 @@ function explain() {
     tgtBut.style.display = "none";
 
     xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            let jsExp = JSON.parse(xmlHttp.responseText);
-console.log(jsExp);
+        if (xmlHttp.readyState == 4) {
             let tgtTbl = document.getElementById("exp_table");
             let tgtBut = document.getElementById("exp_button");
             let tgtMsg = document.getElementById("in_progress");
 
-            let row = tgtTbl.insertRow(1);
-            let cell1 = row.insertCell(0);
-            let cell2 = row.insertCell(1);
-            let cell3 = row.insertCell(2);
-            let cell4 = row.insertCell(3);
-            let cell5 = row.insertCell(4);
-            let cell6 = row.insertCell(5);
+            if (xmlHttp.status == 200) {
+                let jsExp = JSON.parse(xmlHttp.responseText);
+                console.log(jsExp);
 
-            cell1.innerHTML = getSelectedExplanationName();
-            cell2.innerHTML = formattedDateTime();
-            cell3.innerHTML = Date.now() - ts;
-            cell4.innerHTML = jsExp.explanation.prediction;
-            cell5.innerHTML = jsExp.explanation.explanation_text;
-            cell6.innerHTML = "<img alt='Explanation image' src='data:img/jpg;base64," + jsExp.explanation.explanation_image + "'>";
+                let row = tgtTbl.insertRow(1);
+                let cell1 = row.insertCell(0);
+                let cell2 = row.insertCell(1);
+                let cell3 = row.insertCell(2);
+                let cell4 = row.insertCell(3);
+                let cell5 = row.insertCell(4);
+                let cell6 = row.insertCell(5);
 
-            tgtMsg.style.display = "none";
-            tgtBut.style.display = "block";
+                cell1.innerHTML = getSelectedExplanationName();
+                cell2.innerHTML = formattedDateTime();
+                cell3.innerHTML = Date.now() - ts;
+                cell4.innerHTML = jsExp.explanation.prediction;
+                cell5.innerHTML = jsExp.explanation.explanation_text;
+                cell6.innerHTML = "<img alt='Explanation image' src='data:img/jpg;base64," + jsExp.explanation.explanation_image + "'>";
+
+                tgtMsg.style.display = "none";
+                tgtBut.style.display = "block";
+            } else {
+                tgtMsg.style.display = "none";
+                tgtBut.style.display = "block";
+
+                alert("The explanation failed - see server logs for details");
+            }
         }
     }
 
