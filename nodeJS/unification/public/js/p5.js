@@ -4,9 +4,11 @@
 // *******************************************************************************
 
 function useSelectedDataset() {
-    let url = "/models-for-dataset?type=json&dataset=" + getSelectedDatasetName();
+    let modUrl = "/models-for-dataset?type=json&dataset=" + getSelectedDatasetName();
+    let imgUrl = "/dataset-details?type=json&dataset=" + getSelectedDatasetName();
 
-    populateModels(url);
+    populateModels(modUrl);
+    populateStaticImages(imgUrl);
 }
 
 function populateExplanations() {
@@ -72,6 +74,36 @@ function populateModels(url) {
     xmlHttp.send(null);
 }
 
+function populateStaticImages(url) {
+    let xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                let jsDs = JSON.parse(xmlHttp.responseText);
+
+                console.log(jsDs);
+                let eIin = document.getElementById("img_input_name");
+                let eIl = document.getElementById("img_list");
+                clearAllOptions(eIl);
+
+                for (let i in jsDs.interesting_images) {
+                    let option = document.createElement("option");
+                    option.text = jsDs.interesting_images[i];
+                    eIl.add(option);
+                }
+
+                eIin.value = jsDs.interesting_images[0];
+            } else {
+                alert("The list of static images failed to be retrieved - see server logs for details");
+            }
+        }
+    }
+
+    xmlHttp.open("GET", url, true);
+    xmlHttp.send(null);
+}
+
 function clearAllOptions(e) {
     for(let i = e.options.length - 1; i >= 0; i--)
     {
@@ -94,6 +126,10 @@ function useRandomImage() {
 }
 
 function usePredefinedImage(imageName) {
+    if (imageName == null) {
+        imageName = getPredefinedImageName();
+    }
+
     let url = "/datasets-test-image?type=json&dataset=" + getSelectedDatasetName() + "&image=" + imageName;
 
     requestImage(url);
@@ -121,6 +157,12 @@ function getSelectedImageName() {
     let e = document.getElementById("img_name");
 
     return e.innerHTML;
+}
+
+function getPredefinedImageName() {
+    let e = document.getElementById("img_list");
+
+    return e.options[e.selectedIndex].value;
 }
 
 function useNamedImage() {
