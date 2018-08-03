@@ -7,12 +7,16 @@ function useSelectedDataset() {
     let url = "/models-for-dataset?type=json&dataset=" + getSelectedDatasetName();
 
     populateModels(url);
-    populateExplanations();
 }
 
 function populateExplanations() {
-    let url ="/explanations-all?type=json";
+    let url = "";
     let xmlHttp = new XMLHttpRequest();
+
+    url += "/explanations-for-filter?";
+    url += "type=json";
+    url += "&dataset=" + getSelectedDatasetName();
+    url += "&model=" + getSelectedModelName();
 
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
@@ -71,6 +75,8 @@ function useSelectedModel() {
     let eSi = document.getElementById("settings_image");
 
     eSi.style.display = "block";
+
+    populateExplanations();
 }
 
 function useRandomImage() {

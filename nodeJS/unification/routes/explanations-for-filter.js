@@ -12,10 +12,12 @@ let parmType = null;
 
 router.get('/', function (req, res) {
     parmType = req.query.type;
+    parmDsName = req.query.dataset;
+    parmModName = req.query.model;
 
     const options = {
         method: 'GET',
-        uri: fn.getExplanationsAllUrl(config)
+        uri: fn.getExplanationsForFilterUrl(config, parmDsName, parmModName)
     };
 
     request(options)
@@ -25,7 +27,7 @@ router.get('/', function (req, res) {
 
             if (parmType != "json") {
                 res.render("explanation-list", {
-                    "title": "Explanations - all",
+                    "title": "Explanations - for filter",
                     "explanations": result,
                     "parameters": {}
                 });
