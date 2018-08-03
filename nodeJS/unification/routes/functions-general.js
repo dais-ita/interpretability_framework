@@ -167,6 +167,16 @@ module.exports = {
 
         return url;
     },
+    getExplanationsForFilterUrl: function(config, dsName, modName) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.explanations.port +
+            config.urls.explanations.paths.root +
+            config.urls.explanations.paths.for_filters +
+            "/" + dsName + "," + modName;
+
+        return url;
+    },
     getExplanationsExplainUrl: function(config) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
