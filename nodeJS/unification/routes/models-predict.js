@@ -19,10 +19,6 @@ router.get('/', function (req, res) {
 
     let url = fn.getModelsPredictUrl(config);
 
-    console.log("url: " + url);
-    console.log("dsName: " + parmDsName);
-    console.log("imgName: " + parmImgName);
-
     if (parmDsName == null) {
         console.log("No dataset specified");
         return res.sendStatus(500);
@@ -53,9 +49,6 @@ router.get('/', function (req, res) {
                             "dataset": parmDataset,
                             "image": parmImgName
                         }
-//                        "chosen_dataset": req.session.chosen_dataset,
-//                        "chosen_model": req.session.chosen_model,
-//                        "chosen_explanation": req.session.chosen_explanation
                     });
                 } else {
                     res.json(result);

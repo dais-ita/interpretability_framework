@@ -35,9 +35,6 @@ router.get('/', function (req, res) {
                     "title": "Dataset details",
                     "dataset": matchedDs,
                     "parameters": {}
-//                    "chosen_dataset": req.session.chosen_dataset,
-//                    "chosen_model": req.session.chosen_model,
-//                    "chosen_explanation": req.session.chosen_explanation
                 });
             } else {
                 res.json(matchedDs);
