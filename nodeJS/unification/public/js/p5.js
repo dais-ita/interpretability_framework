@@ -19,6 +19,7 @@ function populateExplanations() {
             let jsExps = JSON.parse(xmlHttp.responseText);
 
             let eXl = document.getElementById("exp_list");
+            clearAllOptions(eXl);
 
             for (let i in jsExps.explanations) {
                 let thisExp = jsExps.explanations[i];
@@ -42,6 +43,7 @@ function populateModels(url) {
 
             let eSm = document.getElementById("settings_model");
             let eMl = document.getElementById("mod_list");
+            clearAllOptions(eMl);
 
             eSm.style.display = "block";
 
@@ -56,6 +58,13 @@ function populateModels(url) {
 
     xmlHttp.open("GET", url, true);
     xmlHttp.send(null);
+}
+
+function clearAllOptions(e) {
+    for(let i = e.options.length - 1; i >= 0; i--)
+    {
+        e.remove(i);
+    }
 }
 
 function useSelectedModel() {
