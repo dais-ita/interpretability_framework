@@ -154,7 +154,7 @@ function explain() {
     url += "&model=" + getSelectedModelName();
     url += "&explanation=" + getSelectedExplanationName();
     url += "&image=" + getSelectedImageName() ;
-console.log(url);
+
     tgtMsg.style.display = "block";
     tgtBut.style.display = "none";
 
