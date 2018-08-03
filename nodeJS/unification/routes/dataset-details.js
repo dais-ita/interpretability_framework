@@ -24,7 +24,7 @@ router.get('/', function (req, res) {
         .then(function (response) {
             // Success
             let result = JSON.parse(response);
-            let matchedDs = fn.matchedDataset(parmDs, result);
+            let matchedDs = fn.matchedDataset(parmDs, result.datasets);
 
             if (matchedDs == null) {
                 console.log("Error - no dataset matches '" + parmDs + "'");

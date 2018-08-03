@@ -41,17 +41,15 @@ block content
             | &nbsp; &nbsp; or
             br
             | 2.&nbsp; &nbsp;
-            input(id="img_input_name", type="text", value="00048_gun_wielder.jpg")
+            input(id="img_input_name", type="text")
             | &nbsp; &nbsp;
             button(id='img_named_button', class="btn btn-primary my-2", onclick="javascript:useNamedImage();") &nbsp; Use this named image
             | &nbsp; &nbsp; or
             br
             | 3. Choose a predefined image: &nbsp;
-            a(href="javascript:usePredefinedImage('01061_non-wielder.jpg')") 01061_non-wielder.jpg
-            |,&nbsp;
-            a(href="javascript:usePredefinedImage('00073_gun_wielder.jpg')") 00073_gun_wielder.jpg
-            | ,&nbsp;
-            a(href="javascript:usePredefinedImage('00454_gun_wielder.jpg')") 00454_gun_wielder.jpg
+            select(id="img_list")
+            | &nbsp; &nbsp;
+            button(id='img_button', class="btn btn-primary my-2", onclick="javascript:usePredefinedImage();") &nbsp; Use selected image
             br
             br
 
