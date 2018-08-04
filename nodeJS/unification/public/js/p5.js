@@ -120,7 +120,7 @@ function useSelectedModel() {
 }
 
 function useRandomImage() {
-    let url = "/datasets-test-image?type=json&dataset=" + getSelectedDatasetName();
+    let url = "/dataset-test-image?type=json&dataset=" + getSelectedDatasetName();
 
     requestImage(url);
 }
@@ -130,7 +130,7 @@ function usePredefinedImage(imageName) {
         imageName = getPredefinedImageName();
     }
 
-    let url = "/datasets-test-image?type=json&dataset=" + getSelectedDatasetName() + "&image=" + imageName;
+    let url = "/dataset-test-image?type=json&dataset=" + getSelectedDatasetName() + "&image=" + imageName;
 
     requestImage(url);
 }
@@ -209,7 +209,7 @@ function explain() {
     let ts = Date.now();
     let url = "";
 
-    url += "/explanations-explain?";
+    url += "/explanation-explain?";
     url += "type=json";
     url += "&dataset=" + getSelectedDatasetName();
     url += "&model=" + getSelectedModelName();
@@ -264,7 +264,7 @@ function predict() {
     let tgtMsg = document.getElementById("pred_result");
     let url = "";
 
-    url += "/models-predict?";
+    url += "/model-predict?";
     url += "type=json";
     url += "&dataset=" + getSelectedDatasetName();
     url += "&model=" + getSelectedModelName();

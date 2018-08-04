@@ -1,0 +1,69 @@
+extends layout
+
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    section(class="jumbotron text-left")
+        div(id='div_intro')
+            h1(class="jumbotron-heading") Introduction
+            p
+                | The purpose of this application is threefold:
+                ol
+                    li
+                        | To provide a unifying set of HTTP APIs to wrap all of the backend services regardless of their implementation (flask, ce-store, other)
+                    li
+                        | For the unified APIs to present a large series of entrypoints from which any view on the system can be obtained.  This will be very useful for the conversational interaction.
+                    li
+                        |To provide a simple "wireframe" User Interface to exercise the unified APIs and show the results in simple html pages
+            p
+                | The intention is that the UI elements can either easily be reskinned (using CSS) to become the final UI, or these wireframes can be used a prototypes to inform a separate build of different UI components.
+
+            p
+                | Refer to the <a href="./api-tester">Unified API tester page</a> for an interactive mechanism for executing the APIs
+
+        div(id='div_flask')
+            h1(class="jumbotron-heading") Flask APIs
+            p
+                | The following Flask APIs have been wrapped:
+                ul
+                    li
+                        | DatasetsAAS.py
+                        ul
+                            li
+                                | GET /datasets/get_available wrapped as /datasets-all
+                            li
+                                | GET /datasets/test_image/(string:dataset_name) wrapped as /dataset/test_image
+                            li
+                                | GET /datasets/test_image/specific wrapped as /dataset/test_image
+                            li
+                                | GET /datasets/test_images/(string:dataset_name) wrapped as dataset/test_images
+                            li
+                                | POST /datasets/test_images/(string:dataset_name) wrapped as /dataset/test_images
+                            li
+                                | GET /datasets/archive wrapped as /dataset/archive
+                    li
+                        | ModelsAAS.py
+                        ul
+                            li
+                                | GET /models/get_available wrapped as /models-all
+                            li
+                                | GET /models/get_available_for_dataset/(string:dataset_name) wrapped as /models-for-dataset
+                            li
+                                | POST /models/predict wrapped as /model/predict
+                            li
+                                | GET /models/archive wrapped as /model/archive
+                    li
+                        | ExplanationsAAS.py
+                        ul
+                            li
+                                | GET /explanations/get_available wrapped as /explanations-all
+                            li
+                                | GET /explanations/get_available_for_filters/(string:filters) wrapped as /explanations-for-filter
+                            li
+                                | POST /explanations/attribution_map wrapped as /explanation/attribution-map
+                            li
+                                | POST /explanations/explain wrapped as /explanation/explain

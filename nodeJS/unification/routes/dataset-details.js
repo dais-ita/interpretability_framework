@@ -36,7 +36,7 @@ router.get('/', function (req, res) {
                     "dataset": matchedDs,
                     "parameters": {
                         "type": parmType,
-                        "dataset": parmDataset
+                        "dataset": parmDs
                     }
                 });
             } else {
