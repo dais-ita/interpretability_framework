@@ -1,1 +1,1 @@
-See /public/README.md for details of the APIs and User Interface
+See /readme.html for details of the APIs and User Interface

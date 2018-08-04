@@ -23,7 +23,7 @@ router.get('/', function (req, res) {
     request(options)
         .then(function (response) {
             // Success
-            let result = JSON.parse(response);
+            let result = JSON.parse(response).explanations;
             let matchedExp = fn.matchedExplanation(parmExp, result);
 
             if (matchedExp == null) {

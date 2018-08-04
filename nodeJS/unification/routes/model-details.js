@@ -23,7 +23,7 @@ router.get('/', function (req, res) {
     request(options)
         .then(function (response) {
             // Success
-            let result = JSON.parse(response);
+            let result = JSON.parse(response).models;
             let matchedModel = fn.matchedModel(parmModel, result);
 
             if (matchedModel == null) {
