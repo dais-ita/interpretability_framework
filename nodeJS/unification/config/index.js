@@ -19,7 +19,8 @@ config.urls = {
             "root": "/datasets",
             "list": "/get_available",
             "test_image_random": "/test_image",
-            "test_image_specific": "/test_image/specific"
+            "test_image_specific": "/test_image/specific",
+            "archive": "/archive"
         }
     },
     "models": {
@@ -28,7 +29,8 @@ config.urls = {
             "root": "/models",
             "list": "/get_available",
             "for_dataset": "/get_available_for_dataset",
-            "predict": "/predict"
+            "predict": "/predict",
+            "archive": "/archive"
         }
     },
     "explanations": {

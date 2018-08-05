@@ -26,9 +26,9 @@ router.get('/', function (req, res) {
         };
 
         if (parmImgName == null) {
-            options.uri = fn.getDatasetsRandomTestImageUrl(config, parmDsName);
+            options.uri = fn.getDatasetRandomTestImageUrl(config, parmDsName);
         } else {
-            options.uri = fn.getDatasetsSpecificTestImageUrl(config, parmDsName, parmImgName);
+            options.uri = fn.getDatasetSpecificTestImageUrl(config, parmDsName, parmImgName);
         }
 
         request(options)

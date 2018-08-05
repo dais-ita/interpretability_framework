@@ -93,7 +93,7 @@ function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod
     fn.httpImageJson(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, function(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, imgJson) {
         const options = {
             method: 'POST',
-            uri: fn.getExplanationsExplainUrl(config),
+            uri: fn.getExplanationExplainUrl(config),
             body: {
                 "selected_dataset_json":
                     JSON.stringify(dsJson),

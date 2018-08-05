@@ -14,14 +14,15 @@ let globals = {
 };
 
 function showAPIs() {
-    let e = null;
-
     populateLists();
     uiConfig();
     renderLists();
     recalculateUrls();
+    showSections();
+}
 
-    e = document.getElementById("div_datasets");
+function showSections() {
+    let e = document.getElementById("div_datasets");
     e.style.display = "block";
 
     e = document.getElementById("div_models");
@@ -184,70 +185,6 @@ function populateImages() {
     globals.images_no_default = [];
 }
 
-function listDatasets() {
-    let url = "/datasets-all?type=json";
-    let xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4) {
-            if (xmlHttp.status == 200) {
-                let dsJson = JSON.parse(xmlHttp.responseText).datasets;
-                Array.prototype.push.apply(globals.datasets, dsJson);
-                renderLists();
-                recalculateUrls();
-
-            } else {
-                alert("The list of datasets failed to be retrieved - see server logs for details");
-            }
-        }
-    }
-
-    xmlHttp.open("GET", url, true);
-    xmlHttp.send(null);
-}
-
-function listModels() {
-    let url = "/models-all?type=json";
-    let xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4) {
-            if (xmlHttp.status == 200) {
-                let modJson = JSON.parse(xmlHttp.responseText).models;
-                Array.prototype.push.apply(globals.models, modJson);
-                renderLists();
-                recalculateUrls();
-            } else {
-                alert("The list of models failed to be retrieved - see server logs for details");
-            }
-        }
-    }
-
-    xmlHttp.open("GET", url, true);
-    xmlHttp.send(null);
-}
-
-function listExplanations() {
-    let url = "/explanations-all?type=json";
-    let xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4) {
-            if (xmlHttp.status == 200) {
-                let expJson = JSON.parse(xmlHttp.responseText).explanations;
-                Array.prototype.push.apply(globals.explanations, expJson);
-                renderLists();
-                recalculateUrls();
-            } else {
-                alert("The list of explanations failed to be retrieved - see server logs for details");
-            }
-        }
-    }
-
-    xmlHttp.open("GET", url, true);
-    xmlHttp.send(null);
-}
-
 function recalculateUrls() {
     for (let i in globals.uiConfig) {
         let thisUiConfig = globals.uiConfig[i];
@@ -335,4 +272,68 @@ function recalculate(rootElem, rootUrl, parmConf) {
 
     eU.href = tgtUrl;
     eU.innerText = tgtUrl;
+}
+
+function listDatasets() {
+    let url = "/datasets-all?type=json";
+    let xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                let dsJson = JSON.parse(xmlHttp.responseText).datasets;
+                Array.prototype.push.apply(globals.datasets, dsJson);
+                renderLists();
+                recalculateUrls();
+
+            } else {
+                alert("The list of datasets failed to be retrieved - see server logs for details");
+            }
+        }
+    }
+
+    xmlHttp.open("GET", url, true);
+    xmlHttp.send(null);
+}
+
+function listModels() {
+    let url = "/models-all?type=json";
+    let xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                let modJson = JSON.parse(xmlHttp.responseText).models;
+                Array.prototype.push.apply(globals.models, modJson);
+                renderLists();
+                recalculateUrls();
+            } else {
+                alert("The list of models failed to be retrieved - see server logs for details");
+            }
+        }
+    }
+
+    xmlHttp.open("GET", url, true);
+    xmlHttp.send(null);
+}
+
+function listExplanations() {
+    let url = "/explanations-all?type=json";
+    let xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                let expJson = JSON.parse(xmlHttp.responseText).explanations;
+                Array.prototype.push.apply(globals.explanations, expJson);
+                renderLists();
+                recalculateUrls();
+            } else {
+                alert("The list of explanations failed to be retrieved - see server logs for details");
+            }
+        }
+    }
+
+    xmlHttp.open("GET", url, true);
+    xmlHttp.send(null);
 }
