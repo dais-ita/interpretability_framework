@@ -12,9 +12,13 @@ block content
         h1 Parameters
         table(border=1)
             tbody
-                tr
-                    td (none)
+                -for (var i in parameters)
+                    -var thisParm = parameters[i]
+                    tr
+                        td #{i}
+                        td #{thisParm}
+        hr
 
-        -for (var e in explanations.explanations)
+    -for (var e in explanations.explanations)
             -var thisExp = explanations.explanations[e]
             +explanation-details(thisExp)

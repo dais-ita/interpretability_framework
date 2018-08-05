@@ -31,7 +31,7 @@ router.get('/', function (req, res) {
 
                 if (parmType != "json") {
                     let jsPage = {
-                        "title": "Models - for dataset",
+                        "title": config.unified_apis.model.for_dataset.url,
                         "models": result,
                         "parameters": {
                             "type": parmType,
@@ -39,7 +39,7 @@ router.get('/', function (req, res) {
                         }
                     };
 
-                    res.render("model-list", jsPage);
+                    res.render(config.unified_apis.model.for_dataset.route, jsPage);
                 } else {
                     res.json(result)
                 }

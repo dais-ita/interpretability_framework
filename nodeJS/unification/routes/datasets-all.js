@@ -25,14 +25,14 @@ router.get('/', function (req, res) {
 
             if (parmType != "json") {
                 let jsPage = {
-                    "title": "Datasets - all",
+                    "title": config.unified_apis.dataset.all.url,
                     "datasets": result,
                     "parameters": {
                         "type": parmType
                     }
                 };
 
-                res.render("dataset-list", jsPage);
+                res.render(config.unified_apis.dataset.all.route, jsPage);
             } else {
                 res.json(result);
             }

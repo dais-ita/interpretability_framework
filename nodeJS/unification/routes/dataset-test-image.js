@@ -38,7 +38,7 @@ router.get('/', function (req, res) {
 
                 if (parmType != "json") {
                     let jsPage = {
-                        "title": "Datasets - test image",
+                        "title": config.unified_apis.dataset.test_image.url,
                         "image": result,
                         "parameters": {
                             "type": parmType,
@@ -47,7 +47,7 @@ router.get('/', function (req, res) {
                         }
                     };
 
-                    res.render("image-individual", jsPage);
+                    res.render(config.unified_apis.dataset.test_image.route, jsPage);
                 } else {
                     res.json(result);
                 }

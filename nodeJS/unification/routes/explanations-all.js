@@ -25,14 +25,14 @@ router.get('/', function (req, res) {
 
             if (parmType != "json") {
                 let jsPage = {
-                    "title": "Explanations - all",
+                    "title": config.unified_apis.explanation.all.url,
                     "explanations": result,
                     "parameters": {
                         "type": parmType
                     }
                 };
 
-                res.render("explanation-list", jsPage);
+                res.render(config.unified_apis.explanation.all.route, jsPage);
             } else {
                 res.json(result);
             }

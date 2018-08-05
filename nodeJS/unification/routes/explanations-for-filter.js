@@ -29,7 +29,7 @@ router.get('/', function (req, res) {
 
             if (parmType != "json") {
                 let jsPage = {
-                    "title": "Explanations - for filter",
+                    "title": config.unified_apis.explanation.for_filter.url,
                     "explanations": result,
                     "parameters": {
                         "type": parmType,
@@ -38,7 +38,7 @@ router.get('/', function (req, res) {
                     }
                 };
 
-                res.render("explanation-list", jsPage);
+                res.render(config.unified_apis.explanation.for_filter.route, jsPage);
             } else {
                 res.json(result);
             }

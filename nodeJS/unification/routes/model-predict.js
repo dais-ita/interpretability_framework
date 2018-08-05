@@ -59,18 +59,7 @@ function executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg) {
 
         request(options)
             .then(function (response) {
-                let result = {
-                    "title": "Explanations-explain",
-                    "explanation": response,
-                    "parameters": {
-                        "type": parmType,
-                        "dataset": parmDs,
-                        "model": parmMod,
-                        "image": parmImg
-                    }
-                };
-
-                res.json(result);
+                res.json(response);
             })
             .catch(function (err) {
                 // Error

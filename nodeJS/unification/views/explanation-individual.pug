@@ -9,4 +9,14 @@ block content
     //- *******************************************************************************
 
     div
-        +explanation-details(explanation)
+        h1 Parameters
+        table(border=1)
+            tbody
+                -for (var i in parameters)
+                    -var thisParm = parameters[i]
+                    tr
+                        td #{i}
+                        td #{thisParm}
+        hr
+
+    +explanation-details(explanation)

@@ -12,14 +12,14 @@ block content
         h1 Parameters
         table(border=1)
             tbody
-                tr
-                    td Dataset
-                    td #{parameters.dataset}
-                tr
-                    td Image
-                    td #{parameters.image}
+                -for (var i in parameters)
+                    -var thisParm = parameters[i]
+                    tr
+                        td #{i}
+                        td #{thisParm}
+        hr
 
-        h1 Results
+    h1 Results
         -for (var m in models.models)
             -var thisModel = models.models[m]
             +model-details(thisModel)

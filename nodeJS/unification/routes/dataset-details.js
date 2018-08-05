@@ -32,7 +32,7 @@ router.get('/', function (req, res) {
 
             if (parmType != "json") {
                 let jsPage = {
-                    "title": "Dataset details",
+                    "title": config.unified_apis.dataset.details.url,
                     "dataset": matchedDs,
                     "parameters": {
                         "type": parmType,
@@ -40,7 +40,7 @@ router.get('/', function (req, res) {
                     }
                 };
 
-                res.render("dataset-individual", jsPage);
+                res.render(config.unified_apis.dataset.details.route, jsPage);
             } else {
                 res.json(matchedDs);
             }

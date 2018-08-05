@@ -32,15 +32,15 @@ router.get('/', function (req, res) {
 
             if (parmType != "json") {
                 let jsPage = {
-                    "title": "Model details",
+                    "title": config.unified_apis.model.details.url,
                     "model": matchedModel,
                     "parameters": {
                         "type": parmType,
-                        "model": parmModName
+                        "model": parmModel
                     }
                 };
 
-                res.render("model-individual", jsPage);
+                res.render(config.unified_apis.model.details.route, jsPage);
             } else {
                 res.json(matchedModel);
             }
