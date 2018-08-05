@@ -1,0 +1,21 @@
+extends layout
+include image-details.pug
+
+block content
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    div
+        h1 Parameters
+        table(border=1)
+            tbody
+                -for (var i in parameters)
+                    -var thisParm = parameters[i]
+                    tr
+                        td #{i}
+                        td #{thisParm}
+        hr
+
+    +image-details(image)

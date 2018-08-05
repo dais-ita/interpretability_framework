@@ -66,7 +66,7 @@ function uiConfig() {
     globals.mappings.push( [ "exp_atm", "ds_list", "img_list", "interesting_images", globals.images_no_default ] );
 
     let uiTypes = [ "type_list", "type", null, globals.types ];
-    let uiNumImages = [ "num_images", "type", null, globals.number_of_images ];
+    let uiNumImages = [ "num_images", "num_images", null, globals.number_of_images ];
     let uiDatasets = [ "ds_list", "dataset", "dataset_name", globals.datasets ];
     let uiModels = [ "mod_list", "model", "model_name", globals.models ];
     let uiExplanations = [ "exp_list", "explanation", "explanation_name", globals.explanations ];
