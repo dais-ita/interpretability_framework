@@ -24,13 +24,15 @@ router.get('/', function (req, res) {
             let result = JSON.parse(response);
 
             if (parmType != "json") {
-                res.render("explanation-list", {
+                let jsPage = {
                     "title": "Explanations - all",
                     "explanations": result,
                     "parameters": {
                         "type": parmType
                     }
-                });
+                };
+
+                res.render("explanation-list", jsPage);
             } else {
                 res.json(result);
             }

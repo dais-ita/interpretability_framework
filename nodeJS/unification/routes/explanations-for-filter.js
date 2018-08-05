@@ -9,6 +9,8 @@ let request = require('request-promise');
 let config = require('../config');
 let fn = require('./functions-general');
 let parmType = null;
+let parmDsName = null;
+let parmModName = null;
 
 router.get('/', function (req, res) {
     parmType = req.query.type;
@@ -26,11 +28,17 @@ router.get('/', function (req, res) {
             let result = JSON.parse(response);
 
             if (parmType != "json") {
-                res.render("explanation-list", {
+                let jsPage = {
                     "title": "Explanations - for filter",
                     "explanations": result,
-                    "parameters": {}
-                });
+                    "parameters": {
+                        "type": parmType,
+                        "dataset": parmDsName,
+                        "model": parmModName
+                    }
+                };
+
+                res.render("explanation-list", jsPage);
             } else {
                 res.json(result);
             }

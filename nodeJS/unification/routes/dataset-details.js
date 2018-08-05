@@ -31,14 +31,16 @@ router.get('/', function (req, res) {
             }
 
             if (parmType != "json") {
-                res.render("dataset-individual", {
+                let jsPage = {
                     "title": "Dataset details",
                     "dataset": matchedDs,
                     "parameters": {
                         "type": parmType,
                         "dataset": parmDs
                     }
-                });
+                };
+
+                res.render("dataset-individual", jsPage);
             } else {
                 res.json(matchedDs);
             }

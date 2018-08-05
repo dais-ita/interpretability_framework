@@ -30,11 +30,16 @@ router.get('/', function (req, res) {
                 let result = JSON.parse(response);
 
                 if (parmType != "json") {
-                    res.render("model-list", {
+                    let jsPage = {
                         "title": "Models - for dataset",
                         "models": result,
-                        "parameters": { "dataset": parmDsName }
-                    });
+                        "parameters": {
+                            "type": parmType,
+                            "dataset": parmDsName
+                        }
+                    };
+
+                    res.render("model-list", jsPage);
                 } else {
                     res.json(result)
                 }
