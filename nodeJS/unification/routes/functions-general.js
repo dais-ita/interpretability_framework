@@ -81,9 +81,9 @@ module.exports = {
             };
 
             if (parmImgName == null) {
-                options.uri = fn.getDatasetsRandomTestImageUrl(config, parmDsName);
+                options.uri = fn.getDatasetRandomTestImageUrl(config, parmDsName);
             } else {
-                options.uri = fn.getDatasetsSpecificTestImageUrl(config, parmDsName, parmImgName);
+                options.uri = fn.getDatasetSpecificTestImageUrl(config, parmDsName, parmImgName);
             }
 
             request(options)
@@ -108,7 +108,7 @@ module.exports = {
 
         return url;
     },
-    getDatasetsRandomTestImageUrl: function(config, dsName) {
+    getDatasetRandomTestImageUrl: function(config, dsName) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
             config.urls.datasets.port +
@@ -118,7 +118,7 @@ module.exports = {
 
         return url;
     },
-    getDatasetsSpecificTestImageUrl: function(config, dsName, imgName) {
+    getDatasetSpecificTestImageUrl: function(config, dsName, imgName) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
             config.urls.datasets.port +
@@ -126,6 +126,16 @@ module.exports = {
             config.urls.datasets.paths.test_image_specific +
             "?dataset=" + dsName +
             "&image_name=" + imgName;
+
+        return url;
+    },
+    getDatasetArchiveUrl: function(config, dsFolderName) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.datasets.port +
+            config.urls.datasets.paths.root +
+            config.urls.datasets.paths.archive +
+            "?dataset_folder_name=" + dsFolderName;
 
         return url;
     },
@@ -148,12 +158,23 @@ module.exports = {
 
         return url;
     },
-    getModelsPredictUrl: function(config) {
+    getModelPredictUrl: function(config) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
             config.urls.models.port +
             config.urls.models.paths.root +
             config.urls.models.paths.predict;
+
+        return url;
+    },
+    getModelArchiveUrl: function(config, dsName, modName) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.models.port +
+            config.urls.models.paths.root +
+            config.urls.models.paths.archive +
+            "?dataset_name=" + dsName +
+            "&model_name=" + modName;
 
         return url;
     },
@@ -176,7 +197,7 @@ module.exports = {
 
         return url;
     },
-    getExplanationsExplainUrl: function(config) {
+    getExplanationExplainUrl: function(config) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
             config.urls.explanations.port +

@@ -47,7 +47,7 @@ function executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg) {
     fn.httpImageJson(config, fn, request, parmDs, parmMod, null, parmImg, dsJson, null, null, function(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, imgJson) {
         const options = {
             method: 'POST',
-            uri: fn.getModelsPredictUrl(config),
+            uri: fn.getModelPredictUrl(config),
             body: {
                 "selected_dataset_json":
                     JSON.stringify(dsJson),
