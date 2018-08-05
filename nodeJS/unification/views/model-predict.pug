@@ -1,12 +1,15 @@
 extends layout
 include parameter-details.pug
-include dataset-details.pug
+include model-details.pug
 
 block content
+
     //- *******************************************************************************
     //- * (C) Copyright IBM Corporation 2018
     //- * All Rights Reserved
     //- *******************************************************************************
 
     +parameter-details(parameters)
-    +dataset-details(dataset)
+
+    h1 Result
+    | Prediction = #{prediction.prediction}

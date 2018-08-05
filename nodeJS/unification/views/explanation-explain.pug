@@ -1,4 +1,5 @@
 extends layout
+include parameter-details.pug
 
 block content
 
@@ -7,41 +8,27 @@ block content
     //- * All Rights Reserved
     //- *******************************************************************************
 
-    script(src="/js/P5.js")
+    +parameter-details(parameters)
 
-    div
-        h1 Parameters
-        table(border=1)
-            tbody
-                tr
-                    td Dataset
-                    td #{parameters.dataset}
-                tr
-                    td Model
-                    td #{parameters.model}
-                tr
-                    td Explanation
-                    td #{parameters.explanation}
-                tr
-                    td Image
-                    td #{parameters.image}
+    h2 Explanation
 
-        h1 Result
-        div(id='explanations')
-        #{explanation.explanation_text}
-            table(border=1, id='exp_table')
-                tbody
-                    tr
-                        td Time
-                        td Prediction
-                        td Explanation image
-                    tr
-                        td #{explanation.explanation_time}
-                        td #{explanation.prediction}
-                        td
-                            img(alt='Explanation image', src='data:img/jpg;base64,' + explanation.explanation_image)
-        br
-        -if ((chosen_model != null) && (chosen_explanation != null))
-            a(href='javascript:reExplain("/explanations-explain?type=json&dataset=' + parameters.dataset + '&model=' + parameters.model + '&explanation=' + parameters.explanation + '&image=' + parameters.image + '");') Re-explain this image using #{chosen_model} with #{chosen_explanation}
-        -else
-            | Choose a model and an explanation type to be able to re-explain this image
+    table(border=1)
+        tbody
+            -for (var prop in explanation)
+                    -if (prop == "additional_outputs")
+                        -for (var i in explanation[prop])
+                            -var thisAo = explanation[prop][i]
+                            tr
+                                td #{prop}:#{i}
+                                td
+                                    ul
+                                    -for (var j in thisAo)
+                                        li #{thisAo[j]}
+                    -else
+                        tr
+                            td #{prop}
+                                -if (prop == "explanation_image")
+                                    td
+                                        img(alt='Explanation image', src='data:img/jpg;base64,' + explanation[prop])
+                                -else
+                                    td #{explanation[prop]}

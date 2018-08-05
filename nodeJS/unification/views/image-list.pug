@@ -1,4 +1,5 @@
 extends layout
+include parameter-details.pug
 include image-details.pug
 
 block content
@@ -7,18 +8,9 @@ block content
     //- * All Rights Reserved
     //- *******************************************************************************
 
-    div
-        h1 Parameters
-        table(border=1)
-            tbody
-                -for (var i in parameters)
-                    -var thisParm = parameters[i]
-                    tr
-                        td #{i}
-                        td #{thisParm}
-        hr
+    +parameter-details(parameters)
 
-        -for (var i in images)
+    -for (var i in images)
             -var thisImg = images[i]
             -var ctr = parseInt(i) + 1
             +image-details(thisImg, ctr, images.length)
