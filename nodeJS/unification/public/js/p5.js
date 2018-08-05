@@ -240,9 +240,9 @@ function explain() {
 
                 cell2.innerHTML = formattedDateTime();
                 cell3.innerHTML = Date.now() - ts;
-                cell4.innerHTML = jsExp.explanation.prediction;
-                cell5.innerHTML = jsExp.explanation.explanation_text;
-                cell6.innerHTML = "<img alt='Explanation image' src='data:img/jpg;base64," + jsExp.explanation.explanation_image + "'>";
+                cell4.innerHTML = jsExp.prediction;
+                cell5.innerHTML = jsExp.explanation_text;
+                cell6.innerHTML = "<img alt='Explanation image' src='data:img/jpg;base64," + jsExp.explanation_image + "'>";
 
                 tgtMsg.style.display = "none";
                 tgtBut.style.display = "block";
@@ -275,10 +275,9 @@ function predict() {
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200) {
-                let jsExp = JSON.parse(xmlHttp.responseText);
-                console.log(jsExp);
+                let jsPred = JSON.parse(xmlHttp.responseText);
 
-                tgtMsg.innerHTML = jsExp.explanation.prediction;
+                tgtMsg.innerHTML = jsPred.prediction;
             } else {
                 alert("The predict request failed - see server logs for details");
                 tgtMsg.innerHTML = "Prediction failed";
