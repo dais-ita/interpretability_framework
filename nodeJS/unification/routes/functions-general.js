@@ -129,6 +129,25 @@ module.exports = {
 
         return url;
     },
+    getDatasetFixedImageListUrl: function(config, dsName) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.datasets.port +
+            config.urls.datasets.paths.root +
+            config.urls.datasets.paths.image_list +
+            "/" + dsName;
+
+        return url;
+    },
+    getDatasetImageListUrl: function(config) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.datasets.port +
+            config.urls.datasets.paths.root +
+            config.urls.datasets.paths.image_list;
+
+        return url;
+    },
     getDatasetArchiveUrl: function(config, dsFolderName) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +

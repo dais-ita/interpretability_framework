@@ -197,7 +197,7 @@ def ServeNTestImages():
 	raw_json = json.loads(request.data)
 
 	dataset_name = raw_json["dataset_name"]
-	num_images = raw_json["num_images"]
+	num_images = int(raw_json["num_images"])
 
 	enc_x, y, img_name = EncodeTestImages(dataset_name,num_images)
 	response_dict = {"input":enc_x,"ground_truth":y, "image_name":img_name}

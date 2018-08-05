@@ -20,6 +20,7 @@ config.urls = {
             "list": "/get_available",
             "test_image_random": "/test_image",
             "test_image_specific": "/test_image/specific",
+            "image_list": "/test_images",
             "archive": "/archive"
         }
     },
