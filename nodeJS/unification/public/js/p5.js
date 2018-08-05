@@ -4,8 +4,8 @@
 // *******************************************************************************
 
 function useSelectedDataset() {
-    let modUrl = "/models-for-dataset?type=json&dataset=" + getSelectedDatasetName();
-    let imgUrl = "/dataset-details?type=json&dataset=" + getSelectedDatasetName();
+    let modUrl = "/models-for-dataset?dataset=" + getSelectedDatasetName();
+    let imgUrl = "/dataset-details?dataset=" + getSelectedDatasetName();
 
     populateModels(modUrl);
     populateStaticImages(imgUrl);
@@ -16,7 +16,6 @@ function populateExplanations() {
     let xmlHttp = new XMLHttpRequest();
 
     url += "/explanations-for-filter?";
-    url += "type=json";
     url += "&dataset=" + getSelectedDatasetName();
     url += "&model=" + getSelectedModelName();
 
@@ -120,7 +119,7 @@ function useSelectedModel() {
 }
 
 function useRandomImage() {
-    let url = "/dataset-test-image?type=json&dataset=" + getSelectedDatasetName();
+    let url = "/dataset-test-image?dataset=" + getSelectedDatasetName();
 
     requestImage(url);
 }
@@ -130,7 +129,7 @@ function usePredefinedImage(imageName) {
         imageName = getPredefinedImageName();
     }
 
-    let url = "/dataset-test-image?type=json&dataset=" + getSelectedDatasetName() + "&image=" + imageName;
+    let url = "/dataset-test-image?dataset=" + getSelectedDatasetName() + "&image=" + imageName;
 
     requestImage(url);
 }
@@ -210,7 +209,6 @@ function explain() {
     let url = "";
 
     url += "/explanation-explain?";
-    url += "type=json";
     url += "&dataset=" + getSelectedDatasetName();
     url += "&model=" + getSelectedModelName();
     url += "&explanation=" + getSelectedExplanationName();
@@ -265,7 +263,6 @@ function predict() {
     let url = "";
 
     url += "/model-predict?";
-    url += "type=json";
     url += "&dataset=" + getSelectedDatasetName();
     url += "&model=" + getSelectedModelName();
     url += "&image=" + getSelectedImageName() ;

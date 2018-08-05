@@ -30,7 +30,7 @@ router.get('/', function (req, res) {
                 console.log("Error - no model matches '" + parmModel + "'");
             }
 
-            if (parmType != "json") {
+            if (parmType == "html") {
                 let jsPage = {
                     "title": config.unified_apis.model.details.url,
                     "model": matchedModel,

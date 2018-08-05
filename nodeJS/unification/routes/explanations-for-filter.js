@@ -27,7 +27,7 @@ router.get('/', function (req, res) {
             // Success
             let result = JSON.parse(response);
 
-            if (parmType != "json") {
+            if (parmType == "html") {
                 let jsPage = {
                     "title": config.unified_apis.explanation.for_filter.url,
                     "explanations": result,
