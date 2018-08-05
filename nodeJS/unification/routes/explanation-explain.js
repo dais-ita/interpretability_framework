@@ -108,20 +108,27 @@ function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod
 
         request(options)
             .then(function (response) {
-//                let result = {
-//                    "title": config.unified_apis.explanation.explain.url,
-//                    "explanation": response,
-//                    "parameters": {
-//                        "type": parmType,
-//                        "dataset": parmDs,
-//                        "model": parmMod,
-//                        "explanation": parmExp,
-//                        "image": parmImg
-//                    }
-//                };
-
                 response.explanation_time = new Date;
-                res.json(response);
+
+                if (parmType != "json") {
+                    let jsPage = {
+                        "title": config.unified_apis.explanation.explain.url,
+                        "explanation": response,
+                        "parameters": {
+                            "type": parmType,
+                            "dataset": parmDs,
+                            "model": parmMod,
+                            "explanation": parmExp,
+                            "image": parmImg,
+                            "(chosen_image_name)": imgJson.image_name,
+                            "(chosen_image)": imgJson.input
+                        }
+                    };
+
+                    res.render(config.unified_apis.explanation.explain.route, jsPage);
+                } else {
+                    res.json(response);
+                }
             })
             .catch(function (err) {
                 // Error

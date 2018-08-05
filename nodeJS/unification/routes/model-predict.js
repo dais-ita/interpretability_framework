@@ -59,7 +59,24 @@ function executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg) {
 
         request(options)
             .then(function (response) {
-                res.json(response);
+                if (parmType != "json") {
+                    let jsPage = {
+                        "title": config.unified_apis.model.predict.url,
+                        "prediction": response,
+                        "parameters": {
+                            "type": parmType,
+                            "dataset": parmDs,
+                            "model": parmMod,
+                            "image": parmImg,
+                            "(chosen_image_name)": imgJson.image_name,
+                            "(chosen_image)": imgJson.input
+                        }
+                    };
+
+                    res.render(config.unified_apis.model.predict.route, jsPage);
+                } else {
+                    res.json(response);
+                }
             })
             .catch(function (err) {
                 // Error
