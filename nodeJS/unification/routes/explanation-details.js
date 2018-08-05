@@ -30,7 +30,7 @@ router.get('/', function (req, res) {
                 console.log("Error - no explanation matches '" + parmExp + "'");
             }
 
-            if (parmType != "json") {
+            if (parmType == "html") {
                 let jsPage =  {
                     "title": config.unified_apis.explanation.details.url,
                     "explanation": matchedExp,

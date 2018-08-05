@@ -30,7 +30,7 @@ router.get('/', function (req, res) {
                 console.log("Error - no dataset matches '" + parmDs + "'");
             }
 
-            if (parmType != "json") {
+            if (parmType == "html") {
                 let jsPage = {
                     "title": config.unified_apis.dataset.details.url,
                     "dataset": matchedDs,

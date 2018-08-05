@@ -173,9 +173,9 @@ function clearAllOptions(e) {
 
 function populateTypes() {
     globals.types = [];
-    globals.types.push( ["", "(default - html)"] );
-    globals.types.push( ["html", "html"] );
+    globals.types.push( ["", "(default - json)"] );
     globals.types.push( ["json", "json"] );
+    globals.types.push( ["html", "html"] );
 }
 
 function populateImages() {

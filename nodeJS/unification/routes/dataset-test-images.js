@@ -41,7 +41,7 @@ router.get('/', function (req, res) {
                 // Success
                 let result = processMultipleImageJson(response);
 
-                if (parmType != "json") {
+                if (parmType == "html") {
                     let jsPage = {
                         "title": config.unified_apis.dataset.test_images.url,
                         "images": result,

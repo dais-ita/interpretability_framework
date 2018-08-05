@@ -110,7 +110,7 @@ function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod
             .then(function (response) {
                 response.explanation_time = new Date;
 
-                if (parmType != "json") {
+                if (parmType == "html") {
                     let jsPage = {
                         "title": config.unified_apis.explanation.explain.url,
                         "explanation": response,

@@ -59,7 +59,7 @@ function executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg) {
 
         request(options)
             .then(function (response) {
-                if (parmType != "json") {
+                if (parmType == "html") {
                     let jsPage = {
                         "title": config.unified_apis.model.predict.url,
                         "prediction": response,
