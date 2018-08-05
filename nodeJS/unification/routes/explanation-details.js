@@ -32,7 +32,7 @@ router.get('/', function (req, res) {
 
             if (parmType != "json") {
                 let jsPage =  {
-                    "title": "Explanation details",
+                    "title": config.unified_apis.explanation.details.url,
                     "explanation": matchedExp,
                     "parameters": {
                         "type": parmType,
@@ -40,7 +40,7 @@ router.get('/', function (req, res) {
                     }
                 };
 
-                res.render("explanation-individual", jsPage);
+                res.render(config.unified_apis.explanation.details.route, jsPage);
             } else {
                 res.json(matchedExp);
             }
