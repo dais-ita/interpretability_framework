@@ -31,11 +31,16 @@ router.get('/', function (req, res) {
             }
 
             if (parmType != "json") {
-                res.render("model-individual", {
+                let jsPage = {
                     "title": "Model details",
                     "model": matchedModel,
-                    "parameters": {}
-                });
+                    "parameters": {
+                        "type": parmType,
+                        "model": parmModName
+                    }
+                };
+
+                res.render("model-individual", jsPage);
             } else {
                 res.json(matchedModel);
             }

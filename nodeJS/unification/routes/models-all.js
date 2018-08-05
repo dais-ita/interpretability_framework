@@ -24,11 +24,15 @@ router.get('/', function (req, res) {
             let result = JSON.parse(response);
 
             if (parmType != "json") {
-                res.render("model-list", {
+                let jsPage = {
                     "title": "Models - all",
                     "models": result,
-                    "parameters": {}
-                });
+                    "parameters": {
+                        "type": parmType
+                    }
+                };
+
+                res.render("model-list", jsPage);
             } else {
                 res.json(result);
             }

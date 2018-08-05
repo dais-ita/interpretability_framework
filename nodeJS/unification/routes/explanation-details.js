@@ -31,14 +31,16 @@ router.get('/', function (req, res) {
             }
 
             if (parmType != "json") {
-                res.render("explanation-individual", {
+                let jsPage =  {
                     "title": "Explanation details",
                     "explanation": matchedExp,
                     "parameters": {
                         "type": parmType,
                         "explanation": parmExp
                     }
-                });
+                };
+
+                res.render("explanation-individual", jsPage);
             } else {
                 res.json(matchedExp);
             }

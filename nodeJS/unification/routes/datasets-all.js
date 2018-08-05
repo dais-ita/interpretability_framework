@@ -24,13 +24,15 @@ router.get('/', function (req, res) {
             let result = JSON.parse(response);
 
             if (parmType != "json") {
-                res.render("dataset-list", {
+                let jsPage = {
                     "title": "Datasets - all",
                     "datasets": result,
                     "parameters": {
                         "type": parmType
                     }
-                });
+                };
+
+                res.render("dataset-list", jsPage);
             } else {
                 res.json(result);
             }

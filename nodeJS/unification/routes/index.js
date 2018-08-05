@@ -20,11 +20,12 @@ router.get('/', function(req, res, next) {
         .then(function (response) {
             // Success
             let result = JSON.parse(response);
-
-            res.render("index", {
+            let jsPage = {
                 "title": "P5 demo",
                 "datasets": result
-            });
+            };
+
+            res.render("index", jsPage);
         })
         .catch(function (err) {
             // Error
