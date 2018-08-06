@@ -11,6 +11,16 @@ block content
         div(id='div_intro')
             h1(class="jumbotron-heading") Introduction
             button(id='show_button', class="btn btn-primary my-2", onclick="javascript:showAPIs();") &nbsp; Show APIs
+            p
+                | The purpose of the unification APIs are to provide a single, uniform, simple HTTP mechanism for interaction with the P5 demo system.
+            p
+                | All parameters have consistent names and expect the same kinds of values.
+            p
+                | These APIs are stateless and require only the identifiers of the datasets, models, explanations and images to be specified as parameters.  There is no need to specify JSON payloads.
+            p
+                | In the future, as additional backend functions and services are added we can easily extend the unification layer to wrap these using the same principles.  This will ensure that building the user interface on top of our system is as easy and consistent as possible, regardless of the complexity of the underlaying system.
+            p
+                | Tip: Hold Ctrl (or Cmd on Mac) when clicking links to open them in a new window.
 
         div(id='div_datasets', style={display: "none"})
             h1(class="jumbotron-heading") Datasets
