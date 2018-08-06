@@ -16,7 +16,22 @@ router.get('/', function (req, res) {
     let parmExp = req.query.explanation;
     let parmImg = req.query.image;
 
-    getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg);
+    if (parmDs != null) {
+        if (parmMod != null) {
+            if (parmExp != null) {
+                getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg);
+            } else {
+                let errMsg = "Error: No explanation specified";
+                return res.status(500).send(errMsg);
+            }
+        } else {
+            let errMsg = "Error: No model specified";
+            return res.status(500).send(errMsg);
+        }
+    } else {
+        let errMsg = "Error: No dataset specified";
+        return res.status(500).send(errMsg);
+    }
 });
 
 function getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg) {

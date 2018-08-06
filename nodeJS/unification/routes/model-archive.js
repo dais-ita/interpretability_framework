@@ -15,10 +15,21 @@ router.get('/', function (req, res) {
     parmDs = req.query.dataset;
     parmMod = req.query.model;
 
-    if (parmMod != "cnn_1") {
-        getModelArchive(req, res, parmDs, parmMod);
+    if (parmDs != null) {
+        if (parmMod != null) {
+            if (parmMod != "cnn_1") {
+                getModelArchive(req, res, parmDs, parmMod);
+            } else {
+                let errMsg = "The " + parmMod + " model is too large to be returned - please obtain manually";
+                return res.status(500).send(errMsg);
+            }
+        } else {
+            let errMsg = "Error: No model specified";
+            return res.status(500).send(errMsg);
+        }
     } else {
-        res.send("The " + parmMod + " model is too large to be returned - please obtain manually");
+        let errMsg = "Error: No dataset specified";
+        return res.status(500).send(errMsg);
     }
 });
 

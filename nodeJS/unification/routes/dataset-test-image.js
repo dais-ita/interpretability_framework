@@ -18,8 +18,8 @@ router.get('/', function (req, res) {
     parmImgName = req.query.image;
 
     if (parmDsName == null) {
-        console.log("No dataset specified");
-        return res.sendStatus(500);
+        let errMsg = "Error: No dataset specified";
+        return res.status(500).send(errMsg);
     } else {
         const options = {
             method: 'GET'
