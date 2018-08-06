@@ -17,37 +17,47 @@ router.get('/', function (req, res) {
     parmDsName = req.query.dataset;
     parmModName = req.query.model;
 
-    const options = {
-        method: 'GET',
-        uri: fn.getExplanationsForFilterUrl(config, parmDsName, parmModName)
-    };
+    if (parmDsName != null) {
+        if (parmModName != null) {
+            const options = {
+                method: 'GET',
+                uri: fn.getExplanationsForFilterUrl(config, parmDsName, parmModName)
+            };
 
-    request(options)
-        .then(function (response) {
-            // Success
-            let result = JSON.parse(response);
+            request(options)
+                .then(function (response) {
+                    // Success
+                    let result = JSON.parse(response);
 
-            if (parmType == "html") {
-                let jsPage = {
-                    "title": config.unified_apis.explanation.for_filter.url,
-                    "explanations": result,
-                    "parameters": {
-                        "type": parmType,
-                        "dataset": parmDsName,
-                        "model": parmModName
+                    if (parmType == "html") {
+                        let jsPage = {
+                            "title": config.unified_apis.explanation.for_filter.url,
+                            "explanations": result,
+                            "parameters": {
+                                "type": parmType,
+                                "dataset": parmDsName,
+                                "model": parmModName
+                            }
+                        };
+
+                        res.render(config.unified_apis.explanation.for_filter.route, jsPage);
+                    } else {
+                        res.json(result);
                     }
-                };
-
-                res.render(config.unified_apis.explanation.for_filter.route, jsPage);
-            } else {
-                res.json(result);
-            }
-        })
-        .catch(function (err) {
-            // Error
-            console.log(err);
-            return res.sendStatus(500);
-        })
+                })
+                .catch(function (err) {
+                    // Error
+                    console.log(err);
+                    return res.sendStatus(500);
+                })
+        } else {
+            let errMsg = "Error: No model specified";
+            return res.status(500).send(errMsg);
+        }
+    } else {
+        let errMsg = "Error: No dataset specified";
+        return res.status(500).send(errMsg);
+    }
 });
 
 module.exports = router;

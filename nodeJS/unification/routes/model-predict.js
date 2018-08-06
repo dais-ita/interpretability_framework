@@ -15,7 +15,17 @@ router.get('/', function (req, res) {
     let parmMod = req.query.model;
     let parmImg = req.query.image;
 
-    getAllDatasets(res, parmType, parmDs, parmMod, parmImg);
+    if (parmDs != null) {
+        if (parmMod != null) {
+            getAllDatasets(res, parmType, parmDs, parmMod, parmImg);
+        } else {
+            let errMsg = "Error: No model specified";
+            return res.status(500).send(errMsg);
+        }
+    } else {
+        let errMsg = "Error: No dataset specified";
+        return res.status(500).send(errMsg);
+    }
 });
 
 function getAllDatasets(res, parmType, parmDs, parmMod, parmImg) {
@@ -40,7 +50,12 @@ function getAllDatasets(res, parmType, parmDs, parmMod, parmImg) {
 function prepareAndExecutePredict(res, datasets, parmType, parmDs, parmMod, parmImg) {
     let dsJson = fn.matchedDataset(parmDs, datasets);
 
-    executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg);
+    if (dsJson != null) {
+        executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg);
+    } else {
+        let errMsg = "Error - no dataset matches '" + parmDs + "'";
+        return res.status(500).send(errMsg);
+    }
 }
 
 function executePredict(res, dsJson, parmType, parmDs, parmMod, parmImg) {

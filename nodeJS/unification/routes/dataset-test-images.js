@@ -17,51 +17,58 @@ router.get('/', function (req, res) {
     parmDsName = req.query.dataset;
     parmNumImages = req.query.num_images;
 
-    if (parmDsName == null) {
-        console.log("No dataset specified");
-        return res.sendStatus(500);
-    } else {
-        const options = {};
+    let numImages = parseInt(parmNumImages);
 
-        if (parmNumImages == null) {
-            options.method = "GET";
-            options.uri = fn.getDatasetFixedImageListUrl(config, parmDsName);
+    if (!isNaN(numImages)) {
+        if (parmDsName == null) {
+            let errMsg = "Error: No dataset specified";
+            return res.status(500).send(errMsg);
         } else {
-            options.method = "POST";
-            options.uri = fn.getDatasetImageListUrl(config);
-            options.body = {
-                "dataset_name": parmDsName,
-                "num_images": parmNumImages
-            },
-            options.json = true;
+            const options = {};
+
+            if (parmNumImages == null) {
+                options.method = "GET";
+                options.uri = fn.getDatasetFixedImageListUrl(config, parmDsName);
+            } else {
+                options.method = "POST";
+                options.uri = fn.getDatasetImageListUrl(config);
+                options.body = {
+                    "dataset_name": parmDsName,
+                    "num_images": numImages
+                },
+                    options.json = true;
+            }
+
+            request(options)
+                .then(function (response) {
+                    // Success
+                    let result = processMultipleImageJson(response);
+
+                    if (parmType == "html") {
+                        let jsPage = {
+                            "title": config.unified_apis.dataset.test_images.url,
+                            "images": result,
+                            "parameters": {
+                                "type": parmType,
+                                "dataset": parmDsName,
+                                "num_images": parmNumImages
+                            }
+                        };
+
+                        res.render(config.unified_apis.dataset.test_images.route, jsPage);
+                    } else {
+                        res.json(result);
+                    }
+                })
+                .catch(function (err) {
+                    // Error
+                    console.log(err);
+                    return res.sendStatus(500);
+                })
         }
-
-        request(options)
-            .then(function (response) {
-                // Success
-                let result = processMultipleImageJson(response);
-
-                if (parmType == "html") {
-                    let jsPage = {
-                        "title": config.unified_apis.dataset.test_images.url,
-                        "images": result,
-                        "parameters": {
-                            "type": parmType,
-                            "dataset": parmDsName,
-                            "num_images": parmNumImages
-                        }
-                    };
-
-                    res.render(config.unified_apis.dataset.test_images.route, jsPage);
-                } else {
-                    res.json(result);
-                }
-            })
-            .catch(function (err) {
-                // Error
-                console.log(err);
-                return res.sendStatus(500);
-            })
+    } else {
+        let errMsg = "Error: num_images parameter is '" + parmNumImages + "' but must be a valid positive integer";
+        return res.status(500).send(errMsg);
     }
 });
 

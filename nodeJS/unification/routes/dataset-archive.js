@@ -17,29 +17,34 @@ router.get('/', function (req, res) {
 });
 
 function getAllDatasets(req, res, parmDs) {
-    const options = {
-        method: 'GET',
-        uri: fn.getDatasetsAllUrl(config)
-    };
+    if (parmDs != null) {
+        const options = {
+            method: 'GET',
+            uri: fn.getDatasetsAllUrl(config)
+        };
 
-    request(options)
-        .then(function (response) {
-            // Success
-            let dsJson = JSON.parse(response).datasets;
-            let matchedDs = fn.matchedDataset(parmDs, dsJson);
+        request(options)
+            .then(function (response) {
+                // Success
+                let dsJson = JSON.parse(response).datasets;
+                let matchedDs = fn.matchedDataset(parmDs, dsJson);
 
-            if (matchedDs != null) {
-                let dsFolder = matchedDs.folder;
+                if (matchedDs != null) {
+                    let dsFolder = matchedDs.folder;
 
-                getDatasetArchive(req, res, dsFolder);
-            } else {
-                res.send("Dataset " + parmDs + " could not be located");
-            }
-        })
-        .catch(function (err) {
-            // Error
-            console.log(err);
-        })
+                    getDatasetArchive(req, res, dsFolder);
+                } else {
+                    res.send("Dataset " + parmDs + " could not be located");
+                }
+            })
+            .catch(function (err) {
+                // Error
+                console.log(err);
+            })
+    } else {
+        let errMsg = "Error: No dataset specified";
+        return res.status(500).send(errMsg);
+    }
 }
 
 function getDatasetArchive(req, res, dsFolder) {

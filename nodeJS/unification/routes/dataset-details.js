@@ -15,41 +15,47 @@ router.get('/', function (req, res) {
     parmType = req.query.type;
     parmDs = req.query.dataset;
 
-    const options = {
-        method: 'GET',
-        uri: fn.getDatasetsAllUrl(config)
-    };
+    if (parmDs != null) {
+        const options = {
+            method: 'GET',
+            uri: fn.getDatasetsAllUrl(config)
+        };
 
-    request(options)
-        .then(function (response) {
-            // Success
-            let result = JSON.parse(response);
-            let matchedDs = fn.matchedDataset(parmDs, result.datasets);
+        request(options)
+            .then(function (response) {
+                // Success
+                let result = JSON.parse(response);
+                let matchedDs = fn.matchedDataset(parmDs, result.datasets);
 
-            if (matchedDs == null) {
-                console.log("Error - no dataset matches '" + parmDs + "'");
-            }
+                if (matchedDs == null) {
+                    let errMsg = "Error - no dataset matches '" + parmDs + "'";
+                    return res.status(500).send(errMsg);
+                } else {
+                    if (parmType == "html") {
+                        let jsPage = {
+                            "title": config.unified_apis.dataset.details.url,
+                            "dataset": matchedDs,
+                            "parameters": {
+                                "type": parmType,
+                                "dataset": parmDs
+                            }
+                        };
 
-            if (parmType == "html") {
-                let jsPage = {
-                    "title": config.unified_apis.dataset.details.url,
-                    "dataset": matchedDs,
-                    "parameters": {
-                        "type": parmType,
-                        "dataset": parmDs
+                        res.render(config.unified_apis.dataset.details.route, jsPage);
+                    } else {
+                        res.json(matchedDs);
                     }
-                };
-
-                res.render(config.unified_apis.dataset.details.route, jsPage);
-            } else {
-                res.json(matchedDs);
-            }
-        })
-        .catch(function (err) {
-            // Error
-            console.log(err);
-            return res.sendStatus(500);
-        })
+                }
+            })
+            .catch(function (err) {
+                // Error
+                console.log(err);
+                return res.sendStatus(500);
+            })
+    } else {
+        let errMsg = "Error: No dataset specified";
+        return res.status(500).send(errMsg);
+    }
 });
 
 module.exports = router;
