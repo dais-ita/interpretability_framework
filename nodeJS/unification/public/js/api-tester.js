@@ -281,7 +281,7 @@ function listDatasets() {
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200) {
-                let dsJson = JSON.parse(xmlHttp.responseText).datasets;
+                let dsJson = JSON.parse(xmlHttp.responseText);
                 Array.prototype.push.apply(globals.datasets, dsJson);
                 renderLists();
                 recalculateUrls();
@@ -303,7 +303,7 @@ function listModels() {
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200) {
-                let modJson = JSON.parse(xmlHttp.responseText).models;
+                let modJson = JSON.parse(xmlHttp.responseText);
                 Array.prototype.push.apply(globals.models, modJson);
                 renderLists();
                 recalculateUrls();
@@ -324,7 +324,7 @@ function listExplanations() {
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200) {
-                let expJson = JSON.parse(xmlHttp.responseText).explanations;
+                let expJson = JSON.parse(xmlHttp.responseText);
                 Array.prototype.push.apply(globals.explanations, expJson);
                 renderLists();
                 recalculateUrls();
