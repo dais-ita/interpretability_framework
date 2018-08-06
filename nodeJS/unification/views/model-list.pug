@@ -12,6 +12,6 @@ block content
     +parameter-details(parameters)
 
     h1 Results
-        -for (var m in models.models)
-            -var thisModel = models.models[m]
+        -for (var m in models)
+            -var thisModel = models[m]
             +model-details(thisModel)
