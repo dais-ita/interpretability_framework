@@ -21,7 +21,7 @@ router.get('/', function (req, res) {
     request(options)
         .then(function (response) {
             // Success
-            let result = JSON.parse(response);
+            let result = JSON.parse(response).explanations;
 
             if (parmType == "html") {
                 let jsPage = {
