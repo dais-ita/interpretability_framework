@@ -3,6 +3,11 @@ let config = {};
 config.encoding = 'utf8';
 
 config.unified_apis = {
+    "base": {
+        "protocol": "http://",
+        "server": "0.0.0.0",
+        "port": "3100"
+    },
     "dataset": {
         "all": {
             "url": "datasets-all",

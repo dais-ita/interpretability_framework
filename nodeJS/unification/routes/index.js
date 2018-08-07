@@ -7,13 +7,13 @@ let express = require('express');
 let router = express.Router();
 let request = require('request-promise');
 let config = require('../config');
-let fn = require('./functions-general');
+let ufn = require('./functions-unified');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
     const options = {
         method: 'GET',
-        uri: fn.getDatasetsAllUrl(config)
+        uri: ufn.datasetsAllUrl(config)
     };
 
     request(options)
