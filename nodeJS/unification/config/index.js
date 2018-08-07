@@ -82,11 +82,6 @@ config.unified_apis = {
             "url": "explanation-explain",
             "route": "explanation-explain",
             "maps_to": "config.urls.explanations.explain"
-        },
-        "attribution_map": {
-            "url": "explanation-attribution-map",
-            "route": "explanation-attribution-map",
-            "maps_to": "config.urls.explanations.attribution_map"
         }
     }
 };

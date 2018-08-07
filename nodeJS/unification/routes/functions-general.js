@@ -158,6 +158,15 @@ module.exports = {
 
         return url;
     },
+    getExplanationAttributionMapUrl: function(config) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.explanations.port +
+            config.urls.explanations.paths.root +
+            config.urls.explanations.paths.attribution_map;
+
+        return url;
+    },
     matchedDataset: function(dsName, dsJson) {
         let matchedDs = null;
 

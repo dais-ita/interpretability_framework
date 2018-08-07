@@ -4,6 +4,8 @@
 // *******************************************************************************
 
 let globals = {
+    "types": [],
+    "attribution_maps": [],
     "datasets": [],
     "models": [],
     "explanations": [],
@@ -34,6 +36,7 @@ function showSections() {
 
 function populateLists() {
     populateTypes();
+    populateAttributionMaps();
     populateImages();
     listDatasets();
     listModels();
@@ -72,6 +75,7 @@ function uiConfig() {
     let uiExplanations = [ "exp_list", "explanation", "explanation_name", globals.explanations ];
     let uiImages = [ "img_list", "image", null, globals.images ];
     let uiImagesNoDefault = [ "img_list", "image", null, globals.images_no_default ];
+    let uiAttMaps = [ "map_list", "attribution_map", null, globals.attribution_maps ];
 
     globals.uiConfig.ds_all.uiLists.push(uiTypes);
 
@@ -118,6 +122,7 @@ function uiConfig() {
     globals.uiConfig.exp_exp.uiLists.push(uiModels);
     globals.uiConfig.exp_exp.uiLists.push(uiImagesNoDefault);
     globals.uiConfig.exp_exp.uiLists.push(uiExplanations);
+    globals.uiConfig.exp_exp.uiLists.push(uiAttMaps);
 
     globals.uiConfig.exp_atm.uiLists.push(uiTypes);
     globals.uiConfig.exp_atm.uiLists.push(uiDatasets);
@@ -176,6 +181,13 @@ function populateTypes() {
     globals.types.push( ["", "(default - json)"] );
     globals.types.push( ["json", "json"] );
     globals.types.push( ["html", "html"] );
+}
+
+function populateAttributionMaps() {
+    globals.attribution_maps = [];
+    globals.attribution_maps.push( ["", "(default - true)"] );
+    globals.attribution_maps.push( ["true", "true"] );
+    globals.attribution_maps.push( ["false", "false"] );
 }
 
 function populateImages() {

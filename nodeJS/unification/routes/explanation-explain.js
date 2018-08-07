@@ -15,11 +15,12 @@ router.get('/', function (req, res) {
     let parmMod = req.query.model;
     let parmExp = req.query.explanation;
     let parmImg = req.query.image;
+    let parmMap = req.query.attribution_map;
 
     if (parmDs != null) {
         if (parmMod != null) {
             if (parmExp != null) {
-                getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg);
+                getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg, parmMap);
             } else {
                 let errMsg = "Error: No explanation specified";
                 return res.status(500).send(errMsg);
@@ -34,7 +35,7 @@ router.get('/', function (req, res) {
     }
 });
 
-function getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg) {
+function getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg, parmMap) {
     const options = {
         method: 'GET',
         uri: fn.getDatasetsAllUrl(config)
@@ -45,7 +46,7 @@ function getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg) {
             // Success
             let datasets = JSON.parse(response);
 
-            getAllModels(res, datasets, parmType, parmDs, parmMod, parmExp, parmImg);
+            getAllModels(res, datasets, parmType, parmDs, parmMod, parmExp, parmImg, parmMap);
         })
         .catch(function (err) {
             // Error
@@ -53,7 +54,7 @@ function getAllDatasets(res, parmType, parmDs, parmMod, parmExp, parmImg) {
         })
 }
 
-function getAllModels(res, datasets, parmType, parmDs, parmMod, parmExp, parmImg) {
+function getAllModels(res, datasets, parmType, parmDs, parmMod, parmExp, parmImg, parmMap) {
     const options = {
         method: 'GET',
         uri: fn.getModelsAllUrl(config)
@@ -64,7 +65,7 @@ function getAllModels(res, datasets, parmType, parmDs, parmMod, parmExp, parmImg
             // Success
             let models = JSON.parse(response);
 
-            getAllExplanations(res, datasets, models, parmType, parmDs, parmMod, parmExp, parmImg);
+            getAllExplanations(res, datasets, models, parmType, parmDs, parmMod, parmExp, parmImg, parmMap);
         })
         .catch(function (err) {
             // Error
@@ -72,7 +73,7 @@ function getAllModels(res, datasets, parmType, parmDs, parmMod, parmExp, parmImg
         })
 }
 
-function getAllExplanations(res, datasets, models, parmType, parmDs, parmMod, parmExp, parmImg) {
+function getAllExplanations(res, datasets, models, parmType, parmDs, parmMod, parmExp, parmImg, parmMap) {
     const options = {
         method: 'GET',
         uri: fn.getExplanationsAllUrl(config)
@@ -88,7 +89,7 @@ function getAllExplanations(res, datasets, models, parmType, parmDs, parmMod, pa
             result.models = models.models;
             result.explanations = explanations.explanations;
 
-            prepareAndExecuteExplain(res, result, parmType, parmDs, parmMod, parmExp, parmImg)
+            prepareAndExecuteExplain(res, result, parmType, parmDs, parmMod, parmExp, parmImg, parmMap)
         })
         .catch(function (err) {
             // Error
@@ -96,15 +97,15 @@ function getAllExplanations(res, datasets, models, parmType, parmDs, parmMod, pa
         })
 }
 
-function prepareAndExecuteExplain(res, allJson, parmType, parmDs, parmMod, parmExp, parmImg) {
+function prepareAndExecuteExplain(res, allJson, parmType, parmDs, parmMod, parmExp, parmImg, parmMap) {
     let dsJson = fn.matchedDataset(parmDs, allJson.datasets);
     let modJson = fn.matchedModel(parmMod, allJson.models);
     let expJson = fn.matchedExplanation(parmExp, allJson.explanations);
 
-    executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod, parmExp, parmImg);
+    executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod, parmExp, parmImg, parmMap);
 }
 
-function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod, parmExp, parmImg) {
+function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod, parmExp, parmImg, parmMap) {
     fn.httpImageJson(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, function(config, fn, request, parmDs, parmMod, parmExp, parmImg, dsJson, modJson, expJson, imgJson) {
         const options = {
             method: 'POST',
@@ -125,24 +126,10 @@ function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod
             .then(function (response) {
                 response.explanation_time = new Date;
 
-                if (parmType == "html") {
-                    let jsPage = {
-                        "title": config.unified_apis.explanation.explain.url,
-                        "explanation": response,
-                        "parameters": {
-                            "type": parmType,
-                            "dataset": parmDs,
-                            "model": parmMod,
-                            "explanation": parmExp,
-                            "image": parmImg,
-                            "(chosen_image_name)": imgJson.image_name,
-                            "(chosen_image)": imgJson.input
-                        }
-                    };
-
-                    res.render(config.unified_apis.explanation.explain.route, jsPage);
+                if (parmMap != "false") {
+                    executeAttributionMap(res, response, imgJson, parmType, parmDs, parmMod, parmExp, parmImg, parmMap);
                 } else {
-                    res.json(response);
+                    returnExplanation(res, response, imgJson, null, parmType, parmDs, parmMod, parmExp, parmImg, parmMap);
                 }
             })
             .catch(function (err) {
@@ -151,6 +138,59 @@ function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod
                 return res.sendStatus(500);
             })
     })
+}
+
+function executeAttributionMap(res, expJson, imgJson, parmType, parmDs, parmMod, parmExp, parmImg, parmMap) {
+    const options = {
+        method: 'POST',
+        uri: fn.getExplanationAttributionMapUrl(config),
+        body: {
+            "attribution_slices":
+                JSON.stringify(expJson.additional_outputs.attribution_slices),
+            "attribution_slice_weights":
+                JSON.stringify(expJson.additional_outputs.attribution_slice_weights)
+        },
+        json: true
+    };
+
+    request(options)
+        .then(function (response) {
+            expJson.attribution_time = new Date;
+
+            returnExplanation(res, expJson, imgJson, response, parmType, parmDs, parmMod, parmExp, parmImg, parmMap);
+        })
+        .catch(function (err) {
+            // Error
+            console.log(err);
+            return res.sendStatus(500);
+        })
+}
+
+function returnExplanation(res, expJson, imgJson, attJson, parmType, parmDs, parmMod, parmExp, parmImg, parmMap) {
+    if (attJson != null) {
+        expJson.attribution_map = attJson.attribution_map;
+    }
+
+    if (parmType == "html") {
+        let jsPage = {
+            "title": config.unified_apis.explanation.explain.url,
+            "explanation": expJson,
+            "parameters": {
+                "type": parmType,
+                "dataset": parmDs,
+                "model": parmMod,
+                "explanation": parmExp,
+                "image": parmImg,
+                "(chosen_image_name)": imgJson.image_name,
+                "(chosen_image)": imgJson.input,
+                "attribution_map": parmMap
+            }
+        };
+
+        res.render(config.unified_apis.explanation.explain.route, jsPage);
+    } else {
+        res.json(expJson);
+    }
 }
 
 module.exports = router;
