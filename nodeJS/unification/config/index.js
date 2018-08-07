@@ -1,11 +1,5 @@
 let config = {};
 
-config.datasets = {
-    "hostname": "0.0.0.0",
-    "port": "6001",
-    "path": "/datasets/get_available",
-};
-
 config.encoding = 'utf8';
 
 config.unified_apis = {
