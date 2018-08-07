@@ -61,12 +61,10 @@ function uiConfig() {
     globals.uiConfig.exp_details = { "rootUi": "exp_details", "rootUrl": "explanation-details", "uiLists": [] };
     globals.uiConfig.exp_filt = { "rootUi": "exp_filt", "rootUrl": "explanations-for-filter", "uiLists": [] };
     globals.uiConfig.exp_exp = { "rootUi": "exp_exp", "rootUrl": "explanation-explain", "uiLists": [] };
-    globals.uiConfig.exp_atm = { "rootUi": "exp_atm", "rootUrl": "explanation-attribution-map", "uiLists": [] };
 
     globals.mappings.push( [ "ds_img", "ds_list", "img_list", "interesting_images", globals.images ] );
     globals.mappings.push( [ "mod_pred", "ds_list", "img_list", "interesting_images", globals.images_no_default ] );
     globals.mappings.push( [ "exp_exp", "ds_list", "img_list", "interesting_images", globals.images_no_default ] );
-    globals.mappings.push( [ "exp_atm", "ds_list", "img_list", "interesting_images", globals.images_no_default ] );
 
     let uiTypes = [ "type_list", "type", null, globals.types ];
     let uiNumImages = [ "num_images", "num_images", null, globals.number_of_images ];
@@ -123,12 +121,6 @@ function uiConfig() {
     globals.uiConfig.exp_exp.uiLists.push(uiImagesNoDefault);
     globals.uiConfig.exp_exp.uiLists.push(uiExplanations);
     globals.uiConfig.exp_exp.uiLists.push(uiAttMaps);
-
-    globals.uiConfig.exp_atm.uiLists.push(uiTypes);
-    globals.uiConfig.exp_atm.uiLists.push(uiDatasets);
-    globals.uiConfig.exp_atm.uiLists.push(uiModels);
-    globals.uiConfig.exp_atm.uiLists.push(uiImagesNoDefault);
-    globals.uiConfig.exp_atm.uiLists.push(uiExplanations);
 }
 
 function renderLists() {
