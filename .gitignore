@@ -1,3 +1,10 @@
+nodeJS/unification/node_modules/
+models/cnn_1/saved_models/
+models/keras_cnn/saved_models/
+models/keras_vgg/saved_models/
+datasets/dataset_images/
+.DS_Store
+.idea/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

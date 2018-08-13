@@ -5,14 +5,14 @@
 
 let express = require('express');
 let router = express.Router();
+let request = require('request-promise');
+let config = require('../config');
+let fn = require('./functions-general');
 
-/* GET home page. */
+/* GET api-tester page. */
 router.get('/', function(req, res, next) {
-    res.render("OLD_index", {
-        "title": 'P5 demo'
-//        "chosen_dataset": req.session.chosen_dataset,
-//        "chosen_model": req.session.chosen_model,
-//        "chosen_explanation": req.session.chosen_explanation
+    res.render("api-tester", {
+        "title": "P5 demo - API Tester"
     });
 });
 

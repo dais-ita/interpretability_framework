@@ -10,6 +10,7 @@ html
     title=title
     link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css', integrity='sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B', crossorigin='anonymous')
     script(src="/js/p5.js")
+    script(src="/js/api-tester.js")
   body()
     div(class="text-white bg-dark")
       div(class="container-fluid")
@@ -17,5 +18,9 @@ html
           div(class="col-sm")
             a(href='/', class='text-white') Home
           div(class="col-sm")
-            a(href='/README.md', class='text-white') README.md
+            a(href='/readme', class='text-white') Help
+          div(class="col-sm")
+            a(href='/api-tester', class='text-white') Unified API tester
+          div(class="col-sm")
+            a(href='/combos', class='text-white') Show combos
     block content

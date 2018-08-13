@@ -1,4 +1,5 @@
 extends layout
+include parameter-details.pug
 include model-details.pug
 
 block content
@@ -8,18 +9,8 @@ block content
     //- * All Rights Reserved
     //- *******************************************************************************
 
-    div
-        h1 Parameters
-        table(border=1)
-            tbody
-                tr
-                    td Dataset
-                    td #{parameters.dataset}
-                tr
-                    td Image
-                    td #{parameters.image}
+    +parameter-details(parameters)
 
-        h1 Results
-        -for (var m in models.models)
-            -var thisModel = models.models[m]
-            +model-details(thisModel)
+    -for (var m in models)
+        -var thisModel = models[m]
+        +model-details(thisModel)
