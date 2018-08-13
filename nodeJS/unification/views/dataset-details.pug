@@ -21,10 +21,3 @@ mixin dataset-details(ds)
                                     li #{thisLabel.label} (#{thisLabel.images} images)
                         -else
                             td #{ds[prop]}
-            tr
-                td Actions
-                td
-                    ul
-                        li: a(href ='/dataset-use?dataset=' + ds.dataset_name) use this dataset
-                        -if (ds.dataset_name == chosen_dataset)
-                            li: a(href ='/dataset-use?dataset=none') clear this dataset

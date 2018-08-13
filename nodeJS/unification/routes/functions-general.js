@@ -3,73 +3,6 @@
 // * All Rights Reserved
 // *******************************************************************************
 
-function httpGet(hostname, port, path, encoding, passedRes) {
-    let http = require('http');
-    let result = "";
-
-    const options = {
-        hostname: hostname,
-        port: port,
-        path: path,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'text/plain; charset=utf-8'
-        }
-    };
-
-    const req = http.request(options, (res) => {
-        res.setEncoding(encoding);
-        res.on('data', (chunk) => {
-            result += chunk;
-        });
-        res.on('end', () => {
-            passedRes.json(JSON.parse(result));
-        });
-    });
-
-    req.on('error', (e) => {
-        passedRes.json(JSON.parse(e));
-    });
-
-    req.end();
-}
-
-function httpPost(hostname, port, path, encoding, payload, passedRes) {
-    let querystring = require('querystring');
-    let http = require('http');
-    let encPayload = querystring.escape(payload);
-    let result = "";
-
-    const options = {
-        hostname: hostname,
-        port: port,
-        path: path,
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain; charset=utf-8',
-            'Content-Length': Buffer.byteLength(encPayload)
-        }
-    };
-
-    const req = http.request(options, (res) => {
-        res.setEncoding(encoding);
-        res.on('data', (chunk) => {
-            result += chunk;
-        });
-        res.on('end', () => {
-            passedRes.json(JSON.parse(result));
-        });
-    });
-
-    req.on('error', (e) => {
-        passedRes.json(JSON.parse(e));
-    });
-
-    req.write(encPayload);
-    req.end();
-
-}
-
 module.exports = {
     httpImageJson: function(config, fn, request, parmDsName, parmModName, parmExpName, parmImgName, dsJson, modJson, expJson, tgtFn) {
         if (parmDsName == null) {
@@ -81,17 +14,16 @@ module.exports = {
             };
 
             if (parmImgName == null) {
-                options.uri = fn.getDatasetsRandomTestImageUrl(config, parmDsName);
+                options.uri = fn.getDatasetRandomTestImageUrl(config, parmDsName);
             } else {
-                options.uri = fn.getDatasetsSpecificTestImageUrl(config, parmDsName, parmImgName);
+                options.uri = fn.getDatasetSpecificTestImageUrl(config, parmDsName, parmImgName);
             }
 
             request(options)
                 .then(function (response) {
                     // Success
                     let result = JSON.parse(response);
-
-                    tgtFn(config, fn, request, parmDsName, parmModName, parmExpName, dsJson, modJson, expJson, result);
+                    tgtFn(config, fn, request, parmDsName, parmModName, parmExpName, parmImgName, dsJson, modJson, expJson, result);
                 })
                 .catch(function (err) {
                     // Error
@@ -109,7 +41,7 @@ module.exports = {
 
         return url;
     },
-    getDatasetsRandomTestImageUrl: function(config, dsName) {
+    getDatasetRandomTestImageUrl: function(config, dsName) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
             config.urls.datasets.port +
@@ -119,7 +51,7 @@ module.exports = {
 
         return url;
     },
-    getDatasetsSpecificTestImageUrl: function(config, dsName, imgName) {
+    getDatasetSpecificTestImageUrl: function(config, dsName, imgName) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
             config.urls.datasets.port +
@@ -127,6 +59,35 @@ module.exports = {
             config.urls.datasets.paths.test_image_specific +
             "?dataset=" + dsName +
             "&image_name=" + imgName;
+
+        return url;
+    },
+    getDatasetFixedImageListUrl: function(config, dsName) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.datasets.port +
+            config.urls.datasets.paths.root +
+            config.urls.datasets.paths.image_list +
+            "/" + dsName;
+
+        return url;
+    },
+    getDatasetImageListUrl: function(config) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.datasets.port +
+            config.urls.datasets.paths.root +
+            config.urls.datasets.paths.image_list;
+
+        return url;
+    },
+    getDatasetArchiveUrl: function(config, dsFolderName) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.datasets.port +
+            config.urls.datasets.paths.root +
+            config.urls.datasets.paths.archive +
+            "?dataset_folder_name=" + dsFolderName;
 
         return url;
     },
@@ -149,12 +110,23 @@ module.exports = {
 
         return url;
     },
-    getModelsPredictUrl: function(config) {
+    getModelPredictUrl: function(config) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
             config.urls.models.port +
             config.urls.models.paths.root +
             config.urls.models.paths.predict;
+
+        return url;
+    },
+    getModelArchiveUrl: function(config, dsName, modName) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.models.port +
+            config.urls.models.paths.root +
+            config.urls.models.paths.archive +
+            "?dataset_name=" + dsName +
+            "&model_name=" + modName;
 
         return url;
     },
@@ -167,12 +139,31 @@ module.exports = {
 
         return url;
     },
-    getExplanationsExplainUrl: function(config) {
+    getExplanationsForFilterUrl: function(config, dsName, modName) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.explanations.port +
+            config.urls.explanations.paths.root +
+            config.urls.explanations.paths.for_filters +
+            "/" + dsName + "," + modName;
+
+        return url;
+    },
+    getExplanationExplainUrl: function(config) {
         let url = config.urls.base.protocol +
             config.urls.base.server + ":" +
             config.urls.explanations.port +
             config.urls.explanations.paths.root +
             config.urls.explanations.paths.explain;
+
+        return url;
+    },
+    getExplanationAttributionMapUrl: function(config) {
+        let url = config.urls.base.protocol +
+            config.urls.base.server + ":" +
+            config.urls.explanations.port +
+            config.urls.explanations.paths.root +
+            config.urls.explanations.paths.attribution_map;
 
         return url;
     },

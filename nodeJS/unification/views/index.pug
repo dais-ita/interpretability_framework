@@ -15,8 +15,8 @@ block content
                 | Selected Dataset: &nbsp;
                 -if(datasets != null)
                     select(id="ds_list")
-                        -for(var i = 0;i<datasets.datasets.length;i++){
-                            -var dsName = datasets.datasets[i].dataset_name
+                        -for(var i = 0;i < datasets.length;i++){
+                            -var dsName = datasets[i].dataset_name
                             option(value=dsName) #{dsName}
                         -}
                     | &nbsp; &nbsp;
@@ -41,17 +41,15 @@ block content
             | &nbsp; &nbsp; or
             br
             | 2.&nbsp; &nbsp;
-            input(id="img_input_name", type="text", value="00048_gun_wielder.jpg")
+            input(id="img_input_name", type="text")
             | &nbsp; &nbsp;
             button(id='img_named_button', class="btn btn-primary my-2", onclick="javascript:useNamedImage();") &nbsp; Use this named image
             | &nbsp; &nbsp; or
             br
             | 3. Choose a predefined image: &nbsp;
-            a(href="javascript:usePredefinedImage('01061_non-wielder.jpg')") 01061_non-wielder.jpg
-            |,&nbsp;
-            a(href="javascript:usePredefinedImage('00073_gun_wielder.jpg')") 00073_gun_wielder.jpg
-            | ,&nbsp;
-            a(href="javascript:usePredefinedImage('00454_gun_wielder.jpg')") 00454_gun_wielder.jpg
+            select(id="img_list")
+            | &nbsp; &nbsp;
+            button(id='img_button', class="btn btn-primary my-2", onclick="javascript:usePredefinedImage();") &nbsp; Use selected image
             br
             br
 
@@ -67,6 +65,11 @@ block content
                         tr
                             td Ground truth
                             td(id='img_groundtruth')
+                        tr
+                            td Actions
+                            td(id='img_predict')
+                                button(id='pred_button', class="btn btn-primary my-2", onclick="javascript:predict();") Predict
+                                div(id='pred_result')
 
         div(id='div_exps', style={display: 'none'})
             h1(class="jumbotron-heading") Explanations
@@ -84,7 +87,7 @@ block content
             table(border=1, id='exp_table')
                 tbody
                     tr
-                        td Type
+                        td Context
                         td Time
                         td Duration (ms)
                         td Prediction

@@ -18,35 +18,27 @@ mixin explanation-details(exp)
                                 ul
                                 -for (var i in exp[prop])
                                     -var thisItem = exp[prop][i]
-                                    li #{thisItem.dataset_name} [
-                                        a(href ='/dataset-details?dataset=' + thisItem.dataset_name) details
-                                        | ] [
-                                        a(href ='/dataset-use?dataset=' + thisItem.dataset_name) use dataset
-                                        | ]
+                                    li #{thisItem.dataset_name}
                         -else
                             -if (prop == "compatible_models")
                                 td
                                     ul
                                     -for (var i in exp[prop])
                                         -var thisItem = exp[prop][i]
-                                        li #{thisItem.model_name} [
-                                            a(href ='/model-details?model=' + thisItem.model_name) details
-                                            | ] [
-                                            a(href ='/model-use?model=' + thisItem.model_name) use model
-                                            | ]
+                                        li #{thisItem.model_name}
                             -else
                                 -if (prop == "additional_arguments")
                                     td
                                         ul
                                             -for (var i in exp[prop])
                                                 -var thisItem = exp[prop][i]
-                                                li #{thisItem.name} - #{thisItem.description}
+                                                li #{thisItem.name} - '#{thisItem.description}'
                                 -else
-                                    td #{exp[prop]}
-            tr
-                td Actions
-                td
-                    ul
-                        li: a(href ='/explanation-use?explanation=' + exp.explanation_name) use this explanation
-                        -if (exp.explanation_name == chosen_explanation)
-                            li: a(href ='/explanation-use?explanation=none') clear this explanation
+                                    -if (prop == "additional_outputs")
+                                        td
+                                            ul
+                                                -for (var i in exp[prop])
+                                                    -var thisItem = exp[prop][i]
+                                                    li #{thisItem.name} - '#{thisItem.description}'
+                                    -else
+                                        td #{exp[prop]}

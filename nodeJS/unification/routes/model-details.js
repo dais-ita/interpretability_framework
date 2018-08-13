@@ -15,39 +15,47 @@ router.get('/', function (req, res) {
     parmType = req.query.type;
     parmModel = req.query.model;
 
-    const options = {
-        method: 'GET',
-        uri: fn.getModelsAllUrl(config)
-    };
+    if (parmModel != null) {
+        const options = {
+            method: 'GET',
+            uri: fn.getModelsAllUrl(config)
+        };
 
-    request(options)
-        .then(function (response) {
-            // Success
-            let result = JSON.parse(response);
-            let matchedModel = fn.matchedModel(parmModel, result);
+        request(options)
+            .then(function (response) {
+                // Success
+                let result = JSON.parse(response).models;
+                let matchedModel = fn.matchedModel(parmModel, result);
 
-            if (matchedModel == null) {
-                console.log("Error - no model matches '" + parmModel + "'");
-            }
+                if (matchedModel == null) {
+                    let errMsg = "Error - no model matches '" + parmModel + "'";
+                    return res.status(500).send(errMsg);
+                } else {
+                    if (parmType == "html") {
+                        let jsPage = {
+                            "title": config.unified_apis.model.details.url,
+                            "model": matchedModel,
+                            "parameters": {
+                                "type": parmType,
+                                "model": parmModel
+                            }
+                        };
 
-            if (parmType != "json") {
-                res.render("model-individual", {
-                    "title": "Model details",
-                    "model": matchedModel,
-                    "parameters": {}
-//                    "chosen_dataset": req.session.chosen_dataset,
-//                    "chosen_model": req.session.chosen_model,
-//                    "chosen_explanation": req.session.chosen_explanation
-                });
-            } else {
-                res.json(matchedModel);
-            }
-        })
-        .catch(function (err) {
-            // Error
-            console.log(err);
-            return res.sendStatus(500);
-        })
+                        res.render(config.unified_apis.model.details.route, jsPage);
+                    } else {
+                        res.json(matchedModel);
+                    }
+                }
+            })
+            .catch(function (err) {
+                // Error
+                console.log(err);
+                return res.sendStatus(500);
+            })
+    } else {
+        let errMsg = "Error: No model specified";
+        return res.status(500).send(errMsg);
+    }
 });
 
 module.exports = router;
