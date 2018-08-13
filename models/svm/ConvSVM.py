@@ -50,41 +50,21 @@ class ConvSVM(object):
         if "alpha" in addit_args:
             self.alpha = addit_args["alpha"]
 
-#        the feature descriptor object uses a vgg16 net to transform images 
+#        initialise model placeholders and variables
+        self.input_ = tf.placeholder(
+                tf.float32,
+                shape = [None] + model_input_dim
+        )
+        
+        
+#        the feature descriptor object uses a conv net to transform images 
 #        into feature space
         self.feature_desc = FeatureDescriptor(model_input_dim, batch_size = 100)
+#        get a graph op representing the feature description
+        self.feature_vec = self.feature_desc.get_descriptor_op(self.input_)
         
-#        The placeholders for feature vector and label respectively
-#        these are initialised using self.InitialiseModel, which is called later
-        self.input_ = None
-        self.labels_ = None
-
-#        whether the model variables and placeholders have been defined yet
-        self.initialised = False
-
-#        the tensorflow saver object used for model checkpointing
-        self.saver = None
-
-
-    def InitialiseModel(self, n_features):
-        """
-        This method initialises the ConvSVM models placeholders and variables.
-        This is not done in __init__ because the dimensionality of the feature
-        vector must be specified, this is not determined until the vgg16 model
-        is ran on an input image.
-        n_features depends on the convolutional and pooling layers used to 
-        transform the input image
-        """
+        n_features = self.feature_vec.get_shape().as_list()[1]
         
-#        TODO: n_fetaures could be determined intuitively from the input 
-#        dimensions so long as the architecture of the ConvFeatureDescriptors 
-#        Network was exposed
-#        Might be better?
-        self.input_ = tf.placeholder(
-            name="in_",
-            shape=[None, n_features],
-            dtype=tf.float32
-        )
         self.labels_ = tf.placeholder(
             name="lbl_",
             shape=[None, 1],
@@ -104,24 +84,10 @@ class ConvSVM(object):
             name="b"
         )
 
-    def InitialiseModelWithImage(self, image):
-        """
-        This method uses the FeatureDescriptor on a provided image to find the
-        number of features that the descriptor would create from that image"
-        """
-#        If the input is not in the format (Idx, X, Y, N_channels) format it to
-#        be such
-        if len(image.shape) < 4:
-            image = image.reshape(1, 224, 224, 3)
-        feature_vec = self.process_features(image)
-        self.InitialiseModel(feature_vec.shape[1])
-        self.saver = tf.train.Saver()  
-#        the variables need to be given initial values if they have not 
-#        been already
         self.sess.run(tf.global_variables_initializer())
-#        this prevents initialising multiple times when using transfer learning
-#        or predicting with/evaluating the model
-        self.initialised = True
+
+#        the tensorflow saver object used for model checkpointing
+        self.saver = tf.train.Saver()
         
 
     def Output(self):
@@ -133,7 +99,7 @@ class ConvSVM(object):
         """
         mdl_out = tf.subtract(
             tf.matmul(
-                self.input_,
+                self.feature_vec,
                 self.W
             ),
             self.b
@@ -184,7 +150,6 @@ class ConvSVM(object):
         Returns a value for the models loss at a point y
         """
         sample_loss = self.Loss()
-        x = self.feature_desc.get_feature_vectors(x)
         feed_dict = {
                 self.input_ : x,
                 self.labels_: y
@@ -219,7 +184,7 @@ class ConvSVM(object):
         is used as an approximation
         As t tends to 0, SmoothHinge tends to Hinge
         """
-        return tf.gradients(self.GetSmoothHinge(t), self.GetWeights())
+        return tf.gradients(self.GetSmoothHinge(t), self.W)
     
     def _get_batches(self, x, y, batch_size):
         """
@@ -233,22 +198,7 @@ class ConvSVM(object):
     def TrainModel(self, train_x, train_y, batch_size, n_steps):
         """
         Uses GD to optimise the models loss on evaluation data
-        """
-#        Transform the train images into feature space for processing by the SVM
-        train_x = self.feature_desc.get_feature_vectors(train_x)
-#        at this point we know the dimensionality of the feature space, and 
-#        therefore we can define the SVM
-        if not self.initialised:
-            self.InitialiseModel(train_x.shape[1])
-#            initialise the tf saver object for checkpointing
-            self.saver = tf.train.Saver()
-#            this prevents initialising multiple times when using transfer learning
-#            or predicting with/evaluating the model
-            self.initialised = True
-#            the variables need to be given initial values if they have not 
-#            been already
-            self.sess.run(tf.global_variables_initializer())
-        
+        """        
         for i in range(n_steps):
 #            get a randomly sampled batch of training data
             x, y = self._get_batches(train_x, train_y, batch_size)
@@ -271,7 +221,6 @@ class ConvSVM(object):
         Accuracy is defined as:
             Σ(Wx+b && y_actual)/n_samples
         """
-        val_x = self.feature_desc.get_feature_vectors(val_x)
 
 #        Define the graph operation for accuracy
         acc = tf.reduce_mean(
@@ -312,17 +261,7 @@ class ConvSVM(object):
 #        If the input is not in the format (Idx, X, Y, N_channels) format it to
 #        be such
         if len(predict_x.shape) < 4:
-
             predict_x = predict_x.reshape(1, 224, 224, 3)
-        n_samples = predict_x.shape[0]
-        
-#        Convert into feature space
-        predict_x = self.feature_desc.get_feature_vectors(predict_x)
-
-        if not self.initialised:
-            self.InitialiseModel(predict_x.shape[1])
-            self.saver = tf.train.Saver()
-            self.initialised = True
 
 #        Define the graph operation that predicts the class of each point
         predictions = self.GetPredictions()
@@ -366,8 +305,7 @@ class ConvSVM(object):
 #        Influence functions only needs SVM weights as Feature Descriptor are 
 #        pre-determined and do not affect the loss of one point differently to
 #        another
-        if not self.initialised:
-            self.LoadModel(self.sess)
+        self.LoadModel(self.sess)
         return [self.W, self.b], 2
     
     def GetPlaceholders(self):
@@ -376,12 +314,7 @@ class ConvSVM(object):
         notably for calculating the gradient of the loss
         """
         return self.input_, self.labels_
-    
-    def _process_features(self,x):
-        """
-        Runs the input, in image format, through the models feature 
-        """
-        return x
+
 
 
 """
@@ -398,7 +331,7 @@ if __name__ == '__main__':
         'learning_rate': 0.01,
         'alpha': 0.0001
     }
-    batch_size = 70
+    batch_size = 10
 
     svm_model = ConvSVM(
         [dim_height,
