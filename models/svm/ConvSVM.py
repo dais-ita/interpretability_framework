@@ -17,7 +17,7 @@ for folder in folders:
 import numpy as np
 import tensorflow as tf
 import random
-from ConvFeatureDescriptor import ConvFeatureDescriptor
+from FeatureDescriptor import FeatureDescriptor
 
 class ConvSVM(object):
     """
@@ -29,13 +29,8 @@ class ConvSVM(object):
     The model currently uses a VGG16 architecture for feature description
     """
     
-    def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, model_dir, addit_args, n_classes=2):
+    def __init__(self, model_input_dim, model_dir, addit_args, n_classes=2):
         super(ConvSVM, self).__init__()
-        self.model_input_dim_height = model_input_dim_height
-        self.model_input_dim_width = model_input_dim_width
-        self.model_input_channels = model_input_channels
-        if model_input_dim_height != 224 or model_input_dim_width != 224 or model_input_channels != 3:
-            raise Exception("The input dimensions cannot be used with VGG")
         self.n_classes = n_classes
         self.checkpoint_path = os.path.join(model_dir,"checkpoints")
 
@@ -57,7 +52,7 @@ class ConvSVM(object):
 
 #        the feature descriptor object uses a vgg16 net to transform images 
 #        into feature space
-        self.feature_desc = ConvFeatureDescriptor(mode='IMAGES')
+        self.feature_desc = FeatureDescriptor(model_input_dim, batch_size = 100)
         
 #        The placeholders for feature vector and label respectively
 #        these are initialised using self.InitialiseModel, which is called later
@@ -118,7 +113,7 @@ class ConvSVM(object):
 #        be such
         if len(image.shape) < 4:
             image = image.reshape(1, 224, 224, 3)
-        feature_vec = self.feature_desc.get_feature_vectors(image)
+        feature_vec = self.process_features(image)
         self.InitialiseModel(feature_vec.shape[1])
         self.saver = tf.train.Saver()  
 #        the variables need to be given initial values if they have not 
@@ -382,7 +377,7 @@ class ConvSVM(object):
         """
         return self.input_, self.labels_
     
-    def ProcessFeatures(self,x):
+    def _process_features(self,x):
         """
         Runs the input, in image format, through the models feature 
         """
@@ -406,9 +401,9 @@ if __name__ == '__main__':
     batch_size = 70
 
     svm_model = ConvSVM(
-        dim_height,
+        [dim_height,
         dim_width,
-        input_channels,
+        input_channels],
         os.path.join(models_path,"svm"),
         additional_args,
         n_classes,
