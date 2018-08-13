@@ -17,7 +17,7 @@ for folder in folders:
 import numpy as np
 import tensorflow as tf
 import random
-from utils.ConvFeatureDescriptor import ConvFeatureDescriptor
+from ConvFeatureDescriptor import ConvFeatureDescriptor
 
 class ConvSVM(object):
     """
@@ -57,7 +57,7 @@ class ConvSVM(object):
 
 #        the feature descriptor object uses a vgg16 net to transform images 
 #        into feature space
-        self.feature_desc = ConvFeatureDescriptor()
+        self.feature_desc = ConvFeatureDescriptor(mode='IMAGES')
         
 #        The placeholders for feature vector and label respectively
 #        these are initialised using self.InitialiseModel, which is called later
@@ -109,8 +109,25 @@ class ConvSVM(object):
             name="b"
         )
 
-
-
+    def InitialiseModelWithImage(self, image):
+        """
+        This method uses the FeatureDescriptor on a provided image to find the
+        number of features that the descriptor would create from that image"
+        """
+#        If the input is not in the format (Idx, X, Y, N_channels) format it to
+#        be such
+        if len(image.shape) < 4:
+            image = image.reshape(1, 224, 224, 3)
+        feature_vec = self.feature_desc.get_feature_vectors(image)
+        self.InitialiseModel(feature_vec.shape[1])
+        self.saver = tf.train.Saver()  
+#        the variables need to be given initial values if they have not 
+#        been already
+        self.sess.run(tf.global_variables_initializer())
+#        this prevents initialising multiple times when using transfer learning
+#        or predicting with/evaluating the model
+        self.initialised = True
+        
 
     def Output(self):
         """
@@ -135,18 +152,6 @@ class ConvSVM(object):
         what class the model 'believes' the function belongs to
         """
         return tf.sign(self.Output())
-
-    def GetLoss(self, x, y):
-        """
-        Returns a value for the models loss at a point y
-        """
-        sample_loss = self.Loss()
-        feed_dict = {
-                self.input_ : x,
-                self.labels_: y
-        }
-        self.LoadModel(self.sess)
-        return self.sess.run(sample_loss, feed_dict)
 
     def Loss(self):
         """
@@ -179,6 +184,48 @@ class ConvSVM(object):
         )
         return loss
 
+    def GetLoss(self, x, y):
+        """
+        Returns a value for the models loss at a point y
+        """
+        sample_loss = self.Loss()
+        x = self.feature_desc.get_feature_vectors(x)
+        feed_dict = {
+                self.input_ : x,
+                self.labels_: y
+        }
+        self.LoadModel(self.sess)
+        return self.sess.run(sample_loss, feed_dict)
+    
+    def GetSmoothHinge(self, t):
+        """
+        Returns the loss op of a differentiable close approximation of the SVMs
+        loss function. The loss function at a point i is not differentiable by 
+        standard means
+        However a differentiable approximation can be defined that approaches 
+        Hinge Loss as a parameter t approaches 0.
+        
+        """
+        if t == 0:
+            return self.Loss()
+        else:
+            s = tf.multiply(self.Output(),self.labels_)
+            exp = -(s-1)/t
+            max_elem = tf.maximum(exp, tf.zeros_like(exp))
+            
+            log_loss = t * (max_elem + tf.log(tf.exp(exp - max_elem)  + tf.exp(tf.zeros_like(exp) - max_elem)))
+            
+            return log_loss
+        
+    def GetGradLoss(self, t = 0.0001):
+        """
+        Returns the gradient of the loss function wrt to the model weights.
+        For SVMs this is not possible so instead the Smooth Hinge loss function
+        is used as an approximation
+        As t tends to 0, SmoothHinge tends to Hinge
+        """
+        return tf.gradients(self.GetSmoothHinge(t), self.GetWeights())
+    
     def _get_batches(self, x, y, batch_size):
         """
         Randomly samples feature vectors from a distribution
@@ -194,8 +241,6 @@ class ConvSVM(object):
         """
 #        Transform the train images into feature space for processing by the SVM
         train_x = self.feature_desc.get_feature_vectors(train_x)
-#        reshapes train_x to have shape (num_samples, num_features)
-        train_x = train_x.reshape(len(train_y), -1)
 #        at this point we know the dimensionality of the feature space, and 
 #        therefore we can define the SVM
         if not self.initialised:
@@ -232,7 +277,6 @@ class ConvSVM(object):
             Σ(Wx+b && y_actual)/n_samples
         """
         val_x = self.feature_desc.get_feature_vectors(val_x)
-        val_x = val_x.reshape(len(val_y), -1)
 
 #        Define the graph operation for accuracy
         acc = tf.reduce_mean(
@@ -279,7 +323,6 @@ class ConvSVM(object):
         
 #        Convert into feature space
         predict_x = self.feature_desc.get_feature_vectors(predict_x)
-        predict_x = predict_x.reshape(n_samples, -1)
 
         if not self.initialised:
             self.InitialiseModel(predict_x.shape[1])
@@ -310,10 +353,14 @@ class ConvSVM(object):
                  one_hot.append([0,1])   
         return np.asarray(one_hot)
 
-    def SaveModel(self,sess):
+    def SaveModel(self,sess=None):
+        if sess == None:
+            sess = self.sess
         self.saver.save(sess, os.path.join(self.checkpoint_path,"wvnw_svm.ckpt"))
 
-    def LoadModel(self,sess):
+    def LoadModel(self,sess=None):
+        if sess == None:
+            sess = self.sess
         self.saver.restore(sess, os.path.join(self.checkpoint_path,"wvnw_svm.ckpt"))
 
     def GetWeights(self):
@@ -321,12 +368,25 @@ class ConvSVM(object):
         Returns the weights of the SVM
         """
         
-#        TODO: decide whether Influence functions would need the weights of the
-#        Conv-Net
+#        Influence functions only needs SVM weights as Feature Descriptor are 
+#        pre-determined and do not affect the loss of one point differently to
+#        another
         if not self.initialised:
             self.LoadModel(self.sess)
-        return self.W
-
+        return [self.W, self.b], 2
+    
+    def GetPlaceholders(self):
+        """
+        Returns placeholders used by model for use with explanation techniques,
+        notably for calculating the gradient of the loss
+        """
+        return self.input_, self.labels_
+    
+    def ProcessFeatures(self,x):
+        """
+        Runs the input, in image format, through the models feature 
+        """
+        return x
 
 
 """
@@ -357,7 +417,7 @@ if __name__ == '__main__':
     from tqdm import tqdm
 
 
-    datadir = "../../datasets/dataset_images/resized_wielder_non-wielder/"
+    datadir = "/home/c1435690/Projects/DAIS-ITA/Development/p5_afm_2018_demo" + "/datasets/dataset_images/resized_wielder_non-wielder/"
     contents = os.listdir(datadir)
     classes = [each for each in contents if os.path.isdir(datadir + each)]
 
@@ -370,7 +430,7 @@ if __name__ == '__main__':
         files = os.listdir(class_path)
         for ii, file in enumerate(files, 1):
             img = vgg_utils.load_image(os.path.join(class_path, file))
-            batch.append(img.reshape((1, 224, 224, 3)))
+            batch.append(img.reshape(( 224, 224, 3)))
             labels.append(each)
 
     images = np.asarray(batch)
