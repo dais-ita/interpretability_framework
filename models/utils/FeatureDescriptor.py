@@ -27,7 +27,7 @@ class FeatureDescriptor(object):
 
     def process_features(self, input_data):
         """
-            TODO: a proper docstring
+            Return an n-length feature vector based off input_data
         """
 
         # If input_data is a single image, add a dimension that defines the number of images as 1.
@@ -36,11 +36,16 @@ class FeatureDescriptor(object):
 
 
         with tf.Session().as_default():
-            model = self.__load_architecture('vgg16')
-
-            # print(model.get_layer('block1_conv1').get_weights()[0].shape)
+            model = self.__load_architecture(self.architecture)
             
             return model.predict(input_data)
+       
+    def feature_graph(self):
+        """
+            Simply return the feature descriptor graph as a keras model.
+        """
+        
+        return self.__load_architecture(self.architecture)
 
     def __load_architecture(self, architecture_name):
         """ Loads a particular architecture from keras.applications """
