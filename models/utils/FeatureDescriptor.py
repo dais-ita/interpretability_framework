@@ -40,12 +40,15 @@ class FeatureDescriptor(object):
             
             return model.predict(input_data)
        
-    def feature_graph(self):
+    def get_descriptor_op(self, img_pl):
         """
-            Simply return the feature descriptor graph as a keras model.
+            Return the model prediction op for a placeholder passed as a 
+            parameter
         """
         
-        return self.__load_architecture(self.architecture)
+        model = self.__load_architecture_with_op(self.architecture, img_pl)
+        
+        return tf.identity(model.layers[-2].output, name='pretrained_output')
 
     def __load_architecture(self, architecture_name):
         """ Loads a particular architecture from keras.applications """
@@ -64,7 +67,26 @@ class FeatureDescriptor(object):
             'resnet50': lambda: keras.applications.ResNet50(**model_args)
         }[architecture_name]()
 
+    def __load_architecture_with_op(self, architecture_name, input_):
+        """ Loads a particular architecture from keras.applications built with an input tensor"""
 
+        # Optional arguments that are handy to have for the descriptor.
+        model_args = {
+            'include_top': False,
+            'weights': self.weights,
+            'input_shape': self.input_shape,
+            'pooling': self.pooling,
+            'input_tensor' : input_
+        }
+
+        return {
+            'vgg16': lambda: keras.applications.VGG16(**model_args),
+            'vgg19': lambda: keras.applications.VGG19(**model_args),
+            'resnet50': lambda: keras.applications.ResNet50(**model_args)
+        }[architecture_name]()
+        
+        
+        
 
 """
     Test to ensure it's working - download an image and call it "test.jpg"
@@ -75,7 +97,6 @@ if __name__ == "__main__":
     d = FeatureDescriptor(np.shape(img))
 
     features = d.process_features(img)
-
     print("Feature length: " + str(np.shape(features)[1]))
     print("Features: ")
     print(features)
