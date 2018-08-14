@@ -17,11 +17,13 @@ class FeatureDescriptor(object):
             pooling: 'avg' or 'max'
 
     """
-    def __init__(self, input_shape, batch_size=-1, architecture='vgg16', weights='pretrained', pooling='avg'):
+    def __init__(self, input_shape, batch_size=-1, architecture='vgg16', weights='pretrained', pooling='avg',
+                 input_tensor=False):
         self.input_shape = input_shape
         self.batch_size = batch_size
         self.architecture = architecture
         self.pooling = pooling
+        self.input_tensor = input_tensor
         if weights == "pretrained":
             self.weights = "imagenet"  # keras' provided networks are trained with ImageNet
 
@@ -66,32 +68,15 @@ class FeatureDescriptor(object):
             'pooling': self.pooling
         }
 
-        return {
-            'vgg16': lambda: keras.applications.VGG16(**model_args),
-            'vgg19': lambda: keras.applications.VGG19(**model_args),
-            'resnet50': lambda: keras.applications.ResNet50(**model_args)
-        }[architecture_name]()
-
-    def __load_architecture_with_op(self, architecture_name, input_):
-        """ Loads a particular architecture from keras.applications built with an input tensor"""
-
-        # Optional arguments that are handy to have for the descriptor.
-        model_args = {
-            'include_top': False,
-            'weights': self.weights,
-            'input_shape': self.input_shape,
-            'pooling': self.pooling,
-            'input_tensor' : input_
-        }
+        if self.input_tensor:
+            model_args['input_tensor'] = self.input_tensor
 
         return {
             'vgg16': lambda: keras.applications.VGG16(**model_args),
             'vgg19': lambda: keras.applications.VGG19(**model_args),
             'resnet50': lambda: keras.applications.ResNet50(**model_args)
         }[architecture_name]()
-        
-        
-        
+
 
 """
     Test to ensure it's working - download an image and call it "test.jpg"
