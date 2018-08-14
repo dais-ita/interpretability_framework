@@ -184,7 +184,7 @@ class ConvSVM(object):
         is used as an approximation
         As t tends to 0, SmoothHinge tends to Hinge
         """
-        return tf.gradients(self.GetSmoothHinge(t), self.W)
+        return tf.gradients(self.GetSmoothHinge(t), self.GetWeights())
     
     def _get_batches(self, x, y, batch_size):
         """
@@ -306,7 +306,7 @@ class ConvSVM(object):
 #        pre-determined and do not affect the loss of one point differently to
 #        another
         self.LoadModel(self.sess)
-        return [self.W, self.b], 2
+        return [[self.W], [self.b]]
     
     def GetPlaceholders(self):
         """
