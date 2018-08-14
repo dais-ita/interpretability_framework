@@ -48,7 +48,12 @@ class FeatureDescriptor(object):
         
         model = self.__load_architecture_with_op(self.architecture, img_pl)
         
-        return tf.identity(model.layers[-2].output, name='pretrained_output')
+        return tf.contrib.layers.flatten(
+                tf.identity(
+                        model.layers[-2].output,
+                        name='pretrained_output'
+                )
+        )
 
     def __load_architecture(self, architecture_name):
         """ Loads a particular architecture from keras.applications """
