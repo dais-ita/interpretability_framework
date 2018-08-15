@@ -42,7 +42,7 @@ class FeatureDescriptor(object):
             
             return model.predict(input_data)
        
-    def get_descriptor_op(self, img_pl):
+    def get_descriptor_op(self):
         """
             Return the model prediction op for a placeholder passed as a 
             parameter
