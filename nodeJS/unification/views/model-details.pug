@@ -37,10 +37,3 @@ mixin model-details(mod)
                                             li #{j} - #{thisTo[j]}
                         -else
                             td #{mod[prop]}
-        tr
-            td Actions
-            td
-                ul
-                    li: a(href ='/model-use?model=' + mod.model_name) use this model
-                    -if (mod.model_name == chosen_model)
-                        li: a(href ='/model-use?model=none') clear this model

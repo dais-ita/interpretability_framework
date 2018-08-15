@@ -1,0 +1,20 @@
+mixin parameter-details(parms)
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    h1 Parameters
+    table(border=1)
+        tbody
+            -for (var i in parms)
+                -var thisParm = parms[i]
+                tr
+                    td #{i}
+                    -if (i == "(chosen_image)")
+                        td
+                            img(alt='Chosen image', src='data:img/jpg;base64,' + thisParm)
+                    -else
+                        td #{thisParm}
+    hr

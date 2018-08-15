@@ -29,15 +29,17 @@ router.get('/', function (req, res) {
                 // Success
                 let result = JSON.parse(response);
 
-                if (parmType != "json") {
-                    res.render("model-list", {
-                        "title": "Models - for dataset",
+                if (parmType == "html") {
+                    let jsPage = {
+                        "title": config.unified_apis.model.for_dataset.url,
                         "models": result,
-                        "parameters": { "dataset": parmDsName }
-//                        "chosen_dataset": req.session.chosen_dataset,
-//                        "chosen_model": req.session.chosen_model,
-//                        "chosen_explanation": req.session.chosen_explanation
-                    });
+                        "parameters": {
+                            "type": parmType,
+                            "dataset": parmDsName
+                        }
+                    };
+
+                    res.render(config.unified_apis.model.for_dataset.route, jsPage);
                 } else {
                     res.json(result)
                 }

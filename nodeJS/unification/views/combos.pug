@@ -1,0 +1,457 @@
+extends layout
+
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    section(class="jumbotron text-left")
+        div(id='div_intro')
+            h1(class="jumbotron-heading") Introduction
+            p
+                | The table below shows all the valid combinations of dataset, model and explanations type.
+            p
+                | Each cell contains a status for each environment that has been tested.  These include the "local" environment, e.g. Dave's Macbook development environment, and the "cloud" environment, i.e. http://ita-ce.com:3100
+
+        div(id='div_combos')
+            h1(class="jumbotron-heading") Combos
+
+            table(border=1, id='dataset_table')
+                tbody
+                    tr(align="middle")
+                        td(rowspan=2, colspan=2)
+                        td
+                            | cnn_1
+                        td
+                            | conv_svm
+                        td(colspan=2)
+                            | keras_cnn
+                        td(colspan=2)
+                            | keras_vgg
+                    tr(align="middle")
+                        td
+                            | LIME
+                        td
+                            | LIME
+                        td
+                            | LIME
+                        td
+                            | Shap
+                        td
+                            | LIME
+                        td
+                            | Shap
+                    tr(align="middle")
+                        td(rowspan=2)
+                            | Gun Wielding Image Classification
+                        td
+                            | local
+                        td(bgcolor="lightgreen")
+                            | (GWI-local-cnn_1-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (GWI-local-conv_svm-LIME)
+                            br
+                            a(href="#err_001") ERROR (001)
+                        td(bgcolor="pink")
+                            | (GWI-local-keras-cnn-LIME)
+                            br
+                            a(href="#err_002") ERROR (002)
+                        td(bgcolor="pink")
+                            | (GWI-local-keras_cnn-Shap)
+                            br
+                            a(href="#err_003") ERROR (003)
+                        td(bgcolor="lightgreen")
+                            | (GWI-local-keras_vgg-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (GWI-local-keras_vgg-Shap)
+                            br
+                            a(href="#err_003") ERROR (003)
+                    tr(align="middle")
+                        td
+                            | cloud
+                        td(bgcolor="lightgreen")
+                            | (GWI-cloud-cnn_1-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (GWI-cloud-conv_svm-LIME)
+                            br
+                            a(href="#err_001") ERROR (001)
+                        td(bgcolor="lightgreen")
+                            | (GWI-cloud-keras-cnn-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (GWI-cloud-keras_cnn-Shap)
+                            br
+                            a(href="#err_006") ERROR (006)
+                        td(bgcolor="lightgreen")
+                            | (GWI-cloud-keras_vgg-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (GWI-cloud-keras_vgg-Shap)
+                            br
+                            a(href="#err_006") ERROR (006)
+                    tr(align="middle")
+                        td(rowspan=2)
+                            | Traffic Congestion Image Classification
+                        td
+                            | local
+                        td(bgcolor="lightgreen")
+                            | (TCI-local-cnn_1-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="lightgrey")
+                            | (TCI-local-conv_svm-LIME)
+                            br
+                            | n/a
+                        td(bgcolor="lightgreen")
+                            | (TCI-local-keras-cnn-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (TCI-local-keras-cnn-Shap)
+                            br
+                            a(href="#err_003") ERROR (003)
+                        td(bgcolor="pink")
+                            | (TCI-local-keras_vgg-LIME)
+                            br
+                            a(href="#err_004") ERROR (004)
+                        td(bgcolor="pink")
+                            | (TCI-local-keras_vgg-Shap)
+                            br
+                            a(href="#err_003") ERROR (003)
+                    tr(align="middle")
+                        td
+                            | cloud
+                        td(bgcolor="pink")
+                            | (TCI-cloud-cnn_1-LIME)
+                            br
+                            a(href="#err_005") ERROR (005)
+                        td(bgcolor="lightgrey")
+                            | (TCI-cloud-conv_svm-LIME)
+                            br
+                            | n/a
+                        td(bgcolor="pink")
+                            | (TCI-cloud-keras-cnn-LIME)
+                            br
+                            a(href="#err_007") ERROR (007)
+                        td(bgcolor="pink")
+                            | (TCI-cloud-keras_cnn-Shap)
+                            br
+                            a(href="#err_006") ERROR (006)
+                        td(bgcolor="pink")
+                            | (TCI-cloud-keras_vgg-LIME)
+                            br
+                            a(href="#err_008") ERROR (008)
+                        td(bgcolor="pink")
+                            | (TCI-cloud-keras_vgg-Shap)
+                            br
+                            a(href="#err_006") ERROR (006)
+                    tr(align="middle")
+                        td(rowspan=2)
+                            | Traffic Congestion Image Classification (Resized)
+                        td
+                            | local
+                        td(bgcolor="lightgreen")
+                            | (TCIR-local-cnn_1-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="lightgrey")
+                            | (TCIR-local-conv_svm-LIME)
+                            br
+                            | n/a
+                        td(bgcolor="lightgreen")
+                            | (TCIR-local-keras-cnn-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (TCIR-local-keras_cnn-Shap)
+                            br
+                            a(href="#err_003") ERROR (003)
+                        td(bgcolor="lightgreen")
+                            | (TCIR-local-keras_vgg-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (TCIR-local-keras_vgg-Shap)
+                            br
+                            a(href="#err_003") ERROR (003)
+                    tr(align="middle")
+                        td
+                            | cloud
+                        td(bgcolor="lightgreen")
+                            | (TCIR-cloud-cnn_1-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="lightgrey")
+                            | (TCIR-cloud-conv_svm-LIME)
+                            br
+                            | n/a
+                        td(bgcolor="lightgreen")
+                            | (TCIR-cloud-keras-cnn-LIME)
+                            br
+                            | WORKING
+                        td(bgcolor="pink")
+                            | (TCIR-cloud-keras_cnn-Shap)
+                            br
+                            a(href="#err_006") ERROR (006)
+                        td(bgcolor="pink")
+                            | (TCIR-cloud-keras_vgg-LIME)
+                            br
+                            a(href="#err_008") ERROR (008)
+                        td(bgcolor="pink")
+                            | (TCIR-cloud-keras_vgg-Shap)
+                            br
+                            a(href="#err_008") ERROR (008)
+                    tr(align="middle")
+                        td(rowspan=2)
+                            | Cifar 10
+                        td
+                            | local
+                        td(colspan="6", bgcolor="lightgrey")
+                            | n/a - no valid models returned
+                    tr(align="middle")
+                        td
+                            | cloud
+                        td(colspan="6", bgcolor="lightgrey")
+                            | n/a - no valid models returned
+
+        div(id='div_combos')
+            h1(class="jumbotron-heading") Errors
+
+            a(id="err_001")
+            h2(class="jumbotron-heading") Error 001
+            pre
+                | Traceback (most recent call last):
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 2292, in wsgi_app
+                |     response = self.full_dispatch_request()
+                |  File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+                |    rv = self.handle_user_exception(e)
+                |  File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+                |    reraise(exc_type, exc_value, tb)
+                |  File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+                |    rv = self.dispatch_request()
+                |  File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1799, in dispatch_request
+                |    return self.view_functions[rule.endpoint](**req.view_args)
+                |  File "ExplanationsAAS.py", line 210, in Explain
+                |    loaded_models[model_name][dataset_name] = LoadModelFromJson(model_json,dataset_json)
+                |  File "ExplanationsAAS.py", line 132, in LoadModelFromJson
+                |    ModelModule = __import__(model_json["script_name"])
+                |  File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/models/svm/ConvSVM.py", line 156
+                |    SyntaxError: Non-ASCII character '\xce' in file /Users/davebraines/Documents/DL_work/p5_afm_2018_demo/models/svm/ConvSVM.py on line 157, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details
+
+            hr
+            a(id="err_002")
+            h2(class="jumbotron-heading") Error 002
+            pre
+                | Traceback (most recent call last):
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 2292, in wsgi_app
+                |     response = self.full_dispatch_request()
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+                |     rv = self.handle_user_exception(e)
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+                |     reraise(exc_type, exc_value, tb)
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+                |     rv = self.dispatch_request()
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1799, in dispatch_request
+                |     return self.view_functions[rule.endpoint](**req.view_args)
+                |   File "ExplanationsAAS.py", line 243, in Explain
+                |     explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 101, in Explain
+                |     prediction, explanation = self.ClassifyWithLIME(input_image,num_samples=num_samples,labels=list(range(self.model.n_classes)), top_labels=self.model.n_classes)
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 61, in ClassifyWithLIME
+                |     explanation = explainer.explain_instance(x, self.PredictFunction,labels=labels,top_labels=top_labels, hide_color=0,num_samples = num_samples)
+                |   File "/usr/local/lib/python2.7/site-packages/lime/lime_image.py", line 187, in explain_instance
+                |     batch_size=batch_size)
+                |   File "/usr/local/lib/python2.7/site-packages/lime/lime_image.py", line 248, in data_labels
+                |     preds = classifier_fn(np.array(imgs))
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 20, in PredictFunction
+                |     predictions = list(self.model.Predict(X))
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/models/keras_cnn/keras_cnn.py", line 93, in Predict
+                |     predictions = self.model.predict(predict_x)
+                |   File "/usr/local/lib/python2.7/site-packages/keras/engine/training.py", line 1162, in predict
+                |     self._make_predict_function()
+                |   File "/usr/local/lib/python2.7/site-packages/keras/engine/training.py", line 543, in _make_predict_function
+                |     **kwargs)
+                |   File "/usr/local/lib/python2.7/site-packages/keras/backend/tensorflow_backend.py", line 2695, in function
+                |     return Function(inputs, outputs, updates=updates, **kwargs)
+                |   File "/usr/local/lib/python2.7/site-packages/keras/backend/tensorflow_backend.py", line 2516, in __init__
+                |     with tf.control_dependencies(self.outputs):
+                |   File "/usr/local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 5027, in control_dependencies
+                |     return get_default_graph().control_dependencies(control_inputs)
+                |   File "/usr/local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 4631, in control_dependencies
+                |     c = self.as_graph_element(c)
+                |   File "/usr/local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 3590, in as_graph_element
+                |     return self._as_graph_element_locked(obj, allow_tensor, allow_operation)
+                |   File "/usr/local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 3669, in _as_graph_element_locked
+                |     raise ValueError("Tensor %s is not an element of this graph." % obj)
+                | ValueError: Tensor Tensor("class_prob/Softmax:0", shape=(?, 2), dtype=float32) is not an element of this graph.
+
+            hr
+            a(id="err_003")
+            h2(class="jumbotron-heading") Error 003
+            pre
+                | Traceback (most recent call last):
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 2292, in wsgi_app
+                |     response = self.full_dispatch_request()
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+                |     rv = self.handle_user_exception(e)
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+                |     reraise(exc_type, exc_value, tb)
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+                |     rv = self.dispatch_request()
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1799, in dispatch_request
+                |     return self.view_functions[rule.endpoint](**req.view_args)
+                |   File "ExplanationsAAS.py", line 221, in Explain
+                |     loaded_explanations[explanation_name][model_name][dataset_name] = LoadExplainerFromJson(explanation_json,loaded_models[model_name][dataset_name])
+                |   File "ExplanationsAAS.py", line 123, in LoadExplainerFromJson
+                |     ExplanationModule = __import__(explanation_json["script_name"])
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/explanations/shap/shap_explanation.py", line 9, in <module>
+                |     import shap
+                | ImportError: No module named shap
+
+            hr
+            a(id="err_004")
+            h2(class="jumbotron-heading") Error 004
+            pre
+                | Traceback (most recent call last):
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 2292, in wsgi_app
+                |     response = self.full_dispatch_request()
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+                |     rv = self.handle_user_exception(e)
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+                |     reraise(exc_type, exc_value, tb)
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+                |     rv = self.dispatch_request()
+                |   File "/usr/local/lib/python2.7/site-packages/flask/app.py", line 1799, in dispatch_request
+                |     return self.view_functions[rule.endpoint](**req.view_args)
+                |   File "ExplanationsAAS.py", line 243, in Explain
+                |     explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 101, in Explain
+                |     prediction, explanation = self.ClassifyWithLIME(input_image,num_samples=num_samples,labels=list(range(self.model.n_classes)), top_labels=self.model.n_classes)
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 61, in ClassifyWithLIME
+                |     explanation = explainer.explain_instance(x, self.PredictFunction,labels=labels,top_labels=top_labels, hide_color=0,num_samples = num_samples)
+                |   File "/usr/local/lib/python2.7/site-packages/lime/lime_image.py", line 187, in explain_instance
+                |     batch_size=batch_size)
+                |   File "/usr/local/lib/python2.7/site-packages/lime/lime_image.py", line 248, in data_labels
+                |     preds = classifier_fn(np.array(imgs))
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 20, in PredictFunction
+                |     predictions = list(self.model.Predict(X))
+                |   File "/Users/davebraines/Documents/DL_work/p5_afm_2018_demo/models/keras_vgg/keras_vgg.py", line 93, in Predict
+                |     predictions = self.model.predict(predict_x)
+                |   File "/usr/local/lib/python2.7/site-packages/keras/engine/training.py", line 1167, in predict
+                |     steps=steps)
+                |   File "/usr/local/lib/python2.7/site-packages/keras/engine/training_arrays.py", line 294, in predict_loop
+                |     batch_outs = f(ins_batch)
+                |   File "/usr/local/lib/python2.7/site-packages/keras/backend/tensorflow_backend.py", line 2666, in __call__
+                |     return self._call(inputs)
+                |   File "/usr/local/lib/python2.7/site-packages/keras/backend/tensorflow_backend.py", line 2636, in _call
+                |     fetched = self._callable_fn(*array_vals)
+                |   File "/usr/local/lib/python2.7/site-packages/tensorflow/python/client/session.py", line 1454, in __call__
+                |     self._session._session, self._handle, args, status, None)
+                |   File "/usr/local/lib/python2.7/site-packages/tensorflow/python/framework/errors_impl.py", line 519, in __exit__
+                |     c_api.TF_GetCode(self.status.status))
+                | InvalidArgumentError: Matrix size-incompatible: In[0]: [10,147456], In[1]: [57600,1048]
+                | [[Node: fully_connected_1/MatMul = MatMul[T=DT_FLOAT, transpose_a=false, transpose_b=false, _device="/job:localhost/replica:0/task:0/device:CPU:0"](feature_vector_1/Reshape, fully_connected_1/kernel/read)]]
+
+            hr
+            a(id="err_005")
+            h2(class="jumbotron-heading") Error 005
+            pre
+                | Traceback (most recent call last):
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 2292, in wsgi_app
+                |     response = self.full_dispatch_request()
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+                |     rv = self.handle_user_exception(e)
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+                |     reraise(exc_type, exc_value, tb)
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+                |     rv = self.dispatch_request()
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1799, in dispatch_request
+                |     return self.view_functions[rule.endpoint](**req.view_args)
+                |   File "/home/davebraines/p5_afm_2018_demo/flask_services/ExplanationsAAS.py", line 243, in Explain
+                |     explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
+                |   File "/home/davebraines/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 101, in Explain
+                |     prediction, explanation = self.ClassifyWithLIME(input_image,num_samples=num_samples,labels=list(range(self.model.n_classes)), top_labels=self.model.n_classes)
+                |   File "/home/davebraines/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 56, in ClassifyWithLIME
+                |     x = x.reshape(self.model.model_input_dim_height,self.model.model_input_dim_height,self.model.model_input_channels)
+                | ValueError: cannot reshape array of size 49152 into shape (200,200,3)
+
+            hr
+            a(id="err_006")
+            h2(class="jumbotron-heading") Error 006
+            pre
+                | Traceback (most recent call last):
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 2292, in wsgi_app
+                |     response = self.full_dispatch_request()
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+                |     rv = self.handle_user_exception(e)
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+                |     reraise(exc_type, exc_value, tb)
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+                |     rv = self.dispatch_request()
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1799, in dispatch_request
+                |     return self.view_functions[rule.endpoint](**req.view_args)
+                |   File "/home/davebraines/p5_afm_2018_demo/flask_services/ExplanationsAAS.py", line 243, in Explain
+                |     explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
+                |   File "/home/davebraines/p5_afm_2018_demo/explanations/shap/shap_explanation.py", line 183, in Explain
+                |     shap_values = e.shap_values(input_image)
+                |   File "/usr/lib64/python2.7/site-packages/shap/explainers/deep.py", line 284, in shap_values
+                |     sample_phis = self.run(self.phi_symbolic(feature_ind), self.model_inputs, joint_input)
+                |   File "/usr/lib64/python2.7/site-packages/shap/explainers/deep.py", line 196, in phi_symbolic
+                |     self.orig_grads[n] = reg[n]["type"]
+                | KeyError: 'ClipByValue'
+
+            hr
+            a(id="err_007")
+            h2(class="jumbotron-heading") Error 007
+            pre
+                | Traceback (most recent call last):
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 2292, in wsgi_app
+                |     response = self.full_dispatch_request()
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+                |     rv = self.handle_user_exception(e)
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+                |     reraise(exc_type, exc_value, tb)
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+                |     rv = self.dispatch_request()
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1799, in dispatch_request
+                |     return self.view_functions[rule.endpoint](**req.view_args)
+                |   File "/home/davebraines/p5_afm_2018_demo/flask_services/ExplanationsAAS.py", line 243, in Explain
+                |     explanation_image, explanation_text, prediction, additional_outputs = explanation_instance.Explain(input_image,additional_args=additional_args)
+                |   File "/home/davebraines/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 101, in Explain
+                |     prediction, explanation = self.ClassifyWithLIME(input_image,num_samples=num_samples,labels=list(range(self.model.n_classes)), top_labels=self.model.n_classes)
+                |   File "/home/davebraines/p5_afm_2018_demo/explanations/lime/lime_explanations.py", line 56, in ClassifyWithLIME
+                |     x = x.reshape(self.model.model_input_dim_height,self.model.model_input_dim_height,self.model.model_input_channels)
+                | ValueError: cannot reshape array of size 49152 into shape (200,200,3)
+
+            hr
+            a(id="err_008")
+            h2(class="jumbotron-heading") Error 008
+            pre
+                | Traceback (most recent call last):
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 2292, in wsgi_app
+                |     response = self.full_dispatch_request()
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+                |     rv = self.handle_user_exception(e)
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+                |     reraise(exc_type, exc_value, tb)
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+                |     rv = self.dispatch_request()
+                |   File "/usr/lib64/python2.7/site-packages/flask/app.py", line 1799, in dispatch_request
+                |     return self.view_functions[rule.endpoint](**req.view_args)
+                |   File "/home/davebraines/p5_afm_2018_demo/flask_services/ExplanationsAAS.py", line 210, in Explain
+                |     loaded_models[model_name][dataset_name] = LoadModelFromJson(model_json,dataset_json)
+                |   File "/home/davebraines/p5_afm_2018_demo/flask_services/ExplanationsAAS.py", line 153, in LoadModelFromJson
+                |     model_instance.LoadModel(model_path) ## for this model, this call is redundant. For other models this may be necessary.
+                |   File "/home/davebraines/p5_afm_2018_demo/models/keras_vgg/keras_vgg.py", line 107, in LoadModel
+                |     with open(load_dir, 'r') as f:
+                | IOError: [Errno 2] No such file or directory: u'/home/davebraines/p5_afm_2018_demo/models/keras_vgg/saved_models/traffic_congestion_image_classification'

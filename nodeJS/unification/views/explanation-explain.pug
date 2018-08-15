@@ -1,0 +1,43 @@
+extends layout
+include parameter-details.pug
+
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    +parameter-details(parameters)
+
+    h2 Explanation
+
+    table(border=1)
+        tbody
+            -for (var prop in explanation)
+                    -if (prop == "additional_outputs")
+                        -for (var i in explanation[prop])
+                            -var thisAo = explanation[prop][i]
+                            tr
+                                td #{prop}:#{i}
+                                td
+                                    ul
+                                    -for (var j in thisAo)
+                                        li #{thisAo[j]}
+                    -else
+                        -if (prop == "attribution_map")
+                            tr
+                                td #{prop}
+                                td
+                                    -for (var i in explanation[prop])
+                                        -var thisAm = explanation[prop][i]
+                                        ul
+                                            li #{thisAm}
+                        -else
+                            tr
+                                td #{prop}
+                                    -if (prop == "explanation_image")
+                                        td
+                                            img(alt='Explanation image', src='data:img/jpg;base64,' + explanation[prop])
+                                    -else
+                                        td #{explanation[prop]}
