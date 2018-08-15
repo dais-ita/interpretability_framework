@@ -8,7 +8,7 @@ from os import mkdir
 from tqdm import tqdm
 
 try:
-    from .tensorflow_vgg import vgg16, utils
+    from utils.tensorflow_vgg import vgg16, utils
 except ImportError as error:
     print("`tensorflow_vgg not found.` Please ensure submodule \\"
           "https://github.com/machrisaa/tensorflow-vgg is installed.")

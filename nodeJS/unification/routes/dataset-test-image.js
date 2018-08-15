@@ -18,17 +18,17 @@ router.get('/', function (req, res) {
     parmImgName = req.query.image;
 
     if (parmDsName == null) {
-        console.log("No dataset specified");
-        return res.sendStatus(500);
+        let errMsg = "Error: No dataset specified";
+        return res.status(500).send(errMsg);
     } else {
         const options = {
             method: 'GET'
         };
 
         if (parmImgName == null) {
-            options.uri = fn.getDatasetsRandomTestImageUrl(config, parmDsName);
+            options.uri = fn.getDatasetRandomTestImageUrl(config, parmDsName);
         } else {
-            options.uri = fn.getDatasetsSpecificTestImageUrl(config, parmDsName, parmImgName);
+            options.uri = fn.getDatasetSpecificTestImageUrl(config, parmDsName, parmImgName);
         }
 
         request(options)
@@ -36,16 +36,18 @@ router.get('/', function (req, res) {
                 // Success
                 let result = JSON.parse(response);
 
-                if (parmType != "json") {
-                    res.render("image-details", {
-                        "title": "Datasets - test image",
+                if (parmType == "html") {
+                    let jsPage = {
+                        "title": config.unified_apis.dataset.test_image.url,
                         "image": result,
-                        "parameters": {"dataset": parmDsName, "image": parmImgName}
-//                        "chosen_dataset": req.session.chosen_dataset,
-//                        "chosen_model": req.session.chosen_model,
-//                        "chosen_explanation": req.session.chosen_explanation,
-//                        "explanation_list": req.session.all_explanations
-                    });
+                        "parameters": {
+                            "type": parmType,
+                            "dataset": parmDsName,
+                            "image": parmImgName
+                        }
+                    };
+
+                    res.render(config.unified_apis.dataset.test_image.route, jsPage);
                 } else {
                     res.json(result);
                 }

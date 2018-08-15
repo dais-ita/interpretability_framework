@@ -21,19 +21,18 @@ router.get('/', function (req, res) {
     request(options)
         .then(function (response) {
             // Success
-            let result = JSON.parse(response);
+            let result = JSON.parse(response).explanations;
 
-//            req.session.all_explanations = result;
-
-            if (parmType != "json") {
-                res.render("explanation-list", {
-                    "title": "Explanations - all",
+            if (parmType == "html") {
+                let jsPage = {
+                    "title": config.unified_apis.explanation.all.url,
                     "explanations": result,
-                    "parameters": {}
-//                    "chosen_dataset": req.session.chosen_dataset,
-//                    "chosen_model": req.session.chosen_model,
-//                    "chosen_explanation": req.session.chosen_explanation
-                });
+                    "parameters": {
+                        "type": parmType
+                    }
+                };
+
+                res.render(config.unified_apis.explanation.all.route, jsPage);
             } else {
                 res.json(result);
             }
