@@ -15,7 +15,7 @@ class InfluenceExplainer(object):
         super(InfluenceExplainer, self).__init__()
         self.model = model
         self.sess = model.sess
-        self.params = model.GetWeights()
+        self.params = [tf.reshape(param, [-1,]) for param in model.GetWeights()]
         self.num_params = len(self.params)
         self.input_, self.labels_ = model.GetPlaceholders()
         self.v_placeholder = [
@@ -26,7 +26,7 @@ class InfluenceExplainer(object):
                 )
                 for i, a in zip(xrange(self.num_params),self.params)
         ]
-        self.grad_loss = self.model.GetGradLoss()
+        self.grad_loss = [tf.reshape(grad, [-1,]) for grad in self.model.GetGradLoss()]
         self.hvp = self._get_approx_hvp(self.grad_loss, self.params, self.v_placeholder)
         self.train_imgs = train_imgs
         self.train_lbls = train_lbls
@@ -42,7 +42,7 @@ class InfluenceExplainer(object):
             self.mini_batch = True
                 
         
-    def Explain(self, test_img, n_max=4, additional_args):
+    def Explain(self, test_img, n_max, additional_args):
         """
         Explain test image by showing the training sampels with most influence
         on the models classification of the image.
@@ -73,12 +73,13 @@ class InfluenceExplainer(object):
         """
 
         if "cache" in additional_args:
+            cache = additional_args["cache"]
             if additional_args["cache"]:
                 if test_img in self.cached_influence:
                     if len(self.cached_influence[test_img]) == n_max: 
                         return self.FormCollage(self.cached_influence[test_img])
-        
-        cache = additional_args["cache"] if cache in additional_args else None   
+        else:
+            cache = False
 
         if len(test_img.shape) < 4:
             test_img = np.expand_dims(test_img, axis = 0) 
@@ -86,7 +87,7 @@ class InfluenceExplainer(object):
             self.input_: test_img,
             self.labels_: label
         }
-        
+
         test_loss_gradient = self.sess.run(self.grad_loss,feed_dict)
         s_test = self._get_approx_inv_hvp(test_loss_gradient)
         s_test = [prod.reshape(-1,) for prod in s_test]
@@ -120,7 +121,7 @@ class InfluenceExplainer(object):
 #        if cols or rows is 0
         if not (cols and rows):
             cols = len(img_arr) // 2
-            rows = len(img_arr) - cols
+            rows = len(np.split(img_arr,2))
         
         thumbnail_width = width // cols
         thumbnail_height = height // rows
@@ -336,8 +337,8 @@ class InfluenceExplainer(object):
     def _get_vec_to_list(self):
         params = self.sess.run(self.params)
         def vec_to_list(v):
-            if len(v.shape) == 1:
-                v = np.expand_dims(v, axis = 1)
+            # if len(v.shape) == 1:
+            #     v = np.expand_dims(v, axis = 1)
             return_ls = []
             pos = 0
             for p in params:
@@ -348,4 +349,3 @@ class InfluenceExplainer(object):
             return return_ls
         
         return vec_to_list
-    
