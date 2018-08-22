@@ -1,4 +1,5 @@
 extends layout
+include parameter-details.pug
 include dataset-details.pug
 
 block content
@@ -7,13 +8,8 @@ block content
     //- * All Rights Reserved
     //- *******************************************************************************
 
-    div
-        h1 Parameters
-        table(border=1)
-            tbody
-                tr
-                    td (none)
+    +parameter-details(parameters)
 
-        -for (var ds in datasets.datasets)
-            -var thisDs = datasets.datasets[ds]
-            +dataset-details(thisDs)
+    -for (var ds in datasets)
+        -var thisDs = datasets[ds]
+        +dataset-details(thisDs)

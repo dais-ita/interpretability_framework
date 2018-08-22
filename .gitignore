@@ -1,3 +1,12 @@
+
+nodeJS/unification/node_modules/
+models/cnn_1/saved_models/
+models/keras_cnn/saved_models/
+models/keras_vgg/saved_models/
+datasets/dataset_images/
+.DS_Store
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -108,3 +117,9 @@ datasets/dataset_images/**
 datasets/dataset_images/dataset_archives/*
 models/cnn_1/saved_models
 */saved_models/**
+
+#SVM weights too large to upload via git
+/models/svm/checkpoints
+
+#ignore tensorflow_vgg
+/models/svm/utils/tensorflow_vgg

@@ -1,0 +1,239 @@
+extends layout
+
+block content
+
+    //- *******************************************************************************
+    //- * (C) Copyright IBM Corporation 2018
+    //- * All Rights Reserved
+    //- *******************************************************************************
+
+    section(class="jumbotron text-left")
+        div(id='div_intro')
+            h1(class="jumbotron-heading") Introduction
+            button(id='show_button', class="btn btn-primary my-2", onclick="javascript:showAPIs();") &nbsp; Show APIs
+            p
+                | The purpose of the unification APIs are to provide a single, uniform, simple HTTP mechanism for interaction with the P5 demo system.
+            p
+                | All parameters have consistent names and expect the same kinds of values.
+            p
+                | These APIs are stateless and require only the identifiers of the datasets, models, explanations and images to be specified as parameters.  There is no need to specify JSON payloads.
+            p
+                | In the future, as additional backend functions and services are added we can easily extend the unification layer to wrap these using the same principles.  This will ensure that building the user interface on top of our system is as easy and consistent as possible, regardless of the complexity of the underlaying system.
+            p
+                | Tip: Hold Ctrl (or Cmd on Mac) when clicking links to open them in a new window.
+
+        div(id='div_datasets', style={display: "none"})
+            h1(class="jumbotron-heading") Datasets
+
+            table(border=1, id='dataset_table')
+                thead
+                    tr
+                        td url
+                        td parameters
+                        td try it
+                tbody
+                    tr
+                        td
+                            | /datasets-all
+                        td
+                            p
+                                | Type:
+                                select(id="ds_all-type_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='ds_all-url', href='')
+                    tr
+                        td
+                            | /dataset-details
+                        td
+                            p
+                                | Type:
+                                select(id="ds_details-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Dataset:
+                                select(id="ds_details-ds_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='ds_details-url', href='')
+                    tr
+                        td
+                            | /dataset-test-image
+                        td
+                            p
+                                | Type:
+                                select(id="ds_img-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Dataset:
+                                select(id="ds_img-ds_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Image:
+                                select(id="ds_img-img_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='ds_img-url', href='')
+                    tr
+                        td
+                            | /dataset-test-images
+                        td
+                            p
+                                | Type:
+                                select(id="ds_imgs-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Dataset:
+                                select(id="ds_imgs-ds_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Number of images:
+                                input(type="text", id="ds_imgs-num_images", onkeyup="javascript:recalculateUrls();")
+                        td
+                            a(id='ds_imgs-url', href='')
+                    tr
+                        td
+                            | /dataset-archive
+                        td
+                            p
+                                | Dataset:
+                                select(id="ds_arch-ds_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='ds_arch-url', href='')
+
+        div(id='div_models', style={display: "none"})
+            h1(class="jumbotron-heading") Models
+
+            table(border=1, id='model_table')
+                thead
+                    tr
+                        td url
+                        td parameters
+                        td try it
+                tbody
+                    tr
+                        td
+                            | /models-all
+                        td
+                            p
+                                | Type:
+                                select(id="mod_all-type_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='mod_all-url', href='')
+                    tr
+                        td
+                            | /model-details
+                        td
+                            p
+                                | Type:
+                                select(id="mod_details-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Model:
+                                select(id="mod_details-mod_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='mod_details-url', href='')
+                    tr
+                        td
+                            | /models-for-dataset
+                        td
+                            p
+                                | Type:
+                                select(id="mod_fords-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Dataset:
+                                select(id="mod_fords-ds_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='mod_fords-url', href='')
+                    tr
+                        td
+                            | /model-predict
+                        td
+                            p
+                                | Type:
+                                select(id="mod_pred-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Dataset:
+                                select(id="mod_pred-ds_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Model:
+                                select(id="mod_pred-mod_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Image:
+                                select(id="mod_pred-img_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='mod_pred-url', href='')
+                    tr
+                        td
+                            | /model-archive
+                        td
+                            p
+                                | Dataset:
+                                select(id="mod_arch-ds_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Model:
+                                select(id="mod_arch-mod_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='mod_arch-url', href='')
+
+        div(id='div_explanations', style={display: "none"})
+            h1(class="jumbotron-heading") Explanations
+
+            table(border=1, id='explanation_table')
+                thead
+                    tr
+                        td url
+                        td parameters
+                        td try it
+                tbody
+                    tr
+                        td
+                            | /explanations-all
+                        td
+                            p
+                                | Type:
+                                select(id="exp_all-type_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='exp_all-url', href='')
+                    tr
+                        td
+                            | /explanation-details
+                        td
+                            p
+                                | Type:
+                                select(id="exp_details-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Explanation:
+                                select(id="exp_details-exp_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='exp_details-url', href='')
+                    tr
+                        td
+                            | /explanations-for-filter
+                        td
+                            p
+                                | Type:
+                                select(id="exp_filt-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Dataset:
+                                select(id="exp_filt-ds_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Model:
+                                select(id="exp_filt-mod_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='exp_filt-url', href='')
+                    tr
+                        td
+                            | /explanation-explain
+                        td
+                            p
+                                | Type:
+                                select(id="exp_exp-type_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Dataset:
+                                select(id="exp_exp-ds_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Model:
+                                select(id="exp_exp-mod_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Image:
+                                select(id="exp_exp-img_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Explanation:
+                                select(id="exp_exp-exp_list", onchange="javascript:recalculateUrls();")
+                            p
+                                | Attribution map:
+                                select(id="exp_exp-map_list", onchange="javascript:recalculateUrls();")
+                        td
+                            a(id='exp_exp-url', href='')

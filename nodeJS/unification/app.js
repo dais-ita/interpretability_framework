@@ -5,27 +5,28 @@
 
 var createError = require('http-errors');
 var express = require('express');
-//var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var oiRouter = require('./routes/OLD_index');
+var atRouter = require('./routes/api-tester');
+var rmRouter = require('./routes/readme');
+var comRouter = require('./routes/combos');
 var dsaRouter = require('./routes/datasets-all');
 var dsdRouter = require('./routes/dataset-details');
-var dstRouter = require('./routes/datasets-test-image');
-var duRouter = require('./routes/dataset-use');
+var dstRouter = require('./routes/dataset-test-image');
+var dstsRouter = require('./routes/dataset-test-images');
+var dsarRouter = require('./routes/dataset-archive');
 var maRouter = require('./routes/models-all');
 var mdRouter = require('./routes/model-details');
 var mfdRouter = require('./routes/models-for-dataset');
-var muRouter = require('./routes/model-use');
-var mpRouter = require('./routes/models-predict');
+var mpRouter = require('./routes/model-predict');
+var marRouter = require('./routes/model-archive');
 var xaRouter = require('./routes/explanations-all');
 var xdRouter = require('./routes/explanation-details');
 var xffRouter = require('./routes/explanations-for-filter');
-var xxRouter = require('./routes/explanations-explain');
-var xuRouter = require('./routes/explanation-use');
+var xxRouter = require('./routes/explanation-explain');
 
 var app = express();
 
@@ -42,21 +43,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 
 app.use('/', indexRouter);
-app.use('/OLD_index', oiRouter);
+app.use('/api-tester', atRouter);
+app.use('/readme', rmRouter);
+app.use('/combos', comRouter);
 app.use('/datasets-all', dsaRouter);
 app.use('/dataset-details', dsdRouter);
-app.use('/datasets-test-image', dstRouter);
-app.use('/dataset-use', duRouter);
+app.use('/dataset-test-image', dstRouter);
+app.use('/dataset-test-images', dstsRouter);
+app.use('/dataset-archive', dsarRouter);
 app.use('/models-all', maRouter);
 app.use('/model-details', mdRouter);
 app.use('/models-for-dataset', mfdRouter);
-app.use('/models-predict', mpRouter);
-app.use('/model-use', muRouter);
+app.use('/model-predict', mpRouter);
+app.use('/model-archive', marRouter);
 app.use('/explanations-all', xaRouter);
 app.use('/explanation-details', xdRouter);
 app.use('/explanations-for-filter', xffRouter);
-app.use('/explanation-use', xuRouter);
-app.use('/explanations-explain', xxRouter);
+app.use('/explanation-explain', xxRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

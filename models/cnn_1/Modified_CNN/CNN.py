@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+dataset = tf.data.Dataset
 
 
 class SimpleCNN(object):
@@ -13,6 +14,11 @@ class SimpleCNN(object):
         self.model_input_channels = model_input_channels
         self.n_classes = n_classes
         self.model_dir = model_dir
+
+        self.input_ = tf.placeholder(tf.float32, shape= [None, model_input_dim_width, model_input_dim_height, model_input_channels])
+        self.labels_ = tf.placeholder(tf.float32, shape= [None,1])
+
+        self.sess = tf.Session()
 
         # model specific variables
         # Training Parameters
@@ -169,6 +175,23 @@ class SimpleCNN(object):
 
         return estim_specs
 
+    def input_fn(self, x, y, batch_size = None, num_epochs, shuffle = False):
+        input_ = self.input_
+        labels_ = self.labels_
+        if y is None:
+            ds = dataset.from_tensor_slices(input_)
+        else:
+            ds = dataset.from_tensor_slices(input_, labels_)
+        if shuffle:
+            ds = ds.shuffle(batch_size + 1).repeat(count=num_epochs).batch(batch_size)
+
+        iter = ds.make_initializable_iterator()
+        nx = iter.get_next()
+
+        sess.run(iter.initializer, feed_dict = {input_: x, labels_: y})
+
+        return ds
+
     def GetLayerByName(self,name):
         return self.model.get_variable_value(name)
     
@@ -180,6 +203,11 @@ class SimpleCNN(object):
             var_value_dict[var] = self.model.get_variable_value(var)
 
         return var_value_dict
+
+    def GetGradLoss(self):
+        """
+        Returns the gradient of the loss function with respect to
+        """
 
 if __name__ == '__main__':
     from tensorflow.examples.tutorials.mnist import input_data
