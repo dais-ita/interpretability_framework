@@ -77,8 +77,8 @@ with open(data_json_path,"r") as f:
 
 ### get dataset details
 # dataset_name = "Traffic Congestion Image Classification"
-dataset_name = "Traffic Congestion Image Classification (Resized)"
-# dataset_name = "Gun Wielding Image Classification"
+#dataset_name = "Traffic Congestion Image Classification (Resized)"
+dataset_name = "Gun Wielding Image Classification"
 
 dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
 

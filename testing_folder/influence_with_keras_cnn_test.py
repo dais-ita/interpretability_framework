@@ -6,7 +6,7 @@ import random
 os.chdir("/home/c1435690/Projects/DAIS-ITA/Development/p5_afm_2018_demo/")
 
 from explanations.influence_functions.influence_explanations import InfluenceExplainer
-from models.cnn_1.CNN import SimpleCNN
+from models.keras_cnn.keras_cnn import KerasCNN
 from PIL import Image as Pimage
 
 
@@ -23,7 +23,7 @@ contents = os.listdir(datadir)
 classes = [each for each in contents if os.path.isdir(datadir + each)]
 
 labels, batch = [], []
-images = []
+images = []    
 for each in tqdm(classes):
     print("Starting {} images".format(each))
     class_path = datadir + each
@@ -66,8 +66,8 @@ print("Train shapes (x,y):", train_x.shape, train_y.shape)
 print("Validation shapes (x,y):", val_x.shape, val_y.shape)
 print("Test shapes (x,y):", test_x.shape, test_y.shape)
 
-model = SimpleCNN(input_dim[0],input_dim[1], input_dim[2], 2, os.path.join(os.getcwd(), 'models/keras_cnn'),additional_args)
-model.LoadModel(os.getcwd() + '/models/cnn_1/saved_models/gun_wielding_image_classification')
+model = KerasCNN(input_dim[0],input_dim[1], input_dim[2], 2, os.path.join(os.getcwd(), 'models/keras_cnn'),additional_args)
+model.LoadModel(os.getcwd() + '/models/keras_cnn/saved_models/gun_wielding_image_classification')
 influence_explainer = InfluenceExplainer(model, train_x, train_y, {})
 rand_i = random.randint(0,test_y.shape[0] - 1)
 additional_args = {'label': test_y[rand_i], 'collage': True}
