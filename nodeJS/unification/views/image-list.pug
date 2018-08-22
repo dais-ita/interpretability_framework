@@ -1,6 +1,6 @@
 extends layout
 include parameter-details.pug
-include dataset-details.pug
+include image-details.pug
 
 block content
     //- *******************************************************************************
@@ -9,4 +9,8 @@ block content
     //- *******************************************************************************
 
     +parameter-details(parameters)
-    +dataset-details(dataset)
+
+    -for (var i in images)
+            -var thisImg = images[i]
+            -var ctr = parseInt(i) + 1
+            +image-details(thisImg, ctr, images.length)
