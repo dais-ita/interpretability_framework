@@ -76,9 +76,10 @@ with open(data_json_path,"r") as f:
 
 
 ### get dataset details
-# dataset_name = "Traffic Congestion Image Classification"
+#dataset_name = "Traffic Congestion Image Classification"
 dataset_name = "Traffic Congestion Image Classification (Resized)"
-# dataset_name = "Gun Wielding Image Classification"
+#dataset_name = "Gun Wielding Image Classification"
+#dataset_name = "Cifar 10"
 
 dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
 
@@ -107,6 +108,7 @@ dataset_images_dir_path =  os.path.join(datasets_path,"dataset_images")
 
 dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
 
+print("label_names",label_names)
 dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
 
 if(load_split):
@@ -142,9 +144,11 @@ with open(model_json_path,"r") as f:
 	models_json = json.load(f)
 
 
-model_name = "keras_cnn"
+# model_name = "keras_cnn"
 # model_name = "cnn_1"
-# model_name = "keras_vgg"
+model_name = "keras_vgg"
+model_name = "keras_vgg_with_logits"
+model_name = "keras_api_vgg"
 
 
 model_json = [model for model in models_json["models"] if model["model_name"] == model_name ][0]
@@ -155,7 +159,7 @@ ModelModule = __import__(model_json["script_name"])
 ModelClass = getattr(ModelModule, model_json["class_name"])
 
 n_classes = len(label_names) 
-learning_rate = 0.00001
+learning_rate = 0.001
 
 additional_args = {"learning_rate":learning_rate}
 
@@ -169,7 +173,7 @@ cnn_model = ModelClass(input_image_height, input_image_width, input_image_channe
 
 ### train model
 batch_size = 128
-num_train_steps = 50
+num_train_steps = 300
 
 #load all train images as model handels batching
 source = "train"
