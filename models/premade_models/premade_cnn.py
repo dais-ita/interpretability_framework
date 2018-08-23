@@ -30,7 +30,7 @@ import random
 class PremadeCNN(object):
     """A simple CNN model implemented using the Tensorflow estimator API"""
 
-    def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,
+    def __init__(self, model_input_dim_width, model_input_dim_height, model_input_channels, n_classes, model_dir,
                  additional_args={}):
         super(PremadeCNN, self).__init__()
         self.model_input_dim_height = model_input_dim_height
@@ -55,11 +55,11 @@ class PremadeCNN(object):
         # model specific variables
         # Training Parameters
 
-        # if ("learning_rate" in additional_args):
-        #     self.learning_rate = additional_args["learning_rate"]
-        # else:
-        #     self.learning_rate = 0.001
-        #     print("using default of " + str(self.learning_rate) + " for " + "learning_rate")
+        if ("learning_rate" in additional_args):
+            self.learning_rate = additional_args["learning_rate"]
+        else:
+            self.learning_rate = 0.001
+            print("using default of " + str(self.learning_rate) + " for " + "learning_rate")
         #
         # if ("dropout" in additional_args):
         #     self.dropout = additional_args["dropout"]
@@ -68,6 +68,10 @@ class PremadeCNN(object):
         #     print("using default of " + str(self.dropout) + " for " + "dropout")
 
         self.model = None
+        if "architecture" in additional_args:
+            self.architecture = additional_args["architecture"]
+        else:
+            self.architecture = "vgg16"
         self.InitaliseModel(model_dir=self.model_dir)
 
     ### Required Model Functions
@@ -87,7 +91,7 @@ class PremadeCNN(object):
     def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x=None, val_y=None):
         train_step = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss)
 
-        while train_y != [] and num_steps != 0:
+        while train_y.size != 0 and num_steps != 0:
             #     Get batch
             batch_x, batch_y, train_x, train_y = self._get_batches(train_x, train_y, batch_size)
             feed_dict = {
@@ -128,9 +132,8 @@ class PremadeCNN(object):
         else:
             input_dict = eval_x
 
-        # Train the Model
-        # return self.model.evaluate(eval_x,eval_y, batch_size=batch_size)
         loss = []
+        num_steps = eval_x.shape[0] // batch_size
         while eval_y.size != 0 and num_steps != 0:
             batch_x, batch_y, eval_x, eval_y = self._get_batches(eval_y, eval_y, batch_size)
             feed_dict = {
@@ -156,14 +159,11 @@ class PremadeCNN(object):
         return [np.argmax(prediction) for prediction in predictions]
 
     def SaveModel(self, save_dir):
-        model_json = self.model.to_json()
-        with open(save_dir, "w") as json_file:
-            json_file.write(model_json)
-        print("Saved model to:" + str(self.model_dir))
+        self.model.save_weights(os.path.join(save_dir, self.architecture + "weights.h5"))
 
     def LoadModel(self, load_dir):
         # TODO: get load model fns from Dan
-        print("Loaded model from:" + str(self.model_dir))
+        self.model.load_weights(os.path.join(save_dir, self.architecture + "weights.h5"))
 
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes):
@@ -171,7 +171,7 @@ class PremadeCNN(object):
         Builds the internal model architecture by adapting the FeatureDescriptor class, with the simple alteration of
         setting the "include_top" parameter to true, to load the logits layers
         """
-        featuredesc = FeatureDescriptor([model_input_dim_width, model_input_dim_height,model_input_channels], input_tensor=self.input_, include_top=True, weights='Random')
+        featuredesc = FeatureDescriptor([model_input_dim_width, model_input_dim_height,model_input_channels], input_tensor=self.input_, architecture = self.architecture, include_top=True, weights='Random')
         model = featuredesc.get_premade_model()
         return model
 
@@ -202,4 +202,83 @@ class PremadeCNN(object):
 
 
 
+if __name__ == "__main__":
+    n_classes = 2
+    additional_args = {
+        'learning_rate': 0.01,
+        'alpha': 0.0001
+    }
+    batch_size = 10
 
+    from PIL import Image as Pimage
+    from tqdm import tqdm
+
+    datadir = "/home/c1435690/Projects/DAIS-ITA/Development/p5_afm_2018_demo" + "/datasets/dataset_images/resized_wielder_non-wielder/"
+    contents = os.listdir(datadir)
+    classes = [each for each in contents if os.path.isdir(datadir + each)]
+
+    labels, batch = [], []
+    images = []
+
+    for each in tqdm(classes):
+        print("Starting {} images".format(each))
+        class_path = datadir + each
+        files = os.listdir(class_path)
+        for ii, file in enumerate(files, 1):
+            img = Pimage.open(os.path.join(class_path, file))
+            img = np.array(img)
+            batch.append(img)
+            labels.append(each)
+
+    images = np.asarray(batch)
+
+    from sklearn import preprocessing
+
+    lb = preprocessing.LabelBinarizer()
+    lb.fit(labels)
+
+    labels_vecs = lb.transform(labels)
+    labels_vecs[labels_vecs == 0] -= 1
+
+    from sklearn.model_selection import StratifiedShuffleSplit
+
+    ss = StratifiedShuffleSplit(n_splits=1, test_size=0.2)
+    splitter = ss.split(np.zeros(labels_vecs.shape[0]), labels_vecs)
+
+    train_idx, val_idx = next(splitter)
+
+    half_val_len = int(len(val_idx) / 2)
+    val_idx, test_idx = val_idx[:half_val_len], val_idx[half_val_len:]
+
+    train_x, train_y = images[train_idx], labels_vecs[train_idx]
+    val_x, val_y = images[val_idx], labels_vecs[val_idx]
+    test_x, test_y = images[test_idx], labels_vecs[test_idx]
+
+    input_dim = train_x[0].shape
+    n_batches = 10
+
+    svm_model = PremadeCNN(
+        input_dim[0],
+        input_dim[1],
+        input_dim[2],
+        n_classes,
+        os.path.join(models_path, "premade_models"),
+    )
+
+    print("Train shapes (x,y):", train_x.shape, train_y.shape)
+    print("Validation shapes (x,y):", val_x.shape, val_y.shape)
+    print("Test shapes (x,y):", test_x.shape, test_y.shape)
+
+    for step in range(10, 200 + 1, 10):
+        print("")
+        print("training")
+        print("step:", step)
+        svm_model.TrainModel(train_x, train_y, batch_size, 50)
+        print("")
+        print("evaluation")
+        print(svm_model.EvaluateModel(val_x, val_y, batch_size))
+        print("")
+
+    test_y[test_y == 1] = 0
+    test_y *= -1
+    print(test_y == svm_model.Predict(test_x))
