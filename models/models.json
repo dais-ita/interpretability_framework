@@ -221,23 +221,23 @@
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
 			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":,
-			"training_time":,
-			"training_steps":
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":0
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_train_split.csv",
-			"test_accuracy":,
-			"training_time":,
-			"training_steps":
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":0
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
 			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":,
-			"training_time":,
-			"training_steps":
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":0
 			}
 		],
 		"architectures":{
@@ -255,7 +255,7 @@
 		"additional_arguments":[
 			{"name":"architecture",
 			"description":"Dictates the premade architecture to select"
-			},
+			}
 		],
 		"description":"A model class that uses Feature Descriptor to load in benchmark architectures such as VGG 16 and 19, resnet50 etc.",
 		"license":"apache 2"
