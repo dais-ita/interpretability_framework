@@ -7,6 +7,8 @@
 			{"model_name":"conv_svm"},
 			{"model_name":"cnn_1"},
 			{"model_name":"keras_cnn"},
+			{"model_name":"keras_vgg"},
+			{"model_name":"keras_api_vgg"},
 			{"model_name":"keras_vgg"}
 				],
 		"compatible_datasets":[
@@ -48,6 +50,8 @@
 		"class_name":"ShapExplainer",
 		"compatible_models":[
 			{"model_name":"keras_cnn"},
+			{"model_name":"keras_vgg"},
+			{"model_name":"keras_api_vgg"},
 			{"model_name":"keras_vgg"}
 				],
 		"compatible_datasets":[
@@ -80,8 +84,9 @@
 		"class_name":"InfluenceExplainer",
 		"compatible_models":[
 			{"model_name":"conv_svm"},
-			{"model_name":"keras_cnn"}
-				],
+			{"model_name":"keras_vgg"},
+			{"model_name":"keras_api_vgg"},
+			{"model_name":"keras_vgg"}				],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification"},
@@ -104,6 +109,30 @@
 			}
 		],
 		"additional_outputs":[
+		],
+		"license":"apache 2"
+		},
+
+		{"explanation_name":"LRP",
+		"script_name":"lrp_explanation",
+		"class_name":"LRPExplainer",
+		"compatible_models":[
+			{"model_name":"keras_api_vgg"}
+							],
+		"compatible_datasets":[
+			{"dataset_name":"Gun Wielding Image Classification"},
+			{"dataset_name":"Traffic Congestion Image Classification"},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)"}
+				],
+		"modality":"imagery",
+		"description":"",
+		"additional_arguments":[
+			
+		],
+		"additional_outputs":[
+			{"name":"lrp_values",
+			"description":"raw LRP values"
+			}
 		],
 		"license":"apache 2"
 		}
