@@ -6,8 +6,6 @@ from skimage.segmentation import mark_boundaries
 
 import cv2
 
-import shap
-
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
