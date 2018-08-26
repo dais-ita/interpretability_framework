@@ -18,7 +18,7 @@ class FeatureDescriptor(object):
 
     """
     def __init__(self, input_shape, batch_size=-1, architecture='vgg16', weights='pretrained', pooling='avg',
-                 input_tensor=False):
+                 input_tensor=None):
         self.input_shape = input_shape
         self.batch_size = batch_size
         self.architecture = architecture
@@ -51,10 +51,10 @@ class FeatureDescriptor(object):
         model = self.__load_architecture(self.architecture)
         
         return tf.contrib.layers.flatten(
-                tf.identity(
-                        model.layers[-2].output,
-                        name='pretrained_output'
-                )
+            tf.identity(
+                    model.layers[-1].output,
+                    name='pretrained_output'
+            )
         )
 
     def __load_architecture(self, architecture_name):
@@ -68,7 +68,7 @@ class FeatureDescriptor(object):
             'pooling': self.pooling
         }
 
-        if self.input_tensor:
+        if self.input_tensor is not None:
             model_args['input_tensor'] = self.input_tensor
 
         return {

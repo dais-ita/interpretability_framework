@@ -6,30 +6,43 @@ from scipy.optimize import fmin_ncg
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.ops import array_ops
+from six.moves import xrange
+import random
+import PIL.Image as Pimage
 
 class InfluenceExplainer(object):
-    def __init__(self,model, train_imgs, train_lbls):
+    def __init__(self,model, train_imgs, train_lbls, additional_args):
         super(InfluenceExplainer, self).__init__()
         self.model = model
         self.sess = model.sess
-        self.params, self.num_params = model.GetWeights()
-        self.num_params = len(np.concatenate(self.sess.run(self.params)))
+        self.params = [tf.reshape(param, [-1,]) for param in model.GetWeights()]
+        self.num_params = len(self.params)
         self.input_, self.labels_ = model.GetPlaceholders()
         self.v_placeholder = [
                 tf.placeholder(
                     tf.float32,
-                    shape=a.get_shape()
+                    shape=a.get_shape(),
+                    name= "params"+str(i)+"_pl"
                 )
-                for a in self.params
+                for i, a in zip(xrange(self.num_params),self.params)
         ]
-        self.grad_loss = self.model.GetGradLoss()
+        self.grad_loss = [tf.reshape(grad, [-1,]) for grad in self.model.GetGradLoss()]
         self.hvp = self._get_approx_hvp(self.grad_loss, self.params, self.v_placeholder)
         self.train_imgs = train_imgs
         self.train_lbls = train_lbls
         self.vec_to_list = self._get_vec_to_list()
         self.cached_influence = {}
+        if "damping" in additional_args:
+            self.damping = additional_args["damping"]
+        else:
+            self.damping = 0.0    
+        if "mini_batch" in additional_args:
+            self.mini_batch = additional_args["mini_batch"]
+        else:
+            self.mini_batch = True
+                
         
-    def Explain(self, test_img, n_max=4, additional_args = {}):
+    def Explain(self, test_img, n_max, additional_args):
         """
         Explain test image by showing the training sampels with most influence
         on the models classification of the image.
@@ -51,34 +64,92 @@ class InfluenceExplainer(object):
             label = additional_args["label"]
         else:
             label = self.model.Predict(test_img)
-        cache = False
+        label = label.reshape(-1, 1)
+        """
+        If cache is true, and the image has not been cached before, the resulting max_imgs list will be cached under the test_img
+        If cache is true, and the image has been cached previously, the previously cached results are returned
+        If cache is true, but n_max is different, the results are re-calculated and cached
+        If cache is false, the results are computed regardless
+        """
+
         if "cache" in additional_args:
-            if test_img not in self.cached_influence:
-                if n_max == len(self.cached_influence[test_img]):
-                    compute = False
-                else:
-                    cache = True
-        
-        if compute:
-            feed_dict = {
-                self.input_:         
-            }
-            test_loss_gradient = self.model.GetGradLoss(test_img, label)
-            s_test = self._get_approx_inv_hvp(test_loss_gradient)
-            influences = []
-            for train_pt in zip(self.train_imgs, self.train_lbls):
-                influences.append(self._influence_on_loss_at_test_image(s_test,train_pt))
-#           Get the n_max first training images in order of descending influence
-            idcs = np.argsort(influences)[-n_max:]
-            max_imgs = train_imgs[idcs:]
-            if cache:
-                self.cached_influence[test_img] = max_imgs
+            cache = additional_args["cache"]
+            if additional_args["cache"]:
+                if test_img in self.cached_influence:
+                    if len(self.cached_influence[test_img]) == n_max: 
+                        return self.FormCollage(self.cached_influence[test_img])
         else:
-            max_imgs = self.cached_influence[test_img]
+            cache = False
+
+        if len(test_img.shape) < 4:
+            test_img = np.expand_dims(test_img, axis = 0) 
+        feed_dict = {
+            self.input_: test_img,
+            self.labels_: label
+        }
+
+        test_loss_gradient = self.sess.run(self.grad_loss,feed_dict)
+        s_test = self._get_approx_inv_hvp(test_loss_gradient)
+        s_test = [prod.reshape(-1,) for prod in s_test]
+        influences = []
+        for train_pt in zip(self.train_imgs, self.train_lbls):
+            influences.append(self._influence_on_loss_at_test_image(s_test,train_pt))
+#           Get the n_max first training images in order of descending influence
+        idcs = np.argsort(influences)[-n_max:]
+        max_imgs = self.train_imgs[idcs]
+        if cache:
+            self.cached_influence[test_img] = max_imgs
+            
+        max_imgs = self.FormCollage(max_imgs)
             
         return max_imgs
             
             
+    
+    def FormCollage(self, img_arr, width = 256, height = 256, cols = 0, rows = 0):
+        """
+        Added functionality for collaging the images represented as arrays,
+        that are returned by Explain()
+        returns a PIL Image object
+        Input:
+            img_arr: list of images each in array format
+            width: the desired pixel width of the output collage
+            height: the desired pixel height of the output collage
+            cols: the number of images per collage row
+            rows: the number of images per collage column
+        """
+#        if cols or rows is 0
+        if not (cols and rows):
+            cols = len(img_arr) // 2
+            rows = len(np.split(img_arr,2))
+        
+        thumbnail_width = width // cols
+        thumbnail_height = height // rows
+        size = thumbnail_width, thumbnail_height
+        collage = Pimage.new('RGB', (width, height))
+        imgs = []
+        
+        for arr in img_arr:
+            img = Pimage.fromarray(arr)
+            img.thumbnail(size)
+            imgs.append(img)
+            
+        i = 0
+        x = 0
+        y = 0
+        
+        for col in range(cols):
+            for row in range(rows):
+                collage.paste(imgs[i],(x,y))
+                i += 1
+                y += thumbnail_height
+            x += thumbnail_width
+            y = 0
+        
+        return collage
+                
+
+        
         
     def _influence_on_loss_at_test_image(self, s, train_pt):
         """
@@ -97,13 +168,14 @@ class InfluenceExplainer(object):
         
 #        Get loss  Loss(z,w_min)
         feed_dict = {
-                self.input_ : train_pt[0],
-                self.labels_ : train_pt[1]
+                self.input_ : np.expand_dims(train_pt[0],axis=0),
+                self.labels_ : train_pt[1].reshape(-1,1)
         }
 #        Get gradient of loss at training point: Grad_w x Loss(z,w_min)
-        grad_train_loss_w_min = self.grad_loss(train_pt[0], train_pt[1])
+        grad_train_loss_w_min = self.sess.run(self.grad_loss, feed_dict)
+        grad_train_loss_w_min = [grad.reshape(-1,) for grad in grad_train_loss_w_min]
 #        Calculate Influence
-        influence_on_loss_at_test_image = np.dot(np.concatenate(s), np.concatenate(grad_train_loss_w_min)) / len(self.train_lbls)
+        influence_on_loss_at_test_image = np.dot(np.concatenate(s),np.concatenate(grad_train_loss_w_min) / len(self.train_lbls))
         
         return influence_on_loss_at_test_image
         
@@ -113,7 +185,7 @@ class InfluenceExplainer(object):
         given vector v
         This value is approximated via Newton Conjugate Gradient Descent:
         """
-        
+        v = [a.reshape(-1,) for a in v]
 #        function to minimise
         fmin = self._get_fmin_inv_hvp(v)
 #        gradient of function
@@ -171,6 +243,37 @@ class InfluenceExplainer(object):
         
         return return_grads
         
+    
+    def _minibatch_hvp(self, v):
+        num_samples = self.train_imgs.shape[0]
+        if self.mini_batch == True:
+            batch_size = 31
+            assert num_samples % batch_size == 0
+        else:
+            batch_size = num_samples
+            
+        num_iter = int(num_samples / batch_size)
+        
+        hess_vec_val = None
+        for i in xrange(num_iter):
+            idx = random.sample(xrange(i,i+batch_size), batch_size)
+            feed_dict = {
+                    self.input_: self.train_imgs[idx],
+                    self.labels_: self.train_lbls[idx]
+            }
+            
+            for pl, vec in zip(self.v_placeholder, v):
+                feed_dict[pl] = vec
+            
+            hess_vec_val_tmp = self.sess.run(self.hvp, feed_dict)
+            if hess_vec_val is None:
+                hess_vec_val = [b / float(num_iter) for b in hess_vec_val_tmp]
+            else:
+                hess_vec_val = [a + (b / float(num_iter)) for (a,b) in zip(hess_vec_val, hess_vec_val_tmp)]
+                
+        hess_vec_val = [a + self.damping * b for (a,b) in zip(hess_vec_val,v)]
+        hess_vec_val = [param_val.reshape(-1,) for param_val in hess_vec_val]
+        return hess_vec_val
     def _get_fmin_inv_hvp(self, v):
         """
         H_w_min ^ -1 x v is equiv. to 
@@ -178,10 +281,7 @@ class InfluenceExplainer(object):
         By minimising this using NCG we can approximate s_test (see self.Explain)
         """
         def fmin_inv_hvp(x):
-            feed_dict = {
-                self.v_placeholder: x        
-            }
-            hvp = self.sess.run(self.hvp, feed_dict)
+            hvp = self._minibatch_hvp(self.vec_to_list(x))
             inv_hvp_val = 0.5 * np.dot(np.concatenate(hvp),x) - np.dot(np.concatenate(v),x)
             return inv_hvp_val
         return fmin_inv_hvp
@@ -193,10 +293,8 @@ class InfluenceExplainer(object):
         The vector v is treated as a conbstant and varies with each test point
         """
         def _grad_fmin(x):
-            feed_dict = {
-                self.v_placeholder: x        
-            }
-            hvp = self.sess.run(self.hvp, feed_dict)
+            
+            hvp = self._minibatch_hvp(self.vec_to_list(x))
             grad_val = np.concatenate(hvp) - np.concatenate(v)
             return grad_val
         return _grad_fmin
@@ -205,10 +303,7 @@ class InfluenceExplainer(object):
         """
         Returns the Hessian of the fmin function
         """
-        feed_dict = {
-                self.v_placeholder: x        
-            }
-        hvp = self.sess.run(self.hvp, feed_dict)
+        hvp = self._minibatch_hvp(self.vec_to_list(p))
         return np.concatenate(hvp)
     
     def _get_cg_callback(self, v):
@@ -217,36 +312,36 @@ class InfluenceExplainer(object):
         """
         fmin = self._get_fmin_inv_hvp(v)
 
-        def _fmin_inv_hvp_split(x):        
-            feed_dict = {
-                self.v_placeholder: x        
-            }
-            hvp = self.sess.run(self.hvp, feed_dict)
+        def _fmin_inv_hvp_split(x):
+            hvp = self._minibatch_hvp(self.vec_to_list(x))
             inv_hvp_val = 0.5 * np.dot(np.concatenate(hvp),x) - np.dot(np.concatenate(v),x)
             return inv_hvp_val
         
         def cg_callback(x):
 #            x is current params
             v = self.vec_to_list(x)
+            v = [a.reshape(-1) for a in v]
             idx_to_rm = 5
             
-            single_train_ex = self.train_imgs[idx_to_rm,:].reshape(1,-1)
-            single_train_lbl = self.train_lbls[idx_to_rm].reshape(-1)
+            single_train_ex = np.expand_dims(self.train_imgs[idx_to_rm],axis=0)
+            single_train_lbl = self.train_lbls[idx_to_rm].reshape(-1,1)
             feed_dict = {
                     self.input_ : single_train_ex,
                     self.labels_ : single_train_lbl
             }
-            grad_train_loss = self.grad_loss(single_train_ex, single_train_lbl)
+            grad_train_loss = self.sess.run(self.grad_loss, feed_dict)
             predicted_del_loss = np.dot(np.concatenate(v), np.concatenate(grad_train_loss)) / self.train_lbls.shape[0]
             
         return cg_callback
     
     def _get_vec_to_list(self):
-        
+        params = self.sess.run(self.params)
         def vec_to_list(v):
+            # if len(v.shape) == 1:
+            #     v = np.expand_dims(v, axis = 1)
             return_ls = []
             pos = 0
-            for p in self.params:
+            for p in params:
                 return_ls.append(v[pos : pos+len(p)])
                 pos += len(p)
             

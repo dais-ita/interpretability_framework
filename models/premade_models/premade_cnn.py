@@ -3,47 +3,44 @@ import numpy as np
 import os
 import sys
 
+
 def get_dir_path(dir_name):
     base_path = os.getcwd().split("/")
     while base_path[-1] != str(dir_name):
         base_path = base_path[:-1]
     return "/".join(base_path) + "/"
 
-models_path = os.path.join(get_dir_path("p5_afm_2018_demo"),"models")
+
+models_path = os.path.join(get_dir_path("p5_afm_2018_demo"), "models")
 folders = os.listdir(models_path)
 for folder in folders:
     folder_path = os.path.join(models_path, folder)
     if os.path.isdir(folder_path) and not folder_path in sys.path:
         sys.path.append(folder_path)
 
-
 import keras
-from keras.datasets import mnist
-from keras.layers import InputLayer
-from keras.layers import Dense, Flatten, Dropout
-from keras.layers import Conv2D, MaxPooling2D
-from keras.models import Sequential
-from keras.models import model_from_json
-
 import tensorflow as tf
+
 from keras.backend import set_session
+from FeatureDescriptor import FeatureDescriptor
 
 import random
 
-class KerasCNN(object):
+
+class PremadeCNN(object):
     """A simple CNN model implemented using the Tensorflow estimator API"""
 
-    def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,
+    def __init__(self, model_input_dim_width, model_input_dim_height, model_input_channels, n_classes, model_dir,
                  additional_args={}):
-        super(KerasCNN, self).__init__()
+        super(PremadeCNN, self).__init__()
         self.model_input_dim_height = model_input_dim_height
         self.model_input_dim_width = model_input_dim_width
         self.model_input_channels = model_input_channels
         model_input_dim = [model_input_dim_height, model_input_dim_width, model_input_channels]
         self.input_ = tf.placeholder(
-                tf.float32,
-                shape = [None] + list(model_input_dim),
-                name = "in_"
+            tf.float32,
+            shape=[None] + list(model_input_dim),
+            name="in_"
         )
         self.labels_ = tf.placeholder(
             name="lbl_",
@@ -53,6 +50,7 @@ class KerasCNN(object):
         self.n_classes = n_classes
         self.model_dir = model_dir
         self.sess = tf.Session()
+        self.feature_desc = None
 
         # model specific variables
         # Training Parameters
@@ -62,14 +60,18 @@ class KerasCNN(object):
         else:
             self.learning_rate = 0.001
             print("using default of " + str(self.learning_rate) + " for " + "learning_rate")
-
-        if ("dropout" in additional_args):
-            self.dropout = additional_args["dropout"]
-        else:
-            self.dropout = 0.25
-            print("using default of " + str(self.dropout) + " for " + "dropout")
+        #
+        # if ("dropout" in additional_args):
+        #     self.dropout = additional_args["dropout"]
+        # else:
+        #     self.dropout = 0.25
+        #     print("using default of " + str(self.dropout) + " for " + "dropout")
 
         self.model = None
+        if "architecture" in additional_args:
+            self.architecture = additional_args["architecture"]
+        else:
+            self.architecture = "vgg16"
         self.InitaliseModel(model_dir=self.model_dir)
 
     ### Required Model Functions
@@ -80,20 +82,21 @@ class KerasCNN(object):
         self.sess = tf.Session(config=conf)
         keras.backend.set_session(self.sess.run)
 
-        self.model = self.BuildModel(self.model_input_dim_height, self.model_input_dim_width, self.model_input_channels, self.n_classes,self.dropout)
+        self.model = self.BuildModel(self.model_input_dim_height, self.model_input_dim_width, self.model_input_channels,
+                                     self.n_classes)
         self.logits = self.model(self.input_)
         self.sess.run(tf.global_variables_initializer())
-        self.loss = keras.losses.categorical_crossentropy(self.logits,self.labels_)
+        self.loss = keras.losses.categorical_crossentropy(self.logits, self.labels_)
 
-    def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None):
+    def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x=None, val_y=None):
         train_step = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss)
 
-        while train_y != [] and num_steps != 0:
-        #     Get batch
+        while train_y.size != 0 and num_steps != 0:
+            #     Get batch
             batch_x, batch_y, train_x, train_y = self._get_batches(train_x, train_y, batch_size)
             feed_dict = {
-                self.input_ : batch_x,
-                self.labels_ : batch_y
+                self.input_: batch_x,
+                self.labels_: batch_y
             }
 
             self.sess.run(train_step, feed_dict)
@@ -129,18 +132,18 @@ class KerasCNN(object):
         else:
             input_dict = eval_x
 
-        # Train the Model
-        # return self.model.evaluate(eval_x,eval_y, batch_size=batch_size)
         loss = []
+        num_steps = eval_x.shape[0] // batch_size
         while eval_y.size != 0 and num_steps != 0:
-            batch_x, batch_y, eval_x, eval_y = self._get_batches(eval_y,eval_y, batch_size)
+            batch_x, batch_y, eval_x, eval_y = self._get_batches(eval_y, eval_y, batch_size)
             feed_dict = {
                 self.input_: batch_x,
                 self.labels_: batch_y
             }
             loss.append(self.sess.run(self.loss, feed_dict))
             num_steps -= 1
-        return sum(loss)/len(loss)
+        return sum(loss) / len(loss)
+
     def Predict(self, predict_x):
         if (type(predict_x) != dict):
             input_dict = {"input": predict_x}
@@ -151,55 +154,39 @@ class KerasCNN(object):
             self.input_: predict_x
         }
         predictions = self.sess.run(self.logits, feed_dict)
-        print("[np.argmax(prediction) for prediction in predictions]",[np.argmax(prediction) for prediction in predictions])
+        print("[np.argmax(prediction) for prediction in predictions]",
+              [np.argmax(prediction) for prediction in predictions])
         return [np.argmax(prediction) for prediction in predictions]
 
-
     def SaveModel(self, save_dir):
-        model_json = self.model.to_json()
-        with open(save_dir, "w") as json_file:
-            json_file.write(model_json)
-        print("Saved model to:"+ str(self.model_dir))
-
+        self.model.save_weights(os.path.join(save_dir, self.architecture + "weights.h5"))
 
     def LoadModel(self, load_dir):
-        loaded_model_json = ""
-        with open(load_dir, 'r') as f:
-            loaded_model_json = f.read()
-        
-        loaded_model = model_from_json(loaded_model_json)
-        print("Loaded model from:"+ str(self.model_dir))
+        # TODO: get load model fns from Dan
+        self.model.load_weights(os.path.join(save_dir, self.architecture + "weights.h5"))
 
     ### Model Specific Functions
-    def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout):
-        model = Sequential()
-        model.add(InputLayer(input_tensor=self.input_))
-        model.add(Conv2D(32, kernel_size=(5, 5), strides=(1, 1),
-                         activation='relu',kernel_initializer=keras.initializers.glorot_uniform(),
-                         input_shape=[model_input_dim_height, model_input_dim_width, model_input_channels], name="conv_1"))
-        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2),name="max_pool_1"))
-        model.add(Conv2D(64, (3, 3), activation='relu',name="conv_2"))
-        model.add(MaxPooling2D(pool_size=(2, 2),name="max_pool_2"))
-        model.add(Flatten(name="feature_vector_1"))
-        model.add(Dense(1048, activation='relu', name="fully_connected_1"))
-        model.add(Dropout(dropout,name="dropout_1"))
-        # model.add(Dense(n_classes, activation='relu',name="logits"))
-        model.add(Dense(n_classes, activation='softmax',name="class_prob"))
-
+    def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes):
+        """
+        Builds the internal model architecture by adapting the FeatureDescriptor class, with the simple alteration of
+        setting the "include_top" parameter to true, to load the logits layers
+        """
+        featuredesc = FeatureDescriptor([model_input_dim_width, model_input_dim_height,model_input_channels], input_tensor=self.input_, architecture = self.architecture, include_top=True, weights='Random')
+        model = featuredesc.get_premade_model()
         return model
-        
+
     def GetWeights(self):
-        return [w for w in self.model.weights if 'connected' in w.name and 'kernel' in w.name]
-    
+        return [w for w in self.model.weights if 'fc' in w.name and 'kernel' in w.name]
+
     def GetPlaceholders(self):
         return [self.input_, self.labels_]
 
     def GetGradLoss(self):
         return tf.gradients(self.loss, self.GetWeights())
 
-    def GetLayerByName(self,name):
+    def GetLayerByName(self, name):
         print("GetLayerByName - not implemented")
-    
+
     def FetchAllVariableValues(self):
         print("FetchAllVariableValues - not implemented")
 
@@ -213,39 +200,85 @@ class KerasCNN(object):
         y = np.delete(y, idcs)
         return batch_x, batch_y, x, y
 
-if __name__ == '__main__':
 
-    from tensorflow.examples.tutorials.mnist import input_data
 
-    mnist = input_data.read_data_sets("/tmp/data/", one_hot=False)
+if __name__ == "__main__":
+    n_classes = 2
+    additional_args = {
+        'learning_rate': 0.01,
+        'alpha': 0.0001
+    }
+    batch_size = 10
 
-    model_input_dim_height = 28
-    model_input_dim_width = 28
-    model_input_channels = 1
-    n_classes = 10
-    learning_rate = 0.001
+    from PIL import Image as Pimage
+    from tqdm import tqdm
 
-    batch_size = 128
-    num_train_steps = 200
+    datadir = "/home/c1435690/Projects/DAIS-ITA/Development/p5_afm_2018_demo" + "/datasets/dataset_images/resized_wielder_non-wielder/"
+    contents = os.listdir(datadir)
+    classes = [each for each in contents if os.path.isdir(datadir + each)]
 
-    additional_args = {"learning_rate": learning_rate}
+    labels, batch = [], []
+    images = []
 
-    cnn_model = KerasCNN(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,
-                          model_dir="mnist", additional_args=additional_args)
+    for each in tqdm(classes):
+        print("Starting {} images".format(each))
+        class_path = datadir + each
+        files = os.listdir(class_path)
+        for ii, file in enumerate(files, 1):
+            img = Pimage.open(os.path.join(class_path, file))
+            img = np.array(img)
+            batch.append(img)
+            labels.append(each)
 
-    verbose_every = 10
-    for step in range(verbose_every, num_train_steps + 1, verbose_every):
+    images = np.asarray(batch)
+
+    from sklearn import preprocessing
+
+    lb = preprocessing.LabelBinarizer()
+    lb.fit(labels)
+
+    labels_vecs = lb.transform(labels)
+    labels_vecs[labels_vecs == 0] -= 1
+
+    from sklearn.model_selection import StratifiedShuffleSplit
+
+    ss = StratifiedShuffleSplit(n_splits=1, test_size=0.2)
+    splitter = ss.split(np.zeros(labels_vecs.shape[0]), labels_vecs)
+
+    train_idx, val_idx = next(splitter)
+
+    half_val_len = int(len(val_idx) / 2)
+    val_idx, test_idx = val_idx[:half_val_len], val_idx[half_val_len:]
+
+    train_x, train_y = images[train_idx], labels_vecs[train_idx]
+    val_x, val_y = images[val_idx], labels_vecs[val_idx]
+    test_x, test_y = images[test_idx], labels_vecs[test_idx]
+
+    input_dim = train_x[0].shape
+    n_batches = 10
+
+    svm_model = PremadeCNN(
+        input_dim[0],
+        input_dim[1],
+        input_dim[2],
+        n_classes,
+        os.path.join(models_path, "premade_models"),
+    )
+
+    print("Train shapes (x,y):", train_x.shape, train_y.shape)
+    print("Validation shapes (x,y):", val_x.shape, val_y.shape)
+    print("Test shapes (x,y):", test_x.shape, test_y.shape)
+
+    for step in range(10, 200 + 1, 10):
         print("")
         print("training")
         print("step:", step)
-        cnn_model.TrainModel(mnist.train.images, mnist.train.labels, batch_size, verbose_every)
+        svm_model.TrainModel(train_x, train_y, batch_size, 50)
         print("")
-
         print("evaluation")
-        print(cnn_model.EvaluateModel(mnist.test.images[:128], mnist.test.labels[:128], batch_size))
+        print(svm_model.EvaluateModel(val_x, val_y, batch_size))
         print("")
 
-    print(cnn_model.Predict(mnist.test.images[:5]))
-
-    print(mnist.test.labels[:5])
-    
+    test_y[test_y == 1] = 0
+    test_y *= -1
+    print(test_y == svm_model.Predict(test_x))
