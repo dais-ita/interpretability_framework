@@ -7,6 +7,30 @@ import cv2
 import numpy as np
 import random
 
+######
+## Training COnfiguration ##
+
+#DATASET
+#dataset_name = "Traffic Congestion Image Classification"
+# dataset_name = "Traffic Congestion Image Classification (Resized)"
+dataset_name = "Gun Wielding Image Classification"
+# dataset_name = "Cifar 10"
+
+#MODEL
+# model_name = "keras_cnn"
+# model_name = "cnn_1"
+# model_name = "keras_vgg"
+# model_name = "keras_vgg_with_logits"
+model_name = "keras_api_vgg"
+
+#TRAINING PARAMETERS
+learning_rate = 0.0001
+batch_size = 128
+num_train_steps = 100
+
+
+#####
+
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # turn off repeated messages from Tensorflow RE GPU allocation
 
@@ -77,11 +101,6 @@ with open(data_json_path,"r") as f:
 
 ### get dataset details
 
-#dataset_name = "Traffic Congestion Image Classification"
-dataset_name = "Traffic Congestion Image Classification (Resized)"
-#dataset_name = "Gun Wielding Image Classification"
-#dataset_name = "Cifar 10"
-
 dataset_json = [dataset for dataset in datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
 
 
@@ -92,6 +111,7 @@ if("default_training_allocation_path" in dataset_json.keys()):
 else:
 	file_path = dataset_json["ground_truth_csv_path"]
 	load_split = False
+	print("new training split will be created")
 
 
 image_url_column = "image_path"
@@ -145,12 +165,6 @@ with open(model_json_path,"r") as f:
 	models_json = json.load(f)
 
 
-# model_name = "keras_cnn"
-# model_name = "cnn_1"
-model_name = "keras_vgg"
-model_name = "keras_vgg_with_logits"
-model_name = "keras_api_vgg"
-
 
 model_json = [model for model in models_json["models"] if model["model_name"] == model_name ][0]
 print("selecting first model:" + model_json["model_name"])
@@ -160,7 +174,6 @@ ModelModule = __import__(model_json["script_name"])
 ModelClass = getattr(ModelModule, model_json["class_name"])
 
 n_classes = len(label_names) 
-learning_rate = 0.001
 
 additional_args = {"learning_rate":learning_rate}
 
@@ -173,8 +186,6 @@ cnn_model = ModelClass(input_image_height, input_image_width, input_image_channe
 
 
 ### train model
-batch_size = 128
-num_train_steps = 300
 
 #load all train images as model handels batching
 source = "train"

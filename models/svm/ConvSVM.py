@@ -341,7 +341,7 @@ if __name__ == '__main__':
         additional_args,
         n_classes,
     )
-    from tensorflow_vgg import vgg16, utils as vgg_utils
+    from PIL import Pimage
     from tqdm import tqdm
 
 
@@ -357,7 +357,8 @@ if __name__ == '__main__':
         class_path = datadir + each
         files = os.listdir(class_path)
         for ii, file in enumerate(files, 1):
-            img = vgg_utils.load_image(os.path.join(class_path, file))
+            img = Pimage.open(os.path.join(class_path, file))
+            img = np.array(img)
             batch.append(img.reshape(( 224, 224, 3)))
             labels.append(each)
 

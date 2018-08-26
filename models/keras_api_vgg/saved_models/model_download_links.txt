@@ -1,0 +1,7 @@
+http://services.futurelabsolutions.com:6112/model_download?dataset_name=gun_wielding_image_classification&model_name=keras_api_vgg
+
+http://services.futurelabsolutions.com:6112/model_download?dataset_name=traffic_congestion_image_classification_(resized)&model_name=keras_api_vgg
+
+http://services.futurelabsolutions.com:6112/model_download?dataset_name=traffic_congestion_image_classification&model_name=keras_api_vgg
+
+http://services.futurelabsolutions.com:6112/model_download?dataset_name=cifar_10&model_name=keras_api_vgg
