@@ -233,6 +233,7 @@ def Explain():
 	"num_background_samples":200
 	}
 
+	print(np.amax(input_image))
 	display_explanation_input = False
 	if(display_explanation_input):
 		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)

@@ -175,7 +175,7 @@ class InfluenceExplainer(object):
         grad_train_loss_w_min = self.sess.run(self.grad_loss, feed_dict)
         grad_train_loss_w_min = [grad.reshape(-1,) for grad in grad_train_loss_w_min]
 #        Calculate Influence
-        influence_on_loss_at_test_image = np.concatenate(s) @ np.concatenate(grad_train_loss_w_min) / len(self.train_lbls)
+        influence_on_loss_at_test_image = np.dot(np.concatenate(s),np.concatenate(grad_train_loss_w_min) / len(self.train_lbls))
         
         return influence_on_loss_at_test_image
         
@@ -282,7 +282,7 @@ class InfluenceExplainer(object):
         """
         def fmin_inv_hvp(x):
             hvp = self._minibatch_hvp(self.vec_to_list(x))
-            inv_hvp_val = 0.5 * np.concatenate(hvp)@x - np.concatenate(v)@x
+            inv_hvp_val = 0.5 * np.dot(np.concatenate(hvp),x) - np.dot(np.concatenate(v),x)
             return inv_hvp_val
         return fmin_inv_hvp
     
@@ -314,7 +314,7 @@ class InfluenceExplainer(object):
 
         def _fmin_inv_hvp_split(x):
             hvp = self._minibatch_hvp(self.vec_to_list(x))
-            inv_hvp_val = 0.5 * np.concatenate(hvp)@x - np.concatenate(v)@x
+            inv_hvp_val = 0.5 * np.dot(np.concatenate(hvp),x) - np.dot(np.concatenate(v),x)
             return inv_hvp_val
         
         def cg_callback(x):

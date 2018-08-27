@@ -21,6 +21,7 @@ class ShapExplainer(object):
     super(ShapExplainer, self).__init__()
     self.model = model
     self.dataset_tool_dict = {}
+    self.shap_explainers_dict = {}
 
   def GetColorMap(self):
     colors = []
@@ -35,7 +36,7 @@ class ShapExplainer(object):
 
   def GetBackgroundSamples(self,dataset_name):
     if(dataset_name in self.dataset_tool_dict):
-      dataset_tool = self.dataset_tool_dict["dataset_name"]
+      return self.dataset_tool_dict[dataset_name]
     else:
       
       def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
@@ -107,11 +108,12 @@ class ShapExplainer(object):
       else:
         dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
 
-      self.dataset_tool_dict["dataset_name"] = dataset_tool
     
     source = "train"
     train_x, train_y = dataset_tool.GetBatch(batch_size = 1024,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
 
+    self.dataset_tool_dict[dataset_name] = train_x
+    
     return train_x
 
   def GenerateShapExplanationImage(self,input_image,shap_values):
@@ -148,7 +150,11 @@ class ShapExplainer(object):
     w,h = canvas.get_width_height()
     buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
     buf.shape = ( h, w,3 )
-
+    
+    plt.clf()
+    plt.cla()
+    plt.close()
+    
     return buf
 
   def Explain(self,input_image, additional_args = {}):
@@ -173,10 +179,19 @@ class ShapExplainer(object):
 
     ####SHAP
     # select a set of background examples to take an expectation over
-    background = background_image_pool[np.random.choice(background_image_pool.shape[0], num_background_samples, replace=False)]
-
-    e = shap.DeepExplainer(self.model.model, background)
+    if(not additional_args["dataset_name"] in self.shap_explainers_dict):
+      self.shap_explainers_dict[additional_args["dataset_name"]] = {}
     
+    if(self.model.__class__.__name__ in self.shap_explainers_dict[additional_args["dataset_name"]]):
+      e = self.shap_explainers_dict[additional_args["dataset_name"]][self.model.__class__.__name__]
+      print("loaded previously generated shap explainer")
+    else:
+      print("generating new shap explainer")
+      background = background_image_pool[np.random.choice(background_image_pool.shape[0], num_background_samples, replace=False)]
+
+      e = shap.DeepExplainer(self.model.model, background)
+      self.shap_explainers_dict[additional_args["dataset_name"]][self.model.__class__.__name__] = e
+
     if(len(input_image.shape) == 3 ):
       input_image = np.array([input_image])
 
@@ -195,7 +210,11 @@ class ShapExplainer(object):
     ## for testing:
     # shap.image_plot(shap_values, np.multiply(input_image,255.0))
 
-      
+    cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+    cv2.imshow("explanation image",cv2_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
     additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values]}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
