@@ -29,14 +29,17 @@ class ConvSVM(object):
     The model currently uses a VGG16 architecture for feature description
     """
     
-    def __init__(self, model_input_dim, model_dir, addit_args, n_classes=2):
+    def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,
+                 addit_args={}):
         super(ConvSVM, self).__init__()
+        if n_classes != 2:
+            raise ValueError("This implementation of SVM only works with 2-class classification")
         self.n_classes = n_classes
         self.checkpoint_path = os.path.join(model_dir,"checkpoints")
 
         self.sess = tf.Session()
         
-
+        model_input_dim = [model_input_dim_width, model_input_dim_height , model_input_channels]
         if "learning_rate" in addit_args:
             self.learning_rate = addit_args["learning_rate"]
         else:
@@ -49,25 +52,28 @@ class ConvSVM(object):
 #        of model weight distances on the total loss
         if "alpha" in addit_args:
             self.alpha = addit_args["alpha"]
+        else:
+            self.alpha = 0.0001
 
 #        initialise model placeholders and variables
         self.input_ = tf.placeholder(
                 tf.float32,
-                shape = [None] + model_input_dim
+                shape = [None] + list(model_input_dim),
+                name = "in_"
         )
         
         
 #        the feature descriptor object uses a conv net to transform images 
 #        into feature space
-        self.feature_desc = FeatureDescriptor(model_input_dim, batch_size = 100)
+        self.feature_desc = FeatureDescriptor(model_input_dim, input_tensor=self.input_ )
 #        get a graph op representing the feature description
-        self.feature_vec = self.feature_desc.get_descriptor_op(self.input_)
+        self.feature_vec = self.feature_desc.get_descriptor_op()
         
         n_features = self.feature_vec.get_shape().as_list()[1]
         
         self.labels_ = tf.placeholder(
             name="lbl_",
-            shape=[None, 1],
+            shape=[None,1],
             dtype=tf.float32
         )
 
@@ -160,7 +166,7 @@ class ConvSVM(object):
     def GetSmoothHinge(self, t):
         """
         Returns the loss op of a differentiable close approximation of the SVMs
-        loss function. The loss function at a point i is not differentiable by 
+        loss function. The hinge loss function at a point is not differentiable by
         standard means
         However a differentiable approximation can be defined that approaches 
         Hinge Loss as a parameter t approaches 0.
@@ -169,7 +175,7 @@ class ConvSVM(object):
         if t == 0:
             return self.Loss()
         else:
-            s = tf.multiply(self.Output(),self.labels_)
+            s = tf.multiply(selecommend looking at np.isfinite instead of np.isnan to detect numeric overflows, instaf.Output(),self.labels_)
             exp = -(s-1)/t
             max_elem = tf.maximum(exp, tf.zeros_like(exp))
             
@@ -234,8 +240,9 @@ class ConvSVM(object):
         )
 
 #        Load in the model weights
-        self.LoadModel(self.sess)
+#         self.LoadModel(self.sess)
         accuracies = []
+        losses = []
         for i in range(val_y.shape[0]//batch_size):
 #            Get the accuracy of each batch of evaluation data
             x, y = self._get_batches(val_x, val_y, batch_size)
@@ -248,8 +255,17 @@ class ConvSVM(object):
                     }
                 )
             )
+            losses.append(
+                self.sess.run(
+                    self.Loss(),
+                    feed_dict ={
+                        self.input_: x,
+                        self.labels_: y
+                    }
+                )
+            )
 #        Return mean accuracy on evaluation data
-        return tf.reduce_mean(accuracies).eval(session = self.sess)
+        return [np.mean(accuracies), np.mean(losses)]
 
     def Predict(self, predict_x):
         """
@@ -261,13 +277,13 @@ class ConvSVM(object):
 #        If the input is not in the format (Idx, X, Y, N_channels) format it to
 #        be such
         if len(predict_x.shape) < 4:
-            predict_x = predict_x.reshape(1, 224, 224, 3)
+            predict_x = np.expand_dims(predict_x, axis=0)
 
 #        Define the graph operation that predicts the class of each point
         predictions = self.GetPredictions()
         
 #        Load in the model weights
-        self.LoadModel(self.sess)
+#         self.LoadModel(self.sess)
 #        Find the models prediction at each sample point
         predictions = self.sess.run(
             predictions,
@@ -306,7 +322,8 @@ class ConvSVM(object):
 #        pre-determined and do not affect the loss of one point differently to
 #        another
         self.LoadModel(self.sess)
-        return [[self.W], [self.b]]
+        
+        return [self.W]
     
     def GetPlaceholders(self):
         """
@@ -323,9 +340,6 @@ dataset of two classes of image, those containing people wielding guns, vs.
 those containing people not wielding guns
 """
 if __name__ == '__main__':
-    dim_height = 224
-    dim_width = 224
-    input_channels = 3
     n_classes = 2
     additional_args = {
         'learning_rate': 0.01,
@@ -333,15 +347,7 @@ if __name__ == '__main__':
     }
     batch_size = 10
 
-    svm_model = ConvSVM(
-        [dim_height,
-        dim_width,
-        input_channels],
-        os.path.join(models_path,"svm"),
-        additional_args,
-        n_classes,
-    )
-    from PIL import Pimage
+    from PIL import Image as Pimage
     from tqdm import tqdm
 
 
@@ -359,7 +365,7 @@ if __name__ == '__main__':
         for ii, file in enumerate(files, 1):
             img = Pimage.open(os.path.join(class_path, file))
             img = np.array(img)
-            batch.append(img.reshape(( 224, 224, 3)))
+            batch.append(img)
             labels.append(each)
 
     images = np.asarray(batch)
@@ -387,9 +393,18 @@ if __name__ == '__main__':
     val_x, val_y = images[val_idx], labels_vecs[val_idx]
     test_x, test_y = images[test_idx], labels_vecs[test_idx]
 
-
+    input_dim = train_x[0].shape
     n_batches = 10
 
+    svm_model = ConvSVM(
+        input_dim[0],
+        input_dim[1],
+        input_dim[2],
+        n_classes,
+        os.path.join(models_path,"svm"),
+        additional_args
+    )
+    
     print("Train shapes (x,y):", train_x.shape, train_y.shape)
     print("Validation shapes (x,y):", val_x.shape, val_y.shape)
     print("Test shapes (x,y):", test_x.shape, test_y.shape)
@@ -401,8 +416,11 @@ if __name__ == '__main__':
         print("step:", step)
         svm_model.TrainModel(train_x, train_y, batch_size, 50)
         print("")
-        print("evaluation")
-        print(svm_model.EvaluateModel(val_x, val_y, batch_size))
+        acc, loss = svm_model.EvaluateModel(val_x, val_y, batch_size)
+        print("evaluation accuracy:")
+        print(acc)
+        print("evaluation loss:")
+        print(loss)
         print("")
 
     test_y[test_y==1]=0
