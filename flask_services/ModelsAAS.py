@@ -210,7 +210,7 @@ def Predict():
 		loaded_models[model_name][dataset_name] = LoadModelFromName(model_name,dataset_json)
 
 
-
+	print(np.amax(input_image))
 	prediction = loaded_models[model_name][dataset_name].Predict(np.array([input_image]))
 	
 	labels = [label["label"] for label in dataset_json["labels"]]
