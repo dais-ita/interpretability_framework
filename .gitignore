@@ -113,7 +113,7 @@ venv.bak/
 .mypy_cache/
 
 
-datasets/dataset_images/**
+datasets/dataset_images/*/
 datasets/dataset_images/dataset_archives/*
 
 models/cnn_1/saved_models
