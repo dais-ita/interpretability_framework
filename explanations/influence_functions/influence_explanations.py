@@ -11,7 +11,7 @@ import random
 import PIL.Image as Pimage
 
 class InfluenceExplainer(object):
-    def __init__(self,model, train_imgs, train_lbls, additional_args):
+    def __init__(self,model):
         super(InfluenceExplainer, self).__init__()
         self.model = model
         self.sess = model.sess
@@ -28,21 +28,11 @@ class InfluenceExplainer(object):
         ]
         self.grad_loss = [tf.reshape(grad, [-1,]) for grad in self.model.GetGradLoss()]
         self.hvp = self._get_approx_hvp(self.grad_loss, self.params, self.v_placeholder)
-        self.train_imgs = train_imgs
-        self.train_lbls = train_lbls
         self.vec_to_list = self._get_vec_to_list()
         self.cached_influence = {}
-        if "damping" in additional_args:
-            self.damping = additional_args["damping"]
-        else:
-            self.damping = 0.0    
-        if "mini_batch" in additional_args:
-            self.mini_batch = additional_args["mini_batch"]
-        else:
-            self.mini_batch = True
                 
         
-    def Explain(self, test_img, n_max, additional_args):
+    def Explain(self, test_img, additional_args):
         """
         Explain test image by showing the training sampels with most influence
         on the models classification of the image.
@@ -59,12 +49,26 @@ class InfluenceExplainer(object):
             n_max : number of train images to select for explanation, i.e.
             first n_max images from train set in order of descending 
         """
+        self.n_max = additional_args["n_max"]
+        self.train_imgs = additional_args["train_imgs"]
+        self.train_lbls = additional_args["train_lbls"]
+
         compute = True
         if "label" in additional_args:
             label = additional_args["label"]
         else:
             label = self.model.Predict(test_img)
         label = label.reshape(-1, 1)
+
+        if "damping" in additional_args:
+            self.damping = additional_args["damping"]
+        else:
+            self.damping = 0.0
+        if "mini_batch" in additional_args:
+            self.mini_batch = additional_args["mini_batch"]
+        else:
+            self.mini_batch = True
+
         """
         If cache is true, and the image has not been cached before, the resulting max_imgs list will be cached under the test_img
         If cache is true, and the image has been cached previously, the previously cached results are returned
