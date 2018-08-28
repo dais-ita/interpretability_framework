@@ -132,10 +132,11 @@ def EncodeTestImages(dataset_name,num_images=1, model_name = ""):
 		dataset_tools[dataset_name] = {"dataset_tool":dataset_tool,"label_names":label_names}
 
 	label_names = dataset_tools[dataset_name]["label_names"]
+	n_classes = len(label_names)
 	source = "test"
-
-	x, y, batch = dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = math.ceil(num_images / 2.) * 2,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
-
+	print("label_names",label_names)
+	x, y, batch = dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = math.ceil(num_images / float(n_classes)) * n_classes,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
+	print("len(x)",len(x))
 	random_i_list = random.sample(list(range(0,len(x))),num_images)
 
 	enc_image_list = []
