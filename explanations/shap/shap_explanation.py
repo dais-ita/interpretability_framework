@@ -209,12 +209,14 @@ class ShapExplainer(object):
 
     ## for testing:
     # shap.image_plot(shap_values, np.multiply(input_image,255.0))
+    show_explanation_image = False
 
-    cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
-    cv2.imshow("explanation image",cv2_image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    
+    if(show_explanation_image):
+      cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+      cv2.imshow("explanation image",cv2_image)
+      cv2.waitKey(0)
+      cv2.destroyAllWindows()
+      
     additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values]}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."

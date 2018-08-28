@@ -193,9 +193,20 @@ def GetAttributionMap():
 def Explain():
 	raw_json = json.loads(request.data)
 
-	dataset_json = json.loads(raw_json["selected_dataset_json"])
-	model_json = json.loads(raw_json["selected_model_json"])
-	explanation_json = json.loads(raw_json["selected_explanation_json"])
+	if(isinstance(raw_json['selected_dataset_json'],str)):
+		dataset_json = json.loads(raw_json['selected_dataset_json'])
+	else:
+		dataset_json = raw_json['selected_dataset_json']
+
+	if(isinstance(raw_json['selected_model_json'],str)):
+		model_json = json.loads(raw_json['selected_model_json'])
+	else:
+		model_json = raw_json['selected_model_json']
+
+	if(isinstance(raw_json['selected_explanation_json'],str)):
+		explanation_json = json.loads(raw_json['selected_explanation_json'])
+	else:
+		explanation_json = raw_json['selected_explanation_json']
 
 	input_image = ImagePreProcess(readb64(raw_json["input"],convert_colour=False))
 

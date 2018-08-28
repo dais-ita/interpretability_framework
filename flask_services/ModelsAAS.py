@@ -184,8 +184,10 @@ def Predict():
 	# print("request.data:",request.data)
 
 	raw_json = json.loads(request.data)
-	
-	dataset_json = json.loads(raw_json['selected_dataset_json'])
+	if(isinstance(raw_json['selected_dataset_json'],str)):
+		dataset_json = json.loads(raw_json['selected_dataset_json'])
+	else:
+		dataset_json = raw_json['selected_dataset_json']
 
 	input_image = PredictImagePreProcess(readb64(raw_json['input'],convert_colour=False))
 
