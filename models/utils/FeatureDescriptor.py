@@ -18,15 +18,17 @@ class FeatureDescriptor(object):
 
     """
     def __init__(self, input_shape, batch_size=-1, architecture='vgg16', weights='pretrained', pooling='avg',
-                 input_tensor=None):
+                 input_tensor=None, include_top=False):
         self.input_shape = input_shape
         self.batch_size = batch_size
         self.architecture = architecture
         self.pooling = pooling
         self.input_tensor = input_tensor
+        self.include_top = include_top
         if weights == "pretrained":
             self.weights = "imagenet"  # keras' provided networks are trained with ImageNet
-
+        else:
+            self.weights = None
     def process_features(self, input_data):
         """
             Return an n-length feature vector based off input_data
@@ -42,7 +44,7 @@ class FeatureDescriptor(object):
             
             return model.predict(input_data)
        
-    def get_descriptor_op(self):
+    def get_descriptor_op(self, ):
         """
             Return the model prediction op for a placeholder passed as a 
             parameter
@@ -51,18 +53,18 @@ class FeatureDescriptor(object):
         model = self.__load_architecture(self.architecture)
         
         return tf.contrib.layers.flatten(
-            tf.identity(
-                    model.layers[-1].output,
-                    name='pretrained_output'
-            )
+                model.layers[-1].output,
         )
+
+    def get_premade_model(self):
+        return self.__load_architecture(self.architecture)
 
     def __load_architecture(self, architecture_name):
         """ Loads a particular architecture from keras.applications """
 
         # Optional arguments that are handy to have for the descriptor.
         model_args = {
-            'include_top': False,
+            'include_top': self.include_top,
             'weights': self.weights,
             'input_shape': self.input_shape,
             'pooling': self.pooling
