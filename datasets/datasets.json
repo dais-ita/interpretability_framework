@@ -56,9 +56,9 @@
 	"license":"apache 2"
 	},
 	{
-	"dataset_name":"Cifar 10",
+	"dataset_name":"CIFAR-10",
 	"download_link":"",
-	"folder":"cifar10",
+	"folder":"cifar-10",
 	"labels":[
 				{"label":"airplane","images":4100},
 				{"label":"automobile","images":4107},
@@ -74,8 +74,8 @@
 	"image_x":32,
 	"image_y":32,
 	"image_channels":3,
-	"ground_truth_csv_path":"cifar10.csv",
-	"default_training_allocation_path":"cifar10_train_split.csv",
+	"ground_truth_csv_path":"cifar-10.csv",
+	"default_training_allocation_path":"cifar-10_train_split.csv",
 	"interesting_images":["39485_truck.jpg","35796_ship.jpg","01228_airplane.jpg","16669_deer.jpg","24730_frog.jpg"],
 	"references":[""],
 	"description":"Dataset commonly used for benchmarking Machine Learning techniques.",
