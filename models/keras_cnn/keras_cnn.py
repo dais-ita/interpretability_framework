@@ -89,17 +89,6 @@ class KerasCNN(object):
         train_step = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss)
 
         while train_y != [] and num_steps != 0:
-        #     Get batch
-            batch_x, batch_y, train_x, train_y = self._get_batches(train_x, train_y, batch_size)
-            feed_dict = {
-                self.input_ : batch_x,
-                self.labels_ : batch_y
-            }
-
-            self.sess.run(train_step, feed_dict)
-            num_steps -= 1
-
-        """
         if (type(train_x) != dict):
             input_dict = {"input": train_x}
         else:
@@ -121,7 +110,6 @@ class KerasCNN(object):
           batch_size=batch_size,
           epochs=num_steps,
           verbose=1)
-        """
 
     def EvaluateModel(self, eval_x, eval_y, batch_size):
         if (type(eval_x) != dict):
@@ -129,18 +117,9 @@ class KerasCNN(object):
         else:
             input_dict = eval_x
 
-        # Train the Model
-        # return self.model.evaluate(eval_x,eval_y, batch_size=batch_size)
-        loss = []
-        while eval_y.size != 0 and num_steps != 0:
-            batch_x, batch_y, eval_x, eval_y = self._get_batches(eval_y,eval_y, batch_size)
-            feed_dict = {
-                self.input_: batch_x,
-                self.labels_: batch_y
-            }
-            loss.append(self.sess.run(self.loss, feed_dict))
-            num_steps -= 1
-        return sum(loss)/len(loss)
+        # Evaluate the Model
+        return self.model.evaluate(eval_x,eval_y, batch_size=batch_size)
+
     def Predict(self, predict_x):
         if (type(predict_x) != dict):
             input_dict = {"input": predict_x}
@@ -150,7 +129,7 @@ class KerasCNN(object):
         feed_dict = {
             self.input_: predict_x
         }
-        predictions = self.sess.run(self.logits, feed_dict)
+        predictions = self.model.predict(predict_x)
         print("[np.argmax(prediction) for prediction in predictions]",[np.argmax(prediction) for prediction in predictions])
         return [np.argmax(prediction) for prediction in predictions]
 
