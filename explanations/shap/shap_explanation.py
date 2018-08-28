@@ -15,6 +15,9 @@ import os
 import sys
 import json
 
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+
 class ShapExplainer(object):
   """docstring for LimeExplainer"""
   def __init__(self, model):
@@ -163,7 +166,7 @@ class ShapExplainer(object):
     if("num_background_samples" in additional_args):
       num_background_samples=additional_args["num_background_samples"]
     else:
-      num_background_samples=100
+      num_background_samples=10
 
     if("background_image_pool" in additional_args):
       background_image_pool=additional_args["background_image_pool"]
@@ -188,7 +191,11 @@ class ShapExplainer(object):
     else:
       print("generating new shap explainer")
       background = background_image_pool[np.random.choice(background_image_pool.shape[0], num_background_samples, replace=False)]
-
+      print("backgroun images selected, creating explainer")
+      # config = tf.ConfigProto()
+      # config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+      # sess = tf.Session(config=config)
+      # set_session(sess)  # set this TensorFlow session as the default session for Keras
       e = shap.DeepExplainer(self.model.model, background)
       self.shap_explainers_dict[additional_args["dataset_name"]][self.model.__class__.__name__] = e
 
@@ -209,12 +216,14 @@ class ShapExplainer(object):
 
     ## for testing:
     # shap.image_plot(shap_values, np.multiply(input_image,255.0))
+    show_explanation_image = False
 
-    cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
-    cv2.imshow("explanation image",cv2_image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    
+    if(show_explanation_image):
+      cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+      cv2.imshow("explanation image",cv2_image)
+      cv2.waitKey(0)
+      cv2.destroyAllWindows()
+      
     additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values]}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
