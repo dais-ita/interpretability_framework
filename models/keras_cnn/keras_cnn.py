@@ -152,7 +152,7 @@ class KerasCNN(object):
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout):
         model = Sequential()
-        model.add(InputLayer(input_tensor=self.input_))
+        model.add(InputLayer(input_shape=[model_input_dim_width,model_input_dim_height,model_input_channels]))
         model.add(Conv2D(32, kernel_size=(5, 5), strides=(1, 1),
                          activation='relu',kernel_initializer=keras.initializers.glorot_uniform(),
                          input_shape=[model_input_dim_height, model_input_dim_width, model_input_channels], name="conv_1"))
