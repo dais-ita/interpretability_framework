@@ -241,7 +241,7 @@ def Explain():
 	"min_weight":0.01, 
 	"model_name":model_name, 
 	"dataset_name":dataset_name, 
-	"num_background_samples":200
+	"num_background_samples":50
 	}
 
 	print(np.amax(input_image))
