@@ -24,9 +24,9 @@
 		"script_name":"keras_api_vgg",
 		"class_name":"KerasApiVGG",
 		"trained_on":[
-			{"dataset_name":"Cifar 10",
-			"model_path":"saved_models/cifar_10",
-			"training_allocation_path":"dataset_csvs/cifar_10.csv",
+			{"dataset_name":"CIFAR-10",
+			"model_path":"saved_models/cifar-10",
+			"training_allocation_path":"dataset_csvs/cifar-10.csv",
 			"test_accuracy":0,
 			"training_time":0,
 			"training_steps":100
