@@ -133,22 +133,25 @@ class KerasCNN(object):
         print("[np.argmax(prediction) for prediction in predictions]",[np.argmax(prediction) for prediction in predictions])
         return [np.argmax(prediction) for prediction in predictions]
 
-
     def SaveModel(self, save_dir):
         model_json = self.model.to_json()
         with open(save_dir, "w") as json_file:
             json_file.write(model_json)
-        print("Saved model to:"+ str(self.model_dir))
 
+        self.model.save_weights(save_dir + ".h5")
+
+        print("Saved model to:" + str(self.model_dir))
 
     def LoadModel(self, load_dir):
-        loaded_model_json = ""
-        with open(load_dir, 'r') as f:
-            loaded_model_json = f.read()
-        
-        loaded_model = model_from_json(loaded_model_json)
-        print("Loaded model from:"+ str(self.model_dir))
+        if (load_dir[-3:] == ".h5"):
+            load_h5_path = load_dir
+        else:
+            load_h5_path = load_dir + ".h5"
 
+            self.model.load_weights(load_h5_path)
+
+        print("Loaded model from:" + str(self.model_dir))
+        
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout):
         model = Sequential()
