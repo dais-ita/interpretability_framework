@@ -14,7 +14,7 @@ import random
 #dataset_name = "Traffic Congestion Image Classification"
 # dataset_name = "Traffic Congestion Image Classification (Resized)"
 dataset_name = "Gun Wielding Image Classification"
-# dataset_name = "Cifar 10"
+# dataset_name = "CIFAR-10"
 
 #MODEL
 # model_name = "keras_cnn"

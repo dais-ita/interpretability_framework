@@ -1,0 +1,8 @@
+http://services.futurelabsolutions.com:6112/dataset_download?dataset_folder_name=wielder_non-wielder
+
+http://services.futurelabsolutions.com:6112/dataset_download?dataset_folder_name=cifar10
+
+http://services.futurelabsolutions.com:6112/dataset_download?dataset_folder_name=congested_non-congested_resized
+
+http://services.futurelabsolutions.com:6112/dataset_download?dataset_folder_name=congested_non-congested
+

@@ -40,6 +40,14 @@ base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
 
 
 
+#add dataset folder to sys path to allow for easy import
+datasets_path = os.path.join(base_dir,"datasets")
+sys.path.append(datasets_path)
+
+#import dataset tool
+from DatasetClass import DataSet
+
+
 #TODO remove dependancy on reloading the model
 #add all model folders to sys path to allow for easy import
 models_path = os.path.join(base_dir,"models")
@@ -125,6 +133,32 @@ def LoadExplainerFromJson(explanation_json,model_instance):
 	
 	return ExplanationClass(model_instance)
 
+def LoadDatasetFromJson(dataset_json,model_name = ""):
+	file_path = dataset_json["ground_truth_csv_path"]
+	image_url_column = "image_path"
+	ground_truth_column = "label"
+	label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
+
+	### instantiate dataset tool
+	csv_path = os.path.join(datasets_path,"dataset_csvs",file_path)
+	dataset_images_dir_path =  os.path.join(datasets_path,"dataset_images")
+	dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
+	dataset_tool.CreateLiveDataSet(dataset_max_size = -1, even_examples=True, y_labels_to_use=label_names) #creates an organised list of dataset observations, evenly split between labels
+	
+	if(model_name == ""):
+		training_split_file = dataset_json["default_training_allocation_path"]
+		training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
+		dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
+	else:
+		#TODO allow for passing the model name and load the specific split from the models training(replace the code below with solution)
+		training_split_file = dataset_json["default_training_allocation_path"]
+		training_split_file_path = os.path.join(datasets_path,"dataset_csvs",training_split_file)
+		dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit_path_suffix = dataset_images_dir_path)
+
+	#Code to create new split if required
+	#dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
+
+	return dataset_tool,label_names
 
 def LoadModelFromJson(model_json,dataset_json):
 	model_name = model_json["model_name"]
@@ -178,6 +212,11 @@ def CreateAttributionMap(attribution_slice,slice_weights):
 def GetAttributionMap():
 	raw_json = json.loads(request.data)
 
+	if(not "attribution_slices" in raw_json):
+		json_data = json.dumps({})
+
+		return json_data
+
 	attribution_slices = json.loads(raw_json["attribution_slices"])
 	attribution_slice_weights = json.loads(raw_json["attribution_slice_weights"])
 
@@ -193,15 +232,33 @@ def GetAttributionMap():
 def Explain():
 	raw_json = json.loads(request.data)
 
-	dataset_json = json.loads(raw_json["selected_dataset_json"])
-	model_json = json.loads(raw_json["selected_model_json"])
-	explanation_json = json.loads(raw_json["selected_explanation_json"])
+	print(type(raw_json['selected_dataset_json']))
+	if(isinstance(raw_json['selected_dataset_json'],str) or isinstance(raw_json['selected_dataset_json'],unicode) ):
+		dataset_json = json.loads(raw_json['selected_dataset_json'])
+	else:
+		dataset_json = raw_json['selected_dataset_json']
+
+	if(isinstance(raw_json['selected_model_json'],str) or isinstance(raw_json['selected_model_json'],unicode)):
+		model_json = json.loads(raw_json['selected_model_json'])
+	else:
+		model_json = raw_json['selected_model_json']
+
+	if(isinstance(raw_json['selected_explanation_json'],str) or isinstance(raw_json['selected_explanation_json'],unicode)):
+		explanation_json = json.loads(raw_json['selected_explanation_json'])
+	else:
+		explanation_json = raw_json['selected_explanation_json']
 
 	input_image = ImagePreProcess(readb64(raw_json["input"],convert_colour=False))
 
 	dataset_name = dataset_json["dataset_name"]
 	model_name = model_json["model_name"]
 	explanation_name = explanation_json["explanation_name"]
+
+
+	if(dataset_name not in loaded_dataset_tools):
+		loaded_dataset_tools[dataset_name]={}
+		loaded_dataset_tools[dataset_name]["dataset_tool"],loaded_dataset_tools[dataset_name]["label_names"] = LoadDatasetFromJson(dataset_json)
+
 
 	if(not model_name in loaded_models):
 		loaded_models[model_name] = {}
@@ -222,7 +279,16 @@ def Explain():
 
 
 	explanation_instance = loaded_explanations[explanation_name][model_name][dataset_name]
-	
+
+
+	# load training images for influence functions
+	if(dataset_name not in loaded_training_images):
+		loaded_training_images[dataset_name] = {}
+		source = "train"
+		label_names = loaded_dataset_tools[dataset_name]["label_names"]
+		loaded_training_images[dataset_name]["train_x"], loaded_training_images[dataset_name]["train_y"], loaded_training_images[dataset_name]["batch"] = loaded_dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
+
+		print("loaded_training_images[dataset_name]['train_x'].shape",loaded_training_images[dataset_name]["train_x"].shape)
 	#TODO allow for better handling of additonal arguments, currently additional arguments for ALL explanations must be placed here
 	additional_args = {
 	"num_samples":100,
@@ -230,7 +296,10 @@ def Explain():
 	"min_weight":0.01, 
 	"model_name":model_name, 
 	"dataset_name":dataset_name, 
-	"num_background_samples":200
+	"num_background_samples":50,
+	"train_x":loaded_training_images[dataset_name]["train_x"],
+	"train_y":loaded_training_images[dataset_name]["train_y"],
+	"max_n_influence_images":9
 	}
 
 	print(np.amax(input_image))
@@ -291,7 +360,8 @@ if __name__ == "__main__":
 	with open(explanations_json_path,"r") as f:
 		explanations_json = json.load(f)
 	
-
+	loaded_dataset_tools = {}
+	loaded_training_images = {}
 	loaded_models = {}
 	loaded_explanations = {}
 

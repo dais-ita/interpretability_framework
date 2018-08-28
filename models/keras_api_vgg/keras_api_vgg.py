@@ -43,6 +43,15 @@ class KerasApiVGG(object):
         self.model = None
         self.InitaliseModel(model_dir=self.model_dir)
 
+        self.sess = keras.backend.get_session()
+
+        self.input_ = self.model.layers[0].input
+        self.labels_ = tf.placeholder(tf.float32, shape = [None,])
+        self.logits = self.model.layers[-1].output
+
+        self.loss = keras.losses.categorical_crossentropy(self.labels_, self.logits)
+
+
     ### Required Model Functions
     def InitaliseModel(self, model_dir="model_dir"):
         opts = tf.GPUOptions(allow_growth=True)
@@ -142,8 +151,15 @@ class KerasApiVGG(object):
         x = Activation('softmax',name="absolute_output") (x)
         model = Model(input=vis_input, output=x)
         return model
-        
 
+    def GetWeights(self):
+        return [w for w in self.model.weights if 'connected' in w.name and 'kernel' in w.name]
+
+    def GetPlaceholders(self):
+        return [self.input_, self.labels_]
+
+    def GetGradLoss(self):
+        return tf.gradients(self.loss, self.GetWeights())
     
     def GetLayerByName(self,name):
         print("GetLayerByName - not implemented")
@@ -168,7 +184,7 @@ if __name__ == '__main__':
 
     additional_args = {"learning_rate": learning_rate}
 
-    cnn_model = KerasCNN(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,
+    cnn_model = KerasApiVGG(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,
                           model_dir="mnist", additional_args=additional_args)
 
     verbose_every = 10
