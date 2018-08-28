@@ -50,8 +50,12 @@ class InfluenceExplainer(object):
             first n_max images from train set in order of descending 
         """
         
-        
+        if len(test_img.shape) < 4:
+            test_img = np.expand_dims(test_img, axis = 0) 
+
         ### no default additional arguments (REQUIRED)
+        print("influence function explain")
+
         if "train_x" in additional_args:
             self.train_imgs = additional_args["train_x"]
         else:
@@ -73,6 +77,9 @@ class InfluenceExplainer(object):
             label = additional_args["label"]
         else:
             label = self.model.Predict(test_img)
+        
+        if(isinstance(label,list)):
+            label = np.array(label)
         label = label.reshape(-1, 1)
 
         if "damping" in additional_args:
@@ -100,8 +107,8 @@ class InfluenceExplainer(object):
         else:
             cache = False
 
-        if len(test_img.shape) < 4:
-            test_img = np.expand_dims(test_img, axis = 0) 
+        
+        print("test_img.shape",test_img.shape)
         feed_dict = {
             self.input_: test_img,
             self.labels_: label
