@@ -151,7 +151,7 @@ class KerasCNN(object):
             self.model.load_weights(load_h5_path)
 
         print("Loaded model from:" + str(self.model_dir))
-        
+
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout):
         model = Sequential()
