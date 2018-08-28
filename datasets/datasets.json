@@ -74,11 +74,11 @@
 	"image_x":32,
 	"image_y":32,
 	"image_channels":3,
-	"ground_truth_csv_path":"congested_non-congested_resized.csv",
-	"default_training_allocation_path":"congested_non-congested_resized_train_split.csv",
-	"interesting_images":["00140_congested.jpg","00182_congested.jpg","00605_congested.jpg","01989_non-congested.jpg","01708_non-congested.jpg"],
-	"references":["https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk", "https://osf.io/wm3t9/"],
-	"description":"Resized version of the first traffic congestion image classification dataset.Image classification of traffic camera imagery collected from Transport for London's 'Jamcams' api. The specific set of images collected and labeled is hosted on OSF. The images have been cropped to remove logo and overlaid text.",
+	"ground_truth_csv_path":"cifar10.csv",
+	"default_training_allocation_path":"cifar10_train_split.csv",
+	"interesting_images":[""],
+	"references":[""],
+	"description":"",
 	"license":"apache 2"
 	}
 
