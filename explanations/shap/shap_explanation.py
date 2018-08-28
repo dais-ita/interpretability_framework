@@ -166,7 +166,7 @@ class ShapExplainer(object):
     if("num_background_samples" in additional_args):
       num_background_samples=additional_args["num_background_samples"]
     else:
-      num_background_samples=100
+      num_background_samples=10
 
     if("background_image_pool" in additional_args):
       background_image_pool=additional_args["background_image_pool"]
