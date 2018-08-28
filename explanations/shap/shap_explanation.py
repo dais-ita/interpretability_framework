@@ -15,6 +15,9 @@ import os
 import sys
 import json
 
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+
 class ShapExplainer(object):
   """docstring for LimeExplainer"""
   def __init__(self, model):
@@ -188,7 +191,11 @@ class ShapExplainer(object):
     else:
       print("generating new shap explainer")
       background = background_image_pool[np.random.choice(background_image_pool.shape[0], num_background_samples, replace=False)]
-
+      print("backgroun images selected, creating explainer")
+      # config = tf.ConfigProto()
+      # config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+      # sess = tf.Session(config=config)
+      # set_session(sess)  # set this TensorFlow session as the default session for Keras
       e = shap.DeepExplainer(self.model.model, background)
       self.shap_explainers_dict[additional_args["dataset_name"]][self.model.__class__.__name__] = e
 
