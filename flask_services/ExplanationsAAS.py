@@ -178,6 +178,11 @@ def CreateAttributionMap(attribution_slice,slice_weights):
 def GetAttributionMap():
 	raw_json = json.loads(request.data)
 
+	if(not "attribution_slices" in raw_json):
+		json_data = json.dumps({})
+
+		return json_data
+
 	attribution_slices = json.loads(raw_json["attribution_slices"])
 	attribution_slice_weights = json.loads(raw_json["attribution_slice_weights"])
 
