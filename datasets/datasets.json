@@ -76,9 +76,9 @@
 	"image_channels":3,
 	"ground_truth_csv_path":"cifar10.csv",
 	"default_training_allocation_path":"cifar10_train_split.csv",
-	"interesting_images":[""],
+	"interesting_images":["39485_truck.jpg","35796_ship.jpg","01228_airplane.jpg","16669_deer.jpg","24730_frog.jpg"],
 	"references":[""],
-	"description":"",
+	"description":"Dataset commonly used for benchmarking Machine Learning techniques.",
 	"license":"apache 2"
 	}
 
