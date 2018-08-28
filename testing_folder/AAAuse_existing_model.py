@@ -20,6 +20,11 @@ dataset_name = "Traffic Congestion Image Classification (Resized)"
 # model_name = "keras_vgg"
 # model_name = "keras_vgg_with_logits"
 model_name = "keras_api_vgg"
+
+# explanation_name = "LIME"
+# explanation_name = "LRP"
+# explanation_name = "Shap"
+explanation_name = "Influence Functions"
 #####
 
 
@@ -167,8 +172,8 @@ additional_args = {"learning_rate":learning_rate}
 trained_on_json = [dataset for dataset in model_json["trained_on"] if dataset["dataset_name"] == dataset_name][0]
 
 model_load_path = os.path.join(models_path,model_json["model_name"],trained_on_json["model_path"])
-cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_load_path, additional_args=additional_args)
-cnn_model.LoadModel(model_load_path) ## for this model, this call is redundant. For other models this may be necessary. 
+model_instance = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_load_path, additional_args=additional_args)
+model_instance.LoadModel(model_load_path) ## for this model, this call is redundant. For other models this may be necessary. 
 
 
 
@@ -180,7 +185,7 @@ test_y = dataset_tool.ConvertOneHotToClassNumber(test_y)
 print("num test examples: "+str(len(test_x)))
 
 print("predicted classes:")
-print(cnn_model.Predict(test_x))
+print(model_instance.Predict(test_x))
 
 
 print("ground truth classes:")
@@ -199,7 +204,7 @@ if(use_lime):
 	from skimage.segmentation import mark_boundaries
 	import matplotlib.pyplot as plt
 
-	lime_explainer = LimeExplainer(cnn_model)
+	lime_explainer = LimeExplainer(model_instance)
 
 	test_image = test_x[0]
 	test_label = test_y[0]
@@ -214,50 +219,67 @@ if(use_lime):
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
 
-### use innvestigate toolbox
-use_innvestigate = True
 
-if(use_innvestigate):
-	import innvestigate
-	import keras
 
-	test_image = test_x[:1]
+if(explanation_name != ""):
+	test_image = test_x[0]
 	test_label = test_y[0]
 
-	methods = ["input","gradient","integrated_gradients","deconvnet","guided_backprop","pattern.net","pattern.attribution","lrp.epsilon","lrp.z_baseline","lrp.z","lrp.sequential_preset_a_flat","lrp.sequential_preset_b_flat"]
-	method = methods[0]
-	#print(len(cnn_model.model.layers))
-	#print(cnn_model.model.layers)
-	#print(type(cnn_model.model.layers[-1]))
-	#print(cnn_model.model.layers)
+	source = "train"
+	train_x, train_y, batch = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
 
-	new_model = keras.models.Model(inputs=cnn_model.model.get_layer("absolute_input"), outputs=cnn_model.model.get_layer("absolute_output"))
-	new_model.compile(optimizer="adam", loss="categorical_crossentropy")
+	additional_args = {
+	"num_samples":100,
+	"num_features":300,
+	"min_weight":0.01, 
+	"model_name":model_name, 
+	"dataset_name":dataset_name, 
+	"num_background_samples":50,
+	"train_x":train_x,
+	"train_y":train_y,
+	"max_n_influence_images":9
+	}
 
-	analyzer = innvestigate.create_analyzer("lrp.z", new_model)
+
+	explanation_json_path = os.path.join(explanations_path,"explanations.json")
+
+
+	explanations_json = None
+	with open(explanation_json_path,"r") as f:
+		explanations_json = json.load(f)
+
+
+	explanation_json = [explanation for explanation in explanations_json["explanations"] if explanation["explanation_name"] == explanation_name ][0]
+
+	ExplanationModule = __import__(explanation_json["script_name"]) 
+	ExplanationClass = getattr(ExplanationModule, explanation_json["class_name"])
 	
+	explainer = ExplanationClass(model_instance)
 
-
-	#analyzer = innvestigate.create_analyzer(method, cnn_model.model)
-
-	print(np.amax(test_image))
-	analysis = analyzer.analyze(test_image)
-
-	print(analysis.shape)
-		
-	print(analysis[0].shape)
-	print(np.amax(analysis[0]))
-	explanation_image = analysis[0]
-	print(np.amax(explanation_image))
 	
-	cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
-	cv2.imshow("image 0",cv2_image)
-	cv2.waitKey(0)
-	cv2.destroyAllWindows()
+	explanation_image, explanation_text, prediction, additional_outputs = explainer.Explain(test_image,additional_args=additional_args)
+	
+	print("prediction",prediction)
+	print("")
+	print("explanation_text",explanation_text)
+	print("")
+	print("additional_outputs keys:")
+	print(additional_outputs.keys())
+	print("")
 
-	if(np.amax(explanation_image) <= 1):
-		print(np.amax(explanation_image))
-		cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+	
+	#TODO check if this is needed
+	if(explanation_image.max() <=1):
+		explanation_image_255 = explanation_image*255
+	else:
+		explanation_image_255 = explanation_image
+
+	
+	### test images by displaying pre and post encoding
+	display_explanation_image = True
+
+	if(display_explanation_image):
+		cv2_image = explanation_image
 		cv2.imshow("image 0",cv2_image)
 		cv2.waitKey(0)
 		cv2.destroyAllWindows()
