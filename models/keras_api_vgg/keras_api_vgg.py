@@ -46,7 +46,7 @@ class KerasApiVGG(object):
         self.sess = keras.backend.get_session()
 
         self.input_ = self.model.layers[0].input
-        self.labels_ = tf.placeholder(tf.float32, shape = [?,])
+        self.labels_ = tf.placeholder(tf.float32, shape = [None,])
         self.logits = self.model.layers[-1].output
 
         self.loss = keras.losses.categorical_crossentropy(self.labels_, self.logits)
