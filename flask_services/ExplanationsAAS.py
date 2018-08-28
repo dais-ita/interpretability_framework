@@ -288,6 +288,7 @@ def Explain():
 		label_names = loaded_dataset_tools[dataset_name]["label_names"]
 		loaded_training_images[dataset_name]["train_x"], loaded_training_images[dataset_name]["train_y"], loaded_training_images[dataset_name]["batch"] = loaded_dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
 
+		print("loaded_training_images[dataset_name]['train_x'].shape",loaded_training_images[dataset_name]["train_x"].shape)
 	#TODO allow for better handling of additonal arguments, currently additional arguments for ALL explanations must be placed here
 	additional_args = {
 	"num_samples":100,
