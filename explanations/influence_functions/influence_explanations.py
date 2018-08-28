@@ -102,7 +102,7 @@ class InfluenceExplainer(object):
             
         max_imgs = self.FormCollage(max_imgs)
             
-        return max_imgs
+        return max_imgs, "", np.argmax(label), {}
             
             
     
