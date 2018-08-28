@@ -184,7 +184,7 @@ def Predict():
 	# print("request.data:",request.data)
 
 	raw_json = json.loads(request.data)
-	if(isinstance(raw_json['selected_dataset_json'],str)):
+	if(isinstance(raw_json['selected_dataset_json'],str) or isinstance(raw_json['selected_dataset_json'],unicode)):
 		dataset_json = json.loads(raw_json['selected_dataset_json'])
 	else:
 		dataset_json = raw_json['selected_dataset_json']
