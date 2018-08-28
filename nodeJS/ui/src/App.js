@@ -5,7 +5,9 @@ import './App.css';
 import Title from "./components/Title";
 import DatasetSelection from './components/DatasetSelection';
 import ModelSelection from './components/ModelSelection';
+import InterpretabilitySelection from "./components/InterpretabilitySelection";
 import InterpretabilityComparison from "./components/InterpretabilityComparison";
+
 
 class App extends Component {
     constructor(props) {
@@ -17,6 +19,7 @@ class App extends Component {
         };
         this.setActiveDataset = this.setActiveDataset.bind(this);
         this.setActiveModel = this.setActiveModel.bind(this);
+        this.setActiveInterpreter = this.setActiveInterpreter.bind(this);
     }
 
 
@@ -39,7 +42,20 @@ class App extends Component {
 
     }
 
-    setActiveInterpreter(model) {
+    setActiveInterpreter(interpreter) {
+
+        const interpreter_list = this.state.interpreter;
+
+        if (interpreter_list.includes(interpreter)) {
+            const interpreter_index = interpreter_list.indexOf(interpreter);
+            interpreter_list.splice(interpreter_index, 1);
+            this.setState({interpreter: interpreter_list});
+        } else {
+            interpreter_list.push(interpreter);
+            this.setState({interpreter: interpreter_list});
+        }
+
+        console.log(this.state.interpreter);
 
     }
 
@@ -52,6 +68,7 @@ class App extends Component {
                 <Title/>
                 <DatasetSelection setActiveDataset={this.setActiveDataset} options={this.state}/>
                 <ModelSelection setActiveModel={this.setActiveModel} options={this.state}/>
+                <InterpretabilitySelection setActiveInterpreter={this.setActiveInterpreter} options={this.state}/>
                 <InterpretabilityComparison options={this.state}/>
             </div>
         );
