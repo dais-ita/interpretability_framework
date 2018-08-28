@@ -49,64 +49,24 @@ class DatasetSelection extends Component {
             <div>
                 <Header as='h2'>1. Dataset Selection</Header>
                 <Grid container columns={4}>{dataset_previews}</Grid>
-                <div>
-                    <Button content={show_preview ? 'Hide Preview' : 'Show Preview'} onClick={this.togglePreview}  />
-                    <Button><Icon name='redo'/> </Button>
-                </div>
+                {/*<div>*/}
+                    {/*<Button content={show_preview ? 'Hide Preview' : 'Show Preview'} onClick={this.togglePreview}  />*/}
+                    {/*<Button><Icon name='redo'/> </Button>*/}
+                {/*</div>*/}
 
                 {/*// todo*/}
-                <Grid columns={6}>
-                    <Grid.Column>
-                        <Transition visible={show_preview} animation='swing down' duration={200}>
-                            <div>
-                                <p>CODE FOR {this.props.options.dataset} PREVIEW GOES HERE</p>
-                                <Image size='medium' src="http://placehold.it/600x600"/>
-                            </div>
-                        </Transition>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Transition visible={show_preview} animation='swing down' duration={300}>
-                            <div>
-                                <p>CODE FOR {this.props.options.dataset} PREVIEW GOES HERE</p>
-                                <Image size='medium' src="http://placehold.it/600x600"/>
-                            </div>
-                        </Transition>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Transition visible={show_preview} animation='swing down' duration={400}>
-                            <div>
-                                <p>CODE FOR {this.props.options.dataset} PREVIEW GOES HERE</p>
-                                <Image size='medium' src="http://placehold.it/600x600"/>
-                            </div>
-                        </Transition>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Transition visible={show_preview} animation='swing down' duration={500}>
-                            <div>
-                                <p>CODE FOR {this.props.options.dataset} PREVIEW GOES HERE</p>
-                                <Image size='medium' src="http://placehold.it/600x600"/>
-                            </div>
-                        </Transition>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Transition visible={show_preview} animation='swing down' duration={600}>
-                            <div>
-                                <p>CODE FOR {this.props.options.dataset} PREVIEW GOES HERE</p>
-                                <Image size='medium' src="http://placehold.it/600x600"/>
-                            </div>
-                        </Transition>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Transition visible={show_preview} animation='swing down' duration={700}>
-                            <div>
-                                <p>CODE FOR {this.props.options.dataset} PREVIEW GOES HERE</p>
-                                <Image size='medium' src="http://placehold.it/600x600"/>
-                            </div>
-                        </Transition>
-                    </Grid.Column>
+                {/*<Grid columns={6}>*/}
+                    {/*<Grid.Column>*/}
+                        {/*<Transition visible={show_preview} animation='swing down' duration={200}>*/}
+                            {/*<div>*/}
+                                {/*<p>CODE FOR {this.props.options.dataset} PREVIEW GOES HERE</p>*/}
+                                {/*<Image size='medium' src="http://placehold.it/600x600"/>*/}
+                            {/*</div>*/}
+                        {/*</Transition>*/}
+                    {/*</Grid.Column>*/}
 
 
-                </Grid>
+                {/*</Grid>*/}
 
             </div>
         );

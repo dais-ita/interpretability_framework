@@ -4,17 +4,13 @@ import axios from 'axios';
 import _ from 'lodash';
 
 import ModelDescription from "./ModelDescription";
-import ModelPreview from "./ModelPreview";
-
 
 class ModelSelection extends Component {
     constructor(props) {
         super(props);
         this.state = {
             models : []
-            // active_models : []
         }
-        // this.toggleActiveModels = this.toggleActiveModels.bind(this);
 
     }
 
@@ -25,10 +21,9 @@ class ModelSelection extends Component {
             .then(res => {
                 const models = res.data;
                 this.setState( { models });
-                this.setState( {active_models: models[0].class_name});
             })
             .catch(function (error) {
-                console.log("server error: write code to fix this! ")
+                console.log(error)
             })
 
     }
