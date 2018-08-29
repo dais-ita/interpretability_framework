@@ -64,7 +64,6 @@ class LRPExplainer(object):
     # sv = shap_values[i] if len(shap_values[i].shape) == 2 else shap_values[i].sum(-1)
     # # plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
     # plt.imshow(sv, cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
-
     # img_show = plt.imshow(LRP_values,cmap="hot")
     # img_show = plt.imshow(LRP_values,cmap=self.GetColorMap())
     
