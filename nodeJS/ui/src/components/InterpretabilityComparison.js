@@ -1,65 +1,112 @@
 import React, { Component } from 'react';
-import { Header, Image, Table, Icon, Segment} from "semantic-ui-react";
+import { Header, Image, Table, Icon, Segment, Button} from "semantic-ui-react";
+import _ from "lodash"
+import axios from "axios";
+
 import input_1 from './lime_input.jpg';
 import output_1 from './lime_out.jpg';
+import ComparisonCard from "./ComparisonCard";
 
 import './Interpret.css';
+import ModelDescription from "./ModelDescription";
 
 
 class InterpretabilityComparison extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            results: [
+                {
+                    input_image: "1234",
+                    interpretation: "1234",
+                    time_started: "123",
+                    time_completed: "123",
+                    explanation_text: "1234",
+                    duration: "1234",
+                    timestamp: "1234"
+                }, {
+                    input_image: "",
+                    interpretation: "",
+                    time_started: "",
+                    time_completed: "",
+                    explanation_text: "",
+                    duration: "",
+                    timestamp: ""
+                }
+            ]
+        };
 
-    state = {
-
-    };
+        this.getResults = this.getResults.bind(this);
+    }
 
     componentDidMount () {
+        console.log(this.props)
+
+
+
         // Query ita-ce for images
         // decode images from base-64
 
     }
 
+    componentDidUpdate(prevProps) {
+        // console.log(this.props);
+        if (prevProps.options !== this.props.options) {
+        }
+    }
+
+
+    getResults () {
+        const req = "http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER;
+
+        const rand_img = "/dataset-test-image?dataset=Gun Wielding Image Classification";
+
+        let result = {
+            input_image: "",
+            interpretation: "",
+            time_started: "",
+            time_completed: "",
+            explanation_text: "",
+            duration: "",
+            timestamp: ""
+        };
+
+
+        axios.get(req + rand_img)
+            .then(res => {
+                const explain_req = req + "/explanation-explain?&dataset=" +
+                    encodeURIComponent(this.props.options.dataset.trim()) + "&model=" + this.props.options.model[0] +
+                    "&image=" + res.data["image_name"] + "&explanation=" + this.props.options.interpreter[0];
+
+                result["input_image"] = res.data;
+
+                console.log(explain_req);
+
+                axios.get(explain_req)
+                    .then(res => {
+                        console.log(res)
+                    })
+            })
+    }
+
+
 
     render() {
+
+        const interpreter_results = _.times(this.state.results.length, i => (
+            <React.Fragment key={i}>
+                <ComparisonCard result_data ={this.state.results[i]} options ={this.props.options}/>
+            </React.Fragment>
+        ));
 
 
         return (
             <div>
+                <Button onClick={this.getResults}>Explain random image</Button>
                 <Header as='h2'>Explanation Results</Header>
-
-                <Segment padded compact>
-                    <Header as='h3'>CNN_1 trained on Gun Wielding Image Classification dataset explained by LIME &nbsp;<a><Icon name='linkify'/></a> &nbsp;</Header>
-                    <strong>Timestamp: </strong> 17-Aug-2018 12:2:27 <br/><br/>
-                    <strong>Model Prediction:</strong>   Gun Wielder &nbsp; &nbsp;
-                    <strong>Ground Truth:</strong> Gun Wielder &nbsp; &nbsp;  <Icon color='green' name='thumbs up' />
-
-                    <Table collapsing>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Input Image</Table.HeaderCell>
-                                <Table.HeaderCell>Explanation Image</Table.HeaderCell>
-                                <Table.HeaderCell>Explanation Text</Table.HeaderCell>
-                                <Table.HeaderCell>Further Details</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            <Table.Row>
-                                <Table.Cell>
-                                    <Image size='small' src={input_1}/>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <Image size='small' src={output_1}/>
-                                </Table.Cell>
-                                <Table.Cell verticalAlign='top'>
-                                    <p>Evidence towards predicted class shown in green</p>
-                                </Table.Cell>
-                                <Table.Cell verticalAlign='top'>
-                                    Duration (ms): 14554
-                                </Table.Cell>
-                            </Table.Row>
-                        </Table.Body>
-                    </Table>
-                </Segment>
+                {interpreter_results}
             </div>
+
         );
     }
 }

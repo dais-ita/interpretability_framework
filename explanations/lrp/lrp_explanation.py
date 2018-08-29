@@ -57,7 +57,7 @@ class LRPExplainer(object):
         abs_vals = np.stack([np.abs(LRP_values[i]) for i in range(len(LRP_values))], 0).flatten()
     else:
         abs_vals = np.stack([np.abs(LRP_values[i].sum(-1)) for i in range(len(LRP_values))], 0).flatten()
-    max_val = np.nanpercentile(abs_vals, 95)
+    max_val = np.nanpercentile(abs_vals, 70)
 
     # i = 0
 
