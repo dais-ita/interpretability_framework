@@ -5,7 +5,8 @@
 		"class_name":"LimeExplainer",
 		"compatible_models":[
 			{"model_name":"conv_svm"},
-			{"model_name":"keras_api_vgg"}
+			{"model_name":"keras_api_vgg"},
+			{"model_name":"keras_api_simple"}
 				],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -49,7 +50,8 @@
 		"class_name":"ShapExplainer",
 		"compatible_models":[
 			{"model_name":"keras_cnn"},
-			{"model_name":"keras_api_vgg"}
+			{"model_name":"keras_api_vgg"},
+			{"model_name":"keras_api_simple"}
 			],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -82,7 +84,9 @@
 		"class_name":"InfluenceExplainer",
 		"compatible_models":[
 			{"model_name":"conv_svm"},
-			{"model_name":"keras_api_vgg"}				],
+			{"model_name":"keras_api_vgg"},
+			{"model_name":"keras_api_simple"}				
+		],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification"},
