@@ -46,7 +46,7 @@ class KerasApiVGG(object):
         self.sess = keras.backend.get_session()
 
         self.input_ = self.model.layers[0].input
-        self.labels_ = tf.placeholder(tf.float32, shape = [None,])
+        self.labels_ = tf.placeholder(tf.float32, shape = [None, n_classes])
         self.logits = self.model.layers[-1].output
 
         self.loss = keras.losses.categorical_crossentropy(self.labels_, self.logits)
@@ -153,7 +153,7 @@ class KerasApiVGG(object):
         return model
 
     def GetWeights(self):
-        return [w for w in self.model.weights if 'connected' in w.name and 'kernel' in w.name]
+        return [w for w in self.model.weights if 'dense' in w.name and 'kernel' in w.name]
 
     def GetPlaceholders(self):
         return [self.input_, self.labels_]
