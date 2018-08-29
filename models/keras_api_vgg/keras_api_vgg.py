@@ -115,7 +115,7 @@ class KerasApiVGG(object):
 
         self.model.save_weights(save_dir+".h5")
 
-        print("Saved model to:"+ str(self.model_dir))
+        print("Saved model to:"+ str(save_dir+".h5"))
 
 
     def LoadModel(self, load_dir):
@@ -126,7 +126,7 @@ class KerasApiVGG(object):
 
             self.model.load_weights(load_h5_path)
         
-        print("Loaded model from:"+ str(self.model_dir))
+        print("Loaded model from:"+ str(load_h5_path))
 
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout):

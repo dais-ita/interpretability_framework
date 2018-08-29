@@ -11,20 +11,20 @@ import random
 ## Training COnfiguration ##
 
 #DATASET
-#dataset_name = "Traffic Congestion Image Classification"
+# dataset_name = "Traffic Congestion Image Classification"
 # dataset_name = "Traffic Congestion Image Classification (Resized)"
-# dataset_name = "Gun Wielding Image Classification"
-dataset_name = "CIFAR-10"
+dataset_name = "Gun Wielding Image Classification"
+# dataset_name = "CIFAR-10"
 
 #MODEL
-# model_name = "cnn_svm"
+model_name = "conv_svm"
 # model_name = "keras_api_vgg"
-model_name = "keras_api_simple"
+# model_name = "keras_api_simple"
 
 #TRAINING PARAMETERS
-learning_rate = 0.00001
+learning_rate = 0.0001
 batch_size = 128
-num_train_steps = 300
+num_train_steps = 100
 
 
 #####
@@ -179,6 +179,8 @@ model_save_path = os.path.join(models_path,model_json["model_name"],"saved_model
 model_save_path = os.path.join(models_path,model_json["model_name"],"saved_models",dataset_name.lower().replace(" ","_"))
 cnn_model = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args=additional_args)
 
+if(os.path.exists(model_save_path)):
+	cnn_model.LoadModel(model_save_path)
 
 
 
