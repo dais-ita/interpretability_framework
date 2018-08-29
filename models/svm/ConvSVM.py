@@ -30,7 +30,7 @@ class ConvSVM(object):
     """
     
     def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,
-                 addit_args={}):
+                 additional_args={}):
         super(ConvSVM, self).__init__()
         if n_classes != 2:
             raise ValueError("This implementation of SVM only works with 2-class classification")
@@ -40,8 +40,8 @@ class ConvSVM(object):
         self.sess = tf.Session()
         
         model_input_dim = [model_input_dim_width, model_input_dim_height , model_input_channels]
-        if "learning_rate" in addit_args:
-            self.learning_rate = addit_args["learning_rate"]
+        if "learning_rate" in additional_args:
+            self.learning_rate = additional_args["learning_rate"]
         else:
             print("No learning rate specified in additional_args\nUsing default value of 0.001")
             self.learning_rate = 0.001
@@ -50,8 +50,8 @@ class ConvSVM(object):
         
 #        alpha is a term used when calculating the loss to weight the influence
 #        of model weight distances on the total loss
-        if "alpha" in addit_args:
-            self.alpha = addit_args["alpha"]
+        if "alpha" in additional_args:
+            self.alpha = additional_args["alpha"]
         else:
             self.alpha = 0.0001
 
@@ -125,8 +125,8 @@ class ConvSVM(object):
         Returns the graph operation used to calculate the loss of the model at 
         a sample
         Defined as
-        max(0,1-(Wx+b)(y_actual)) + αΣW
-        α is a regularisation term used to realise preference between accuracy
+        max(0,1-(Wx+b)(y_actual)) + aSUM(W)
+        a is a regularisation term used to realise preference between accuracy
         and generality or robustness
         """
         l2_norm = tf.reduce_sum(self.W)
@@ -175,7 +175,7 @@ class ConvSVM(object):
         if t == 0:
             return self.Loss()
         else:
-            s = tf.multiply(selecommend looking at np.isfinite instead of np.isnan to detect numeric overflows, instaf.Output(),self.labels_)
+            s = tf.multiply(self.Output(),self.labels_)
             exp = -(s-1)/t
             max_elem = tf.maximum(exp, tf.zeros_like(exp))
             
@@ -201,7 +201,7 @@ class ConvSVM(object):
         return x[idcs], y[idcs]
 
 
-    def TrainModel(self, train_x, train_y, batch_size, n_steps):
+    def TrainModel(self, train_x, train_y, batch_size, n_steps,val_x= None, val_y=None):
         """
         Uses GD to optimise the models loss on evaluation data
         """        
@@ -225,7 +225,7 @@ class ConvSVM(object):
         effectiveness of the training, and therefore the models effectiveness
         for classification
         Accuracy is defined as:
-            Σ(Wx+b && y_actual)/n_samples
+            SUM(Wx+b && y_actual)/n_samples
         """
 
 #        Define the graph operation for accuracy
