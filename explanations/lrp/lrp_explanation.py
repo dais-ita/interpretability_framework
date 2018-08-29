@@ -57,14 +57,13 @@ class LRPExplainer(object):
         abs_vals = np.stack([np.abs(LRP_values[i]) for i in range(len(LRP_values))], 0).flatten()
     else:
         abs_vals = np.stack([np.abs(LRP_values[i].sum(-1)) for i in range(len(LRP_values))], 0).flatten()
-    max_val = np.nanpercentile(abs_vals, 95)
+    max_val = np.nanpercentile(abs_vals, 70)
 
     # i = 0
 
     # sv = shap_values[i] if len(shap_values[i].shape) == 2 else shap_values[i].sum(-1)
     # # plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
     # plt.imshow(sv, cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
-
     # img_show = plt.imshow(LRP_values,cmap="hot")
     # img_show = plt.imshow(LRP_values,cmap=self.GetColorMap())
     
