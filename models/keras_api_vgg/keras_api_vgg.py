@@ -46,7 +46,7 @@ class KerasApiVGG(object):
         self.sess = keras.backend.get_session()
 
         self.input_ = self.model.layers[0].input
-        self.labels_ = tf.placeholder(tf.float32, shape = [None,])
+        self.labels_ = tf.placeholder(tf.float32, shape = [None, n_classes])
         self.logits = self.model.layers[-1].output
 
         self.loss = keras.losses.categorical_crossentropy(self.labels_, self.logits)
@@ -115,7 +115,7 @@ class KerasApiVGG(object):
 
         self.model.save_weights(save_dir+".h5")
 
-        print("Saved model to:"+ str(self.model_dir))
+        print("Saved model to:"+ str(save_dir+".h5"))
 
 
     def LoadModel(self, load_dir):
@@ -126,7 +126,7 @@ class KerasApiVGG(object):
 
             self.model.load_weights(load_h5_path)
         
-        print("Loaded model from:"+ str(self.model_dir))
+        print("Loaded model from:"+ str(load_h5_path))
 
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout):
@@ -153,7 +153,7 @@ class KerasApiVGG(object):
         return model
 
     def GetWeights(self):
-        return [w for w in self.model.weights if 'connected' in w.name and 'kernel' in w.name]
+        return [w for w in self.model.weights if 'dense' in w.name and 'kernel' in w.name]
 
     def GetPlaceholders(self):
         return [self.input_, self.labels_]
