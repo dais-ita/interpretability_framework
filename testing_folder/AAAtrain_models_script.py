@@ -24,7 +24,7 @@ model_name = "keras_api_simple"
 #TRAINING PARAMETERS
 learning_rate = 0.00001
 batch_size = 128
-num_train_steps = 300
+num_train_steps = 500
 
 
 #####
