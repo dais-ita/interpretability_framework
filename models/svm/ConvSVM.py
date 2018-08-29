@@ -200,11 +200,20 @@ class ConvSVM(object):
         idcs = random.sample(range(x.shape[0]),batch_size)
         return x[idcs], y[idcs]
 
+    def _process_labels(self, y):
+        """
+        Detects one hot encoding in y and converts it to a form processible by SVMs
+        """
+        if len(y) != y.size:
+            n_y = np.array([[1 if lbl[0] == 1 else -1] for lbl in y])
+            y = n_y
+        return y
 
     def TrainModel(self, train_x, train_y, batch_size, n_steps,val_x= None, val_y=None):
         """
         Uses GD to optimise the models loss on evaluation data
-        """        
+        """
+        train_y = self._process_labels(train_y)
         for i in range(n_steps):
 #            get a randomly sampled batch of training data
             x, y = self._get_batches(train_x, train_y, batch_size)
@@ -243,6 +252,8 @@ class ConvSVM(object):
 #         self.LoadModel(self.sess)
         accuracies = []
         losses = []
+
+        val_y = self._process_labels(val_y)
         for i in range(val_y.shape[0]//batch_size):
 #            Get the accuracy of each batch of evaluation data
             x, y = self._get_batches(val_x, val_y, batch_size)
@@ -265,7 +276,7 @@ class ConvSVM(object):
                 )
             )
 #        Return mean accuracy on evaluation data
-        return [np.mean(accuracies), np.mean(losses)]
+        return np.mean(accuracies)
 
     def Predict(self, predict_x):
         """
