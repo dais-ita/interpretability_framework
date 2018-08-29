@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Header, Image, Table, Icon, Segment, Button} from "semantic-ui-react";
+import { Header, Image, Table, Icon, Segment, Button, Grid, Modal} from "semantic-ui-react";
 import _ from "lodash"
 import axios from "axios";
 
-import input_1 from './lime_input.jpg';
-import output_1 from './lime_out.jpg';
+//import input_1 from './lime_input.jpg';
+//import output_1 from './lime_out.jpg';
 import ComparisonCard from "./ComparisonCard";
 
 import './Interpret.css';
@@ -15,25 +15,7 @@ class InterpretabilityComparison extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            results: [
-                {
-                    input_image: "1234",
-                    interpretation: "1234",
-                    time_started: "123",
-                    time_completed: "123",
-                    explanation_text: "1234",
-                    duration: "1234",
-                    timestamp: "1234"
-                }, {
-                    input_image: "",
-                    interpretation: "",
-                    time_started: "",
-                    time_completed: "",
-                    explanation_text: "",
-                    duration: "",
-                    timestamp: ""
-                }
-            ]
+            results: []
         };
 
         this.getResults = this.getResults.bind(this);
@@ -57,36 +39,52 @@ class InterpretabilityComparison extends Component {
 
 
     getResults () {
+        const prevResults = this.state.results;
         const req = "http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER;
 
         const rand_img = "/dataset-test-image?dataset=Gun Wielding Image Classification";
 
-        let result = {
-            input_image: "",
-            interpretation: "",
-            time_started: "",
-            time_completed: "",
-            explanation_text: "",
-            duration: "",
-            timestamp: ""
-        };
+        let result = {};
 
+        result["dataset"] = this.props.options.dataset;
+        result["model"] = this.props.options.model[0];
+        result["interpreter"] = this.props.options.interpreter[0];
 
         axios.get(req + rand_img)
             .then(res => {
-                const explain_req = req + "/explanation-explain?&dataset=" +
+                const explain_req = req + "/explanation-explain?dataset=" +
                     encodeURIComponent(this.props.options.dataset.trim()) + "&model=" + this.props.options.model[0] +
                     "&image=" + res.data["image_name"] + "&explanation=" + this.props.options.interpreter[0];
 
-                result["input_image"] = res.data;
-
-                console.log(explain_req);
+                result["input_image"] = res.data["input"];
+                result["ground_truth"] = res.data["ground_truth"];
+                result["image_name"] = res.data["image_name"];
 
                 axios.get(explain_req)
                     .then(res => {
-                        console.log(res)
+
+                        result["start_time"] = res.data["attribution_time"];
+                        result["explanation_image"] = res.data["explanation_image"];
+                        result["explanation_text"] = res.data["explanation_text"];
+                        result["end_time"] = res.data["explanation_time"];
+                        result["prediction"] = res.data["prediction"];
                     })
-            })
+                    .catch( function(error) {
+                        alert(error);
+                    })
+
+
+            });
+
+        prevResults.push(result);
+        this.setState({results: prevResults});
+
+        console.log(this.state.results);
+
+    }
+
+    showPreview(result_id) {
+         alert(result_id);
     }
 
 
@@ -94,17 +92,57 @@ class InterpretabilityComparison extends Component {
     render() {
 
         const interpreter_results = _.times(this.state.results.length, i => (
-            <React.Fragment key={i}>
-                <ComparisonCard result_data ={this.state.results[i]} options ={this.props.options}/>
-            </React.Fragment>
+            <Grid.Column key={i}>
+                <Modal trigger={<Image src={this.state.results[i]["explanation_image"]}/>}>
+                    <Modal.Header>Select a Photo</Modal.Header>
+                        <Modal.Content image>
+                          <Image wrapped size='medium' src='/images/avatar/large/rachel.png' />
+                          <Modal.Description>
+                            <Header>Default Profile Image</Header>
+                            <p>We've found the following gravatar image associated with your e-mail address.</p>
+                            <p>Is it okay to use this photo?</p>
+                          </Modal.Description>
+                        </Modal.Content>
+                </Modal>
+            </Grid.Column>
+
+
+
+
+            //
+            // <React.Fragment key={i}>
+            //     <ComparisonCard result_data ={this.state.results[i]}/>
+            // </React.Fragment>
         ));
 
+        const columns = _.times(this.state.results.length, i => (
+              <Grid.Column key={i}>
+                   <Modal trigger={<Image src='http://placehold.it/180x180' />}>
+                        <Modal.Header>Select a Photo</Modal.Header>
+                        <Modal.Content image>
+                          <Image wrapped size='medium' src='/images/avatar/large/rachel.png' />
+                          <Modal.Description>
+                            <Header>Default Profile Image</Header>
+                            <p>We've found the following gravatar image associated with your e-mail address.</p>
+                            <p>Is it okay to use this photo?</p>
+                          </Modal.Description>
+                        </Modal.Content>
+                      </Modal>
+
+              </Grid.Column>
+            ));
 
         return (
             <div>
                 <Button onClick={this.getResults}>Explain random image</Button>
                 <Header as='h2'>Explanation Results</Header>
-                {interpreter_results}
+                Input Image
+                <Image src="http://placehold.it/180x180" />
+                <br/>
+                <Grid stackable columns={4}>
+                    {interpreter_results}
+                </Grid>
+                {/*{interpreter_results}*/}
             </div>
 
         );
