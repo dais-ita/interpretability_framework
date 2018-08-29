@@ -145,6 +145,252 @@
 		],
 		"description":"A model class that uses Feature Descriptor to load in benchmark architectures such as VGG 16 and 19, resnet50 etc.",
 		"license":"apache 2"
+		},
+		{"model_name":"vgg16_imagenet",
+		"script_name":"vgg16_imagenet",
+		"class_name":"VGG16Imagenet",
+		"trained_on":[
+			{"dataset_name":"CIFAR-10",
+			"model_path":"saved_models/cifar-10",
+			"training_allocation_path":"dataset_csvs/cifar-10.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"saved_models/gun_wielding_image_classification",
+			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":300
+			}
+		],
+		"layers":[
+			
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
+			"description":""
+			}
+		],
+		"references":["https://keras.io/applications/"],
+		"description":"A keras api VGG16 CNN feature descriptor trained on Imagenet with newly trained fully connected layers.",
+		"license":"apache 2"
+		}
+		,{"model_name":"vgg19_imagenet",
+		"script_name":"vgg19_imagenet",
+		"class_name":"VGG19Imagenet",
+		"trained_on":[
+			{"dataset_name":"CIFAR-10",
+			"model_path":"saved_models/cifar-10",
+			"training_allocation_path":"dataset_csvs/cifar-10.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"saved_models/gun_wielding_image_classification",
+			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":300
+			}
+		],
+		"layers":[
+			
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
+			"description":""
+			}
+		],
+		"references":["https://keras.io/applications/"],
+		"description":"A keras api VGG19 CNN feature descriptor trained on Imagenet with newly trained fully connected layers.",
+		"license":"apache 2"
+		},
+		{"model_name":"inception_v3_imagenet",
+		"script_name":"inception_v3_imagenet",
+		"class_name":"InceptionV3Imagenet",
+		"trained_on":[
+			{"dataset_name":"CIFAR-10",
+			"model_path":"saved_models/cifar-10",
+			"training_allocation_path":"dataset_csvs/cifar-10.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"saved_models/gun_wielding_image_classification",
+			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":300
+			}
+		],
+		"layers":[
+			
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
+			"description":""
+			}
+		],
+		"references":["https://keras.io/applications/"],
+		"description":"A keras api InceptionV3 CNN feature descriptor trained on Imagenet with newly trained fully connected layers.",
+		"license":"apache 2"
+		},
+		{"model_name":"inception_resent_v2_imagenet",
+		"script_name":"inception_resent_v2_imagenet",
+		"class_name":"InceptionResNetV2Imagenet",
+		"trained_on":[
+			{"dataset_name":"CIFAR-10",
+			"model_path":"saved_models/cifar-10",
+			"training_allocation_path":"dataset_csvs/cifar-10.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"saved_models/gun_wielding_image_classification",
+			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":300
+			}
+		],
+		"layers":[
+			
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
+			"description":""
+			}
+		],
+		"references":["https://keras.io/applications/"],
+		"description":"A keras api InceptionResNetV2 CNN feature descriptor trained on Imagenet with newly trained fully connected layers.",
+		"license":"apache 2"
+		},
+		{"model_name":"mobilenet_imagenet",
+		"script_name":"mobilenet_imagenet",
+		"class_name":"MobileNetImagenet",
+		"trained_on":[
+			{"dataset_name":"CIFAR-10",
+			"model_path":"saved_models/cifar-10",
+			"training_allocation_path":"dataset_csvs/cifar-10.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"saved_models/gun_wielding_image_classification",
+			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":300
+			}
+		],
+		"layers":[
+			
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
+			"description":""
+			}
+		],
+		"references":["https://keras.io/applications/"],
+		"description":"A keras api MobileNet CNN feature descriptor trained on Imagenet with newly trained fully connected layers.",
+		"license":"apache 2"
+		},
+		{"model_name":"xception_imagenet",
+		"script_name":"xception_imagenet",
+		"class_name":"XceptionImagenet",
+		"trained_on":[
+			{"dataset_name":"CIFAR-10",
+			"model_path":"saved_models/cifar-10",
+			"training_allocation_path":"dataset_csvs/cifar-10.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Gun Wielding Image Classification",
+			"model_path":"saved_models/gun_wielding_image_classification",
+			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":100
+			},
+			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
+			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
+			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
+			"test_accuracy":0,
+			"training_time":0,
+			"training_steps":300
+			}
+		],
+		"layers":[
+			
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
+			"description":""
+			}
+		],
+		"references":["https://keras.io/applications/"],
+		"description":"A keras api Xception CNN feature descriptor trained on Imagenet with newly trained fully connected layers.",
+		"license":"apache 2"
 		}
 	]
 }
