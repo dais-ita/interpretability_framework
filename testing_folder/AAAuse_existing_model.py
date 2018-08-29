@@ -226,7 +226,7 @@ if(explanation_name != ""):
 	test_label = test_y[0]
 
 	source = "train"
-	train_x, train_y, batch = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = False, batch_source = source, return_batch_data=True)
+	train_x, train_y, batch = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source, return_batch_data=True)
 
 	additional_args = {
 	"num_samples":100,
