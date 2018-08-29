@@ -215,6 +215,7 @@ class ConvSVM(object):
         """
         train_y = self._process_labels(train_y)
         for i in range(n_steps):
+            print("training step: "+str(i))
 #            get a randomly sampled batch of training data
             x, y = self._get_batches(train_x, train_y, batch_size)
             self.sess.run(
