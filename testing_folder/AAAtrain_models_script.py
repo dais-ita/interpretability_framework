@@ -13,20 +13,18 @@ import random
 #DATASET
 #dataset_name = "Traffic Congestion Image Classification"
 # dataset_name = "Traffic Congestion Image Classification (Resized)"
-dataset_name = "Gun Wielding Image Classification"
-# dataset_name = "CIFAR-10"
+# dataset_name = "Gun Wielding Image Classification"
+dataset_name = "CIFAR-10"
 
 #MODEL
-# model_name = "keras_cnn"
-# model_name = "cnn_1"
-# model_name = "keras_vgg"
-# model_name = "keras_vgg_with_logits"
-model_name = "keras_api_vgg"
+# model_name = "cnn_svm"
+# model_name = "keras_api_vgg"
+model_name = "keras_api_simple"
 
 #TRAINING PARAMETERS
-learning_rate = 0.0001
+learning_rate = 0.00001
 batch_size = 128
-num_train_steps = 100
+num_train_steps = 300
 
 
 #####
@@ -87,8 +85,7 @@ sys.path.append(datasets_path)
 
 #import dataset tool
 from DatasetClass import DataSet
-#import model
-from CNN import SimpleCNN
+
 
 
 #### load dataset json
