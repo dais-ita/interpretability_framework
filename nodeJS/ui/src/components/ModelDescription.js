@@ -24,7 +24,6 @@ class ModelDescription extends Component  {
 
             const trained_on = this.props.model_data.trained_on;
             for (let key in trained_on) {
-                console.log(trained_on[key]['dataset_name']);
                 if (trained_on[key]['dataset_name'] === this.props.options.dataset) {
                     this.setState({dataset_id: key})
                 }
