@@ -82,18 +82,7 @@ class DatasetPreview extends React.Component {
                     {/*</Card.Content>*/}
 
                 </Card>
-
-
-
-
-
-
-
-
             </div>
-
-
-
         )
     }
 

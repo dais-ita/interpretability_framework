@@ -11,8 +11,8 @@ import numpy as np
 
 ######
 #dataset_name = "Traffic Congestion Image Classification"
-dataset_name = "Traffic Congestion Image Classification (Resized)"
-#dataset_name = "Gun Wielding Image Classification"
+# dataset_name = "Traffic Congestion Image Classification (Resized)"
+dataset_name = "Gun Wielding Image Classification"
 #dataset_name = "CIFAR-10"
 
 # model_name = "keras_cnn"
