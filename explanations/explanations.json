@@ -6,7 +6,13 @@
 		"compatible_models":[
 			{"model_name":"conv_svm"},
 			{"model_name":"keras_api_vgg"},
-			{"model_name":"keras_api_simple"}
+			{"model_name":"keras_api_simple"},
+			{"model_name":"vgg16_imagenet"},
+			{"model_name":"vgg19_imagenet"},
+			{"model_name":"inception_v3_imagenet"},
+			{"model_name":"inception_resnet_v2_imagenet"},
+			{"model_name":"mobilenet_imagenet"},
+			{"model_name":"xception_imagenet"}
 				],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -51,7 +57,13 @@
 		"compatible_models":[
 			{"model_name":"keras_cnn"},
 			{"model_name":"keras_api_vgg"},
-			{"model_name":"keras_api_simple"}
+			{"model_name":"keras_api_simple"},
+			{"model_name":"vgg16_imagenet"},
+			{"model_name":"vgg19_imagenet"},
+			{"model_name":"inception_v3_imagenet"},
+			{"model_name":"inception_resnet_v2_imagenet"},
+			{"model_name":"mobilenet_imagenet"},
+			{"model_name":"xception_imagenet"}
 			],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -85,7 +97,13 @@
 		"compatible_models":[
 			{"model_name":"conv_svm"},
 			{"model_name":"keras_api_vgg"},
-			{"model_name":"keras_api_simple"}				
+			{"model_name":"keras_api_simple"},
+			{"model_name":"vgg16_imagenet"},
+			{"model_name":"vgg19_imagenet"},
+			{"model_name":"inception_v3_imagenet"},
+			{"model_name":"inception_resnet_v2_imagenet"},
+			{"model_name":"mobilenet_imagenet"},
+			{"model_name":"xception_imagenet"}		
 		],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -118,7 +136,13 @@
 		"script_name":"lrp_explanation",
 		"class_name":"LRPExplainer",
 		"compatible_models":[
-			{"model_name":"keras_api_vgg"}
+			{"model_name":"keras_api_vgg"},
+			{"model_name":"vgg16_imagenet"},
+			{"model_name":"vgg19_imagenet"},
+			{"model_name":"inception_v3_imagenet"},
+			{"model_name":"inception_resnet_v2_imagenet"},
+			{"model_name":"mobilenet_imagenet"},
+			{"model_name":"xception_imagenet"}
 							],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},

@@ -16,15 +16,33 @@ import random
 dataset_name = "Gun Wielding Image Classification"
 # dataset_name = "CIFAR-10"
 
+dataset_names = ["Traffic Congestion Image Classification",
+"Traffic Congestion Image Classification (Resized)",
+"Gun Wielding Image Classification",
+"CIFAR-10"]
+
 #MODEL
-model_name = "conv_svm"
+# model_name = "conv_svm"
 # model_name = "keras_api_vgg"
 # model_name = "keras_api_simple"
+# model_name = "vgg16_imagenet"
+# model_name = "vgg19_imagenet"
+# model_name = "inception_v3_imagenet"
+# model_name = "inception_resnet_v2_imagenet"
+# model_name = "mobilenet_imagenet"
+model_name = "xception_imagenet"
+
+model_names = ["vgg16_imagenet",
+"vgg19_imagenet", 
+"inception_v3_imagenet",
+"inception_resnet_v2_imagenet",
+"mobilenet_imagenet",
+"xception_imagenet"]
 
 #TRAINING PARAMETERS
 learning_rate = 0.0001
 batch_size = 128
-num_train_steps = 100
+num_train_steps = 20
 
 
 #####
@@ -155,6 +173,7 @@ if(display_example_image):
 
 
 ### instantiate the model
+print("instantiating model")
 model_json_path = os.path.join(models_path,"models.json")
 
 models_json = None
@@ -187,6 +206,8 @@ if(os.path.exists(model_save_path)):
 ### train model
 
 #load all train images as model handels batching
+print("load training data")
+print("")
 source = "train"
 train_x, train_y = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True, split_one_hot = True, batch_source = source)
 random.shuffle(train_x)
@@ -208,7 +229,8 @@ if(model_name == "cnn_1"):
 else:
 	model_validates_during_test = True
 
-
+print("train model")
+print("")
 if(model_validates_during_test):
 	cnn_model.TrainModel(train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
 else:
@@ -229,6 +251,8 @@ else:
 cnn_model.SaveModel(model_save_path)
 
 ### test the model
+print("load test data")
+print("")
 source = "test"
 test_x, test_y = dataset_tool.GetBatch(batch_size = 20,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
 test_y = dataset_tool.ConvertOneHotToClassNumber(test_y) 
@@ -243,23 +267,3 @@ print("ground truth classes:")
 print(test_y)
 
 
-
-# ### use LIME to explain a classification
-# print("Generating LIME explanation")
-# from lime_explanations import LimeExplainer
-
-# from skimage.segmentation import mark_boundaries
-# import matplotlib.pyplot as plt
-
-# lime_explainer = LimeExplainer(cnn_model)
-
-# test_image = test_x[0]
-# test_label = test_y[0]
-
-
-# explanation_image, explanation_text, prediction, additional_outputs = lime_explainer.Explain(test_image)
-
-# cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
-# cv2.imshow("image 0",cv2_image)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
