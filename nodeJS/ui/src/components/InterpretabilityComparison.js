@@ -40,7 +40,7 @@ class InterpretabilityComparison extends Component {
         const prevResults = this.state.results;
         const req = "http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER;
 
-        const rand_img = "/dataset-test-image?dataset=Gun Wielding Image Classification";
+        const img = "/dataset-test-image?dataset=Gun Wielding Image Classification&image=" + this.state.image.image_name;
 
         let result = {};
 
@@ -48,7 +48,7 @@ class InterpretabilityComparison extends Component {
         result["model"] = this.props.options.model[0];
         result["interpreter"] = this.props.options.interpreter[0];
 
-        axios.get(req + rand_img)
+        axios.get(req + img)
             .then(res => {
                 const explain_req = req + "/explanation-explain?dataset=" +
                     encodeURIComponent(this.props.options.dataset.trim()) + "&model=" + this.props.options.model[0] +
@@ -60,7 +60,6 @@ class InterpretabilityComparison extends Component {
 
                 axios.get(explain_req)
                     .then(res => {
-
                         result["start_time"] = res.data["attribution_time"];
                         result["explanation_image"] = res.data["explanation_image"];
                         result["explanation_text"] = res.data["explanation_text"];
@@ -70,6 +69,7 @@ class InterpretabilityComparison extends Component {
                     .catch( function(error) {
                         alert(error);
                     })
+
 
 
             });
@@ -99,48 +99,88 @@ class InterpretabilityComparison extends Component {
 
 
 
+
+
     render() {
 
         const interpreter_results = _.times(this.state.results.length, i => (
             <Grid.Column key={i}>
-                <Modal trigger={<Image src={this.state.results[i]["explanation_image"]}/>}>
-                    <Modal.Header>Select a Photo</Modal.Header>
-                        <Modal.Content image>
-                          <Image wrapped size='medium' src='/images/avatar/large/rachel.png' />
-                          <Modal.Description>
-                            <Header>Default Profile Image</Header>
-                            <p>We've found the following gravatar image associated with your e-mail address.</p>
-                            <p>Is it okay to use this photo?</p>
-                          </Modal.Description>
-                        </Modal.Content>
+                <Modal trigger={<Image src={"data:image/png;base64," + this.state.results[i].explanation_image}/>}>
+                    <Modal.Header>{this.state.results[i].model} trained on {this.state.results[i].dataset} dataset explained by
+                        {this.state.results[i].interpreter}</Modal.Header>
+                    <Modal.Content>
+                    {/*<Segment padded compact>*/}
+                        {/*<Header as='h3'>{this.state.data.model} trained on {this.state.data.dataset} dataset explained by {this.state.data.interpreter} &nbsp;<a><Icon name='down arrow'/></a> &nbsp;</Header>*/}
+                        {/*<strong>Timestamp: </strong> 17-Aug-2018 12:2:27 <br/><br/>*/}
+                        {/*<strong>Model Prediction:</strong>   Gun Wielder &nbsp; &nbsp;*/}
+                        {/*<strong>Ground Truth:</strong> Gun Wielder &nbsp; &nbsp;  <Icon color='green' name='thumbs up' />*/}
+
+                        <Table basic='very' collapsing>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>Input Image</Table.HeaderCell>
+                                    <Table.HeaderCell>Explanation Image</Table.HeaderCell>
+                                    <Table.HeaderCell>Explanation Text</Table.HeaderCell>
+                                    <Table.HeaderCell>Further Details</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                <Table.Row>
+                                    <Table.Cell>
+                                        {/*<Image size='small' src={input_1}/>*/}
+                                        <Image size='small' src={"data:image/png;base64," + this.state.results[i].input_image} />
+                                        <p>{this.state.results[i].ground_truth}</p>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <Image size='small' src={"data:image/png;base64," + this.state.results[i].explanation_image}/>
+                                        <p>{this.state.results[i].prediction}</p>
+                                    </Table.Cell>
+                                    <Table.Cell verticalAlign='top'>
+                                        {this.state.results[i].explanation_text}
+                                        {/*<p>Evidence towards predicted class shown in green</p>*/}
+                                    </Table.Cell>
+                                    <Table.Cell verticalAlign='top'>
+                                        {this.state.results[i].start_time}
+                                    </Table.Cell>
+                                </Table.Row>
+                            </Table.Body>
+                        </Table>
+                    </Modal.Content>
                 </Modal>
+                        {/*<Modal.Content image >*/}
+                                {/*<Image wrapped size='medium' src={"data:image/png;base64," + this.state.results[i].input_image} />*/}
+                                {/*Input*/}
+                                {/*<Image wrapped size='medium' src={"data:image/png;base64," + this.state.results[i].explanation_image} />*/}
+                                {/*Output*/}
+                          {/*<Modal.Description>*/}
+                              {/*<Table basic='very'>*/}
+                                  {/*<Table.Header>*/}
+                                      {/*<Table.Row>*/}
+                                          {/*/!*<Table.HeaderCell>Input Image</Table.HeaderCell>*!/*/}
+                                          {/*/!*<Table.HeaderCell>Explanation Image</Table.HeaderCell>*!/*/}
+                                          {/*<Table.HeaderCell>Explanation Text</Table.HeaderCell>*/}
+                                          {/*<Table.HeaderCell>Further Details</Table.HeaderCell>*/}
+                                      {/*</Table.Row>*/}
+                                  {/*</Table.Header>*/}
+                                  {/*<Table.Body>*/}
+                                      {/*<Table.Row>*/}
+                                          {/*<Table.Cell verticalAlign='top'>*/}
+                                              {/*{this.state.results[i].explanation_text}*/}
+                                          {/*</Table.Cell>*/}
+                                          {/*<Table.Cell verticalAlign='top'>*/}
+                                              {/*{this.state.results[i].start_time}*/}
+                                          {/*</Table.Cell>*/}
+                                      {/*</Table.Row>*/}
+                                  {/*</Table.Body>*/}
+                              {/*</Table>*/}
+                            {/*/!*<Header>Default Profile Image</Header>*!/*/}
+                            {/*/!*<p>We've found the following gravatar image associated with your e-mail address.</p>*!/*/}
+                            {/*/!*<p>Is it okay to use this photo?</p>*!/*/}
+                          {/*</Modal.Description>*/}
+                        {/*</Modal.Content>*/}
+
             </Grid.Column>
-
-
-
-
-            //
-            // <React.Fragment key={i}>
-            //     <ComparisonCard result_data ={this.state.results[i]}/>
-            // </React.Fragment>
         ));
-
-        const columns = _.times(this.state.results.length, i => (
-              <Grid.Column key={i}>
-                   <Modal trigger={<Image src='http://placehold.it/180x180' />}>
-                        <Modal.Header>Select a Photo</Modal.Header>
-                        <Modal.Content image>
-                          <Image wrapped size='medium' src='/images/avatar/large/rachel.png' />
-                          <Modal.Description>
-                            <Header>Default Profile Image</Header>
-                            <p>We've found the following gravatar image associated with your e-mail address.</p>
-                            <p>Is it okay to use this photo?</p>
-                          </Modal.Description>
-                        </Modal.Content>
-                      </Modal>
-
-              </Grid.Column>
-            ));
 
         const dataset_images = _.times(this.state.images.length, i => (
 
@@ -155,9 +195,23 @@ class InterpretabilityComparison extends Component {
         ));
 
         let input_image;
+        let results;
+
+        if (this.state.results.length > 0) {
+            results = interpreter_results
+        } else {
+            results = <br/>
+        }
+
 
         if (this.state.image) {
-            input_image = <Image src={"data:image/png;base64," + this.state.image.input} />
+            input_image = (
+                <Segment>
+                    <Image src={"data:image/png;base64," + this.state.image.input} />
+                    <p>{this.state.image.ground_truth}</p>
+                    <p>{this.state.image.image_name}</p>
+                </Segment>
+            )
         } else {
             input_image = <p>Please select input</p>
         }
@@ -166,27 +220,27 @@ class InterpretabilityComparison extends Component {
 
         return (
             <div>
+                <Header as='h2'>4. Image Selection</Header>
                 <Modal onOpen={this.loadImages} trigger={<Button>Choose Image</Button>} centered={false}>
                     <Modal.Header>{this.props.options.dataset}</Modal.Header>
                     <Modal.Content>
-                        <Grid stackable columns={4}>
+                        <Grid stackable columns={6}>
                             {dataset_images}
                         </Grid>
                     </Modal.Content>
 
                 </Modal>
 
-
                 {input_image}
 
-                <Header as='h2'>Explanation Results</Header>
-
+                <Header as='h2'>5. Explanation Results</Header>
+                <Button onClick={this.getResults}>Generate Explanation</Button>
 
                 <br/>
                 <Grid stackable columns={4}>
-                    {interpreter_results}
+                    {results}
                 </Grid>
-                {/*{interpreter_results}*/}
+
             </div>
 
         );
