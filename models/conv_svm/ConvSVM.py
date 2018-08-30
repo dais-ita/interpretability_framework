@@ -35,7 +35,7 @@ class ConvSVM(object):
         if n_classes != 2:
             raise ValueError("This implementation of SVM only works with 2-class classification")
         self.n_classes = n_classes
-        self.checkpoint_path = os.path.join(model_dir,"checkpoints")
+        self.checkpoint_path = model_dir
 
         self.sess = tf.Session()
         
@@ -73,13 +73,14 @@ class ConvSVM(object):
         
         self.labels_ = tf.placeholder(
             name="lbl_",
-            shape=[None,1],
+            shape=[None,2],
             dtype=tf.float32
         )
 
-        self.y = tf.argmax(self.labels_)
+        self.y = tf.argmax(self.labels_,1)
         self.y = self.y * -2
         self.y = self.y + 1
+        self.y = tf.reshape(self.y, [-1,1])
         self.y = tf.cast(self.y, tf.float32)
 
         self.W = tf.Variable(
@@ -165,7 +166,7 @@ class ConvSVM(object):
                 self.input_ : x,
                 self.labels_: y
         }
-        self.LoadModel(self.sess)
+        self.LoadModel(None,self.sess)
         return self.sess.run(sample_loss, feed_dict)
     
     def GetSmoothHinge(self, t):
@@ -205,20 +206,10 @@ class ConvSVM(object):
         idcs = random.sample(range(x.shape[0]),batch_size)
         return x[idcs], y[idcs]
 
-    def _process_labels(self, y):
-        """
-        Detects one hot encoding in y and converts it to a form processible by SVMs
-        """
-        if len(y) != y.size:
-            n_y = np.array([[1 if lbl[0] == 1 else -1] for lbl in y])
-            y = n_y
-        return y
-
     def TrainModel(self, train_x, train_y, batch_size, n_steps,val_x= None, val_y=None):
         """
         Uses GD to optimise the models loss on evaluation data
         """
-        train_y = self._process_labels(train_y)
         for i in range(n_steps):
             print("training step: "+str(i))
 #            get a randomly sampled batch of training data
@@ -231,7 +222,9 @@ class ConvSVM(object):
                     self.labels_: y
                 }
             )
-        self.SaveModel(self.sess)
+            if (i % 10) == 0:
+                print(self.EvaluateModel(x, y, batch_size))
+        self.SaveModel(None,self.sess)
 
 
     def EvaluateModel(self, val_x, val_y, batch_size):
@@ -259,7 +252,6 @@ class ConvSVM(object):
         accuracies = []
         losses = []
 
-        val_y = self._process_labels(val_y)
         for i in range(val_y.shape[0]//batch_size):
 #            Get the accuracy of each batch of evaluation data
             x, y = self._get_batches(val_x, val_y, batch_size)
@@ -282,7 +274,7 @@ class ConvSVM(object):
                 )
             )
 #        Return mean accuracy on evaluation data
-        return np.mean(accuracies)
+        return [np.mean(losses),np.mean(accuracies)]
 
     def Predict(self, predict_x):
         """
@@ -325,14 +317,18 @@ class ConvSVM(object):
             sess = self.sess
         if model_dir == None:
             model_dir = self.checkpoint_path
-        self.saver.save(sess, os.path.join(model_dir,"wvnw_svm.ckpt"))
+
+        if(not os.path.exists(model_dir)): ###THIS MAY NOT WORK
+            os.mkdir(model_dir)
+
+        self.saver.save(sess, os.path.join(model_dir,"model.ckpt"))
 
     def LoadModel(self, model_dir = None, sess=None):
         if sess == None:
             sess = self.sess
         if model_dir == None:
             model_dir = self.checkpoint_path
-        self.saver.restore(sess, os.path.join(model_dir,"wvnw_svm.ckpt"))
+        self.saver.restore(sess, os.path.join(model_dir,"model.ckpt"))
 
     def GetWeights(self):
         """
