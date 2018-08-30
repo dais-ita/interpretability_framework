@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Image, Table, Icon, Segment, Button, Grid, Modal} from "semantic-ui-react";
+import { Header, Image, Table, Icon, Segment, Button, Grid, Modal, Card} from "semantic-ui-react";
 import _ from "lodash"
 import axios from "axios";
 
@@ -15,19 +15,17 @@ class InterpretabilityComparison extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            results: []
+            results: [],
+            images: [],
+            image: false
         };
 
         this.getResults = this.getResults.bind(this);
+        this.loadImages = this.loadImages.bind(this);
     }
 
     componentDidMount () {
         console.log(this.props)
-
-
-
-        // Query ita-ce for images
-        // decode images from base-64
 
     }
 
@@ -87,6 +85,18 @@ class InterpretabilityComparison extends Component {
          alert(result_id);
     }
 
+    loadImages() {
+        axios.get("http://127.0.0.1:3100/dataset-test-images?dataset=Gun%20Wielding%20Image%20Classification&num_images=100")
+            .then(res => {
+                this.setState({images : res.data})
+            });
+    }
+
+
+    setImage(img_data) {
+        this.setState({image: img_data})
+    }
+
 
 
     render() {
@@ -132,12 +142,46 @@ class InterpretabilityComparison extends Component {
               </Grid.Column>
             ));
 
+        const dataset_images = _.times(this.state.images.length, i => (
+
+            <Grid.Column key={i}>
+                <Segment onClick={() => this.setImage(this.state.images[i])}>
+                    <Image size='small' src={"data:image/png;base64," + this.state.images[i].input} />
+                    {this.state.images[i].ground_truth}<br/>
+                    {this.state.images[i].image_name}
+                </Segment>
+            </Grid.Column>
+
+        ));
+
+        let input_image;
+
+        if (this.state.image) {
+            input_image = <Image src={"data:image/png;base64," + this.state.image.input} />
+        } else {
+            input_image = <p>Please select input</p>
+        }
+
+
+
         return (
             <div>
-                <Button onClick={this.getResults}>Explain random image</Button>
+                <Modal onOpen={this.loadImages} trigger={<Button>Choose Image</Button>} centered={false}>
+                    <Modal.Header>{this.props.options.dataset}</Modal.Header>
+                    <Modal.Content>
+                        <Grid stackable columns={4}>
+                            {dataset_images}
+                        </Grid>
+                    </Modal.Content>
+
+                </Modal>
+
+
+                {input_image}
+
                 <Header as='h2'>Explanation Results</Header>
-                Input Image
-                <Image src="http://placehold.it/180x180" />
+
+
                 <br/>
                 <Grid stackable columns={4}>
                     {interpreter_results}
