@@ -1,0 +1,1 @@
+//{"root": "http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER  + "/"}

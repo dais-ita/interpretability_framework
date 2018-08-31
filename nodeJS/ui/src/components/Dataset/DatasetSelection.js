@@ -3,7 +3,7 @@ import { Header, Image, Grid, Button, Transition, Icon } from "semantic-ui-react
 import _ from 'lodash';
 import axios from 'axios';
 
-import DatasetPreview from "./DatasetPreview";
+import DatasetCard from "./DatasetCard";
 
 
 class DatasetSelection extends Component {
@@ -24,7 +24,9 @@ class DatasetSelection extends Component {
                 const datasets = res.data;
                 this.setState( { datasets });
                 this.props.setActiveDataset(datasets[0].dataset_name);
-                console.log(datasets[0].dataset_name)
+                // console.log(datasets[0].dataset_name)
+
+                console.log(this.props.options);
             })
     }
 
@@ -37,9 +39,9 @@ class DatasetSelection extends Component {
 
         const dataset_previews = _.times(this.state.datasets.length, i => (
             <Grid.Column key={i}>
-               <DatasetPreview setActiveDataset={this.props.setActiveDataset}
-                               active_dataset={this.props.options.dataset}
-                               dataset={this.state.datasets[i]}/>
+               <DatasetCard setActiveDataset={this.props.setActiveDataset}
+                            active_dataset={this.props.options.dataset}
+                            dataset={this.state.datasets[i]}/>
             </Grid.Column>
 
         ));
