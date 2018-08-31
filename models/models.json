@@ -5,11 +5,18 @@
 		"class_name":"ConvSVM",
 		"trained_on":[
 			{"dataset_name":"Gun Wielding Image Classification",
-			"model_path":"saved_models/wielder_non-wielder",
-			"test_accuracy":0.707721,
-			"training_time":0,
-			"training_steps":200
-			}
+			"model_path":"saved_models/gun_wielding_image_classification",
+			"test_accuracy":0.60821,
+			"training_time":412.11,
+			"training_steps":213
+			},
+			{"dataset_name":"Traffic Congestion Image Classification",
+			"model_path":"saved_models/traffic_congestion_image_classification",
+			"test_accuracy":0.81,
+			"training_time":400.1,
+			"training_steps":211
+			},
+
 		],
 		"additional_arguments":[
 			{"name":"learning_rate",
@@ -98,52 +105,6 @@
 			}
 		],
 		"description":"A keras functional api based VGG-like CNN.",
-		"license":"apache 2"
-		},
-		{"model_name":"premade_models",
-		"script_name":"premade_cnn",
-		"class_name":"PremadeCNN",
-		"trained_on":[
-			{"dataset_name":"Gun Wielding Image Classification",
-			"model_path":"saved_models/gun_wielding_image_classification",
-			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			},
-			{"dataset_name":"Traffic Congestion Image Classification",
-			"model_path":"saved_models/traffic_congestion_image_classification",
-			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			},
-			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
-			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
-			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			}
-		],
-		"architectures":{
-			"VGG16":{
-				"description":"AKA OxfordNet, a benchmark 16-layer cnn winning the Imagenet competition in 2014"
-			},
-			"VGG19":{
-				"description":"A 19 layer modification of VGG16 that was more successful in some image recognition tasks: Caltech-101 & 256"
-			},	
-			"ResNet50":{
-				"description":"50 layer Residual Network, Microsofts Imagenet 2015 winning cnn architecture that uses shortcut layers or skip connections, to get lower rates of complexity than VGG on a much larger model."
-			}
-		},
-		"layers":"The architecture of this model depends on the premade model selected",
-		"additional_arguments":[
-			{"name":"architecture",
-			"description":"Dictates the premade architecture to select"
-			}
-		],
-		"description":"A model class that uses Feature Descriptor to load in benchmark architectures such as VGG 16 and 19, resnet50 etc.",
 		"license":"apache 2"
 		},
 		{"model_name":"vgg16_imagenet",
