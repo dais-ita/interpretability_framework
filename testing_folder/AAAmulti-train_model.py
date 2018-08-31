@@ -20,6 +20,9 @@ dataset_name = "Gun Wielding Image Classification"
 
 dataset_names = ["Gun Wielding Image Classification"]
 
+
+dataset_names = ["Gun Wielding Image Classification"]
+
 #MODEL
 model_name = "conv_svm"
 # model_name = "keras_api_vgg"
@@ -38,15 +41,13 @@ model_names = ["vgg16_imagenet",
 "mobilenet_imagenet",
 "xception_imagenet"]
 
-model_names = ["conv_svm"]
+# model_names = ["vgg16_imagenet"]
 
 #TRAINING PARAMETERS
-learning_rate = 0.001
-batch_size = 32
-num_train_steps = 1
+learning_rate = 0.000001
+batch_size = 64
+num_train_steps = 300
 
-
-#####
 
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # turn off repeated messages from Tensorflow RE GPU allocation
