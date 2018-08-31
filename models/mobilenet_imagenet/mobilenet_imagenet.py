@@ -29,6 +29,10 @@ class MobileNetImagenet(object):
         self.model_dir = model_dir
 
         # model specific variables
+        self.min_height = 32
+        self.min_width = 32
+
+        self.imagenet_valid_shapes = [[128, 128], [160, 160], [192, 192], [224, 224]]
         # Training Parameters
 
         if ("learning_rate" in additional_args):
@@ -67,6 +71,8 @@ class MobileNetImagenet(object):
 
     def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None):
         train_x = self.CheckInputArrayAndResize(train_x,self.min_height,self.min_width)
+        if(val_x is not None):
+            val_x = self.CheckInputArrayAndResize(val_x,self.min_height,self.min_width)
 
         if (type(train_x) != dict):
             input_dict = {"input": train_x}
@@ -177,13 +183,41 @@ class MobileNetImagenet(object):
         print("FetchAllVariableValues - not implemented")
 
 
-   def CheckInputDimensions(self,input_shape,min_height,min_width):
+    def GetNearestValidImagenetShape(self,input_shape,valid_shapes):
         if(len(input_shape) == 4):
             image_shape = input_shape[1:]
         else:
             image_shape = input_shape
 
-        return (max(min_height,image_shape[0]),max(min_width,image_shape[1]),image_shape[2])
+        image_dimensions = np.array(image_shape[:2])
+
+        lowest_difference = abs(sum(np.array(valid_shapes[-1]) - image_dimensions))
+        closest_shape = valid_shapes[-1]
+
+        for valid_shape in valid_shapes[:-1]:
+            if(valid_shape[0]<image_dimensions[0] or valid_shape[1]<image_dimensions[1]):#ensure target size is bigger than or equal to current size (so only padding is required, no down-sizing)
+                continue
+            current_diff = abs(sum(np.array(valid_shape) - image_dimensions))
+
+            if(current_diff < lowest_difference):
+                lowest_difference = current_diff
+                closest_shape = valid_shape
+
+        print(closest_shape)
+        return closest_shape
+
+
+
+
+    def CheckInputDimensions(self,input_shape,min_height,min_width):
+        if(len(input_shape) == 4):
+            image_shape = input_shape[1:]
+        else:
+            image_shape = input_shape
+
+        valid_shape = self.GetNearestValidImagenetShape(image_shape,self.imagenet_valid_shapes)
+
+        return (valid_shape[0],valid_shape[1],image_shape[2])
 
 
     def CheckInputArrayAndResize(self,image_array,min_height,min_width):
@@ -194,10 +228,14 @@ class MobileNetImagenet(object):
         else:
             image_shape = image_array_shape
 
-        target_shape = (max(min_height,image_shape[0]),max(min_width,image_shape[1]),image_shape[2])
+        valid_shape = self.GetNearestValidImagenetShape(image_shape,self.imagenet_valid_shapes)
 
+        target_shape = (valid_shape[0],valid_shape[1],image_shape[2])
+        print(target_shape)
         shape_difference = (np.array(target_shape) - np.array(image_shape))
-
+        
+        print(shape_difference)
+        
         add_top = int(shape_difference[0]/2)
         add_bottom = shape_difference[0] - add_top
 

@@ -29,6 +29,8 @@ class VGG19Imagenet(object):
         self.model_dir = model_dir
 
         # model specific variables
+        self.min_height = 48
+        self.min_width = 48
         # Training Parameters
 
         if ("learning_rate" in additional_args):
@@ -171,7 +173,7 @@ class VGG19Imagenet(object):
         print("FetchAllVariableValues - not implemented")
 
 
-   def CheckInputDimensions(self,input_shape,min_height,min_width):
+    def CheckInputDimensions(self,input_shape,min_height,min_width):
         if(len(input_shape) == 4):
             image_shape = input_shape[1:]
         else:
