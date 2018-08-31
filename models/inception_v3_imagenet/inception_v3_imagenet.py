@@ -29,6 +29,8 @@ class InceptionV3Imagenet(object):
         self.model_dir = model_dir
 
         # model specific variables
+        self.min_height = 139
+        self.min_width = 139
         # Training Parameters
 
         if ("learning_rate" in additional_args):
@@ -66,6 +68,11 @@ class InceptionV3Imagenet(object):
         
 
     def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None):
+        train_x = self.CheckInputArrayAndResize(train_x,self.min_height,self.min_width)
+
+        if(val_x is not None):
+            val_x = self.CheckInputArrayAndResize(val_x,self.min_height,self.min_width)
+
         if (type(train_x) != dict):
             input_dict = {"input": train_x}
         else:
@@ -90,6 +97,8 @@ class InceptionV3Imagenet(object):
 
 
     def EvaluateModel(self, eval_x, eval_y, batch_size):
+        eval_x = self.CheckInputArrayAndResize(eval_x,self.min_height,self.min_width)
+
         if (type(eval_x) != dict):
             input_dict = {"input": eval_x}
         else:
@@ -100,6 +109,8 @@ class InceptionV3Imagenet(object):
 
 
     def Predict(self, predict_x):
+        predict_x = self.CheckInputArrayAndResize(predict_x,self.min_height,self.min_width)
+
         if (type(predict_x) != dict):
             input_dict = {"input": predict_x}
         else:
@@ -135,6 +146,8 @@ class InceptionV3Imagenet(object):
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout): 
         
+        model_input_dim_height, model_input_dim_width, model_input_channels = self.CheckInputDimensions((model_input_dim_height, model_input_dim_width, model_input_channels),self.min_height,self.min_width)
+
         vis_input = Input(shape=(model_input_dim_height, model_input_dim_width, model_input_channels), name="absolute_input")
 
         base_model = InceptionV3(input_tensor=vis_input, weights='imagenet',input_shape=(model_input_dim_height, model_input_dim_width, model_input_channels), include_top=False)
@@ -167,4 +180,34 @@ class InceptionV3Imagenet(object):
     
     def FetchAllVariableValues(self):
         print("FetchAllVariableValues - not implemented")
+
+
+    def CheckInputDimensions(self,input_shape,min_height,min_width):
+        if(len(input_shape) == 4):
+            image_shape = input_shape[1:]
+        else:
+            image_shape = input_shape
+
+        return (max(min_height,image_shape[0]),max(min_width,image_shape[1]),image_shape[2])
+
+
+    def CheckInputArrayAndResize(self,image_array,min_height,min_width):
+        image_array_shape = image_array.shape
+
+        if(len(image_array_shape) == 4):
+            image_shape = image_array_shape[1:]
+        else:
+            image_shape = image_array_shape
+
+        target_shape = (max(min_height,image_shape[0]),max(min_width,image_shape[1]),image_shape[2])
+
+        shape_difference = (np.array(target_shape) - np.array(image_shape))
+
+        add_top = int(shape_difference[0]/2)
+        add_bottom = shape_difference[0] - add_top
+
+        add_left = int(shape_difference[1]/2)
+        add_right = shape_difference[1] - add_left
+
+        return np.pad(image_array,((0,0),(add_top,add_bottom),(add_left,add_right),(0,0)), mode='constant', constant_values=0)
 

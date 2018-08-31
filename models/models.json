@@ -229,8 +229,8 @@
 		"description":"A keras api InceptionV3 CNN feature descriptor trained on Imagenet with newly trained fully connected layers.",
 		"license":"apache 2"
 		},
-		{"model_name":"inception_resent_v2_imagenet",
-		"script_name":"inception_resent_v2_imagenet",
+		{"model_name":"inception_resnet_v2_imagenet",
+		"script_name":"inception_resnet_v2_imagenet",
 		"class_name":"InceptionResNetV2Imagenet",
 		"trained_on":[
 			{"dataset_name":"CIFAR-10",
