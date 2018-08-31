@@ -15,7 +15,7 @@
 			"test_accuracy":0.81,
 			"training_time":400.1,
 			"training_steps":211
-			},
+			}
 
 		],
 		"additional_arguments":[
