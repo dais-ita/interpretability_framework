@@ -118,6 +118,8 @@ class ResultComparison extends Component {
 
                 <Header as='h2'>5. Explanation Results</Header>
                 <Button onClick={this.getResults}>Generate Explanation</Button>
+                <br/>
+                <br/>
                 <ResultQueue results={this.state.results} />
 
             </div>
