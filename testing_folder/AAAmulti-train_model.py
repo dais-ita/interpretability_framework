@@ -23,6 +23,9 @@ dataset_names = ["Traffic Congestion Image Classification",
 "Gun Wielding Image Classification",
 "CIFAR-10"]
 
+dataset_names = ["Gun Wielding Image Classification",
+"CIFAR-10"]
+
 
 # dataset_names = ["Gun Wielding Image Classification"]
 
@@ -52,7 +55,7 @@ model_names = ["vgg16_imagenet",
 # model_names = ["mobilenet_imagenet"]
 
 #TRAINING PARAMETERS
-learning_rate = 0.000001
+learning_rate = 0.00001
 batch_size = 64
 num_train_steps = 400
 
