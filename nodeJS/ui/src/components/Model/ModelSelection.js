@@ -22,12 +22,11 @@ class ModelSelection extends Component {
                 console.log(res);
                 const models = res.data;
                 this.setState({ models });
+                this.props.setActiveModel(this.state.models[0].model_name)
             })
             .catch(function (error) {
                 console.log(error)
-            })
-
-
+            });
     }
 
     render () {
@@ -54,7 +53,6 @@ class ModelSelection extends Component {
                     </Table.Header>
                     <Table.Body>
                         {model_selections}
-
                     </Table.Body>
                 </Table>
 

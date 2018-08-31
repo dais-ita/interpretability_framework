@@ -11,7 +11,6 @@ class InterpretabilityDescription extends Component  {
     };
 
     componentDidMount() {
-        console.log("interpreter data");
     }
 
     componentDidUpdate(prevProps) {
@@ -39,8 +38,6 @@ class InterpretabilityDescription extends Component  {
                     </Button>
                 </Table.Cell>
             </Table.Row>
-
-        //
         )
 
     }
