@@ -1,0 +1,2 @@
+steps,learning_rate,batch_size,time,loss,accuracy
+400,1e-06,64,760.449820995,0.6056639726569013,0.7987804892586499
