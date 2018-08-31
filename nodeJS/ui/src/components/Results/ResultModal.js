@@ -11,7 +11,9 @@ class ResultModal extends Component {
         console.log(this.props);
 
         return (
-            <Modal trigger={<Image src={"data:image/png;base64," + this.props.results.explanation_image}/>}>
+            <Modal trigger={
+                            <Image size='medium' src={"data:image/png;base64," + this.props.results.explanation_image}/>
+                            }>
                 <Modal.Header>{this.props.results.model} trained on {this.props.results.dataset} dataset explained by
                     {this.props.results.interpreter}</Modal.Header>
                 <Modal.Content>

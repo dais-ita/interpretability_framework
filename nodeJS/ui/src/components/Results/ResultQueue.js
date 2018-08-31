@@ -28,7 +28,8 @@ class ResultQueue extends Component {
 
 
         return (
-            <Grid stackable columns={4}>
+
+            <Grid stackable columns={5}>
                 {interpreter_results}
             </Grid>
         )
