@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 
@@ -9,7 +10,7 @@ import InterpretabilitySelection from "./components/InterpretabilitySelection";
 import InterpretabilityComparison from "./components/InterpretabilityComparison";
 
 
-class App extends Component {
+class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -63,6 +64,7 @@ class App extends Component {
         console.log("Current server: " + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER)
     }
     render() {
+
         return (
             <div className="App">
                 <Title/>
@@ -74,5 +76,12 @@ class App extends Component {
         );
   }
 }
+
+const App = () => (
+    <Router>
+        <Route path="/ui" component={Home} />
+    </Router>
+    );
+
 
 export default App;
