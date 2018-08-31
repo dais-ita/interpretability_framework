@@ -41,7 +41,6 @@ class ModelSelection extends Component {
 
         return (
             <div>
-                <Header as='h2'>2. Machine Learning Model</Header>
                 <Table basic='very' structured fixed>
                     <Table.Header>
                         <Table.Row>
