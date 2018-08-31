@@ -17,7 +17,9 @@ for folder in folders:
 import numpy as np
 import tensorflow as tf
 import random
-from FeatureDescriptor import FeatureDescriptor
+import keras.losses as losses
+import keras.applications.vgg19 as vgg19
+import keras.backend as K
 
 class ConvSVM(object):
     """
@@ -26,7 +28,7 @@ class ConvSVM(object):
     The dimensions of the input images, the number of channels in the input 
     images (grayscale or RGB) and the directory in which the model is found 
     must be specified beforehand
-    The model currently uses a VGG16 architecture for feature description
+    The model currently uses architecture from keras.applications models for feature description
     """
     
     def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,
@@ -35,7 +37,7 @@ class ConvSVM(object):
         if n_classes != 2:
             raise ValueError("This implementation of SVM only works with 2-class classification")
         self.n_classes = n_classes
-        self.checkpoint_path = os.path.join(model_dir,"checkpoints")
+        self.checkpoint_path = model_dir
 
         self.sess = tf.Session()
         
@@ -53,7 +55,7 @@ class ConvSVM(object):
         if "alpha" in additional_args:
             self.alpha = additional_args["alpha"]
         else:
-            self.alpha = 0.0001
+            self.alpha = 0.000001
 
 #        initialise model placeholders and variables
         self.input_ = tf.placeholder(
@@ -61,26 +63,31 @@ class ConvSVM(object):
                 shape = [None] + list(model_input_dim),
                 name = "in_"
         )
-        
+
         
 #        the feature descriptor object uses a conv net to transform images 
 #        into feature space
         self.feature_desc = FeatureDescriptor(model_input_dim, input_tensor=self.input_ )
+
 #        get a graph op representing the feature description
-        self.feature_vec = self.feature_desc.get_descriptor_op()
-        
+#         self.feature_vec = self.feature_desc.get_descriptor_op()
+
+        K.set_session(self.sess)
+        # self.descriptor = FeatureDescriptor(model_input_dim,input_tensor = self.input_, architecture = 'vgg16', weights = 'pretrained', pooling = 'max')
+        # self.conv_model = self.descriptor.get_premade_model()
+        self.conv_model = vgg19.VGG19(input_tensor=self.input_, include_top=False, weights='imagenet', pooling='avg')
+        for layer in self.conv_model.layers:
+            layer.trainable = False
+
+        self.feature_vec = self.conv_model.output
+
         n_features = self.feature_vec.get_shape().as_list()[1]
-        
+
         self.labels_ = tf.placeholder(
             name="lbl_",
-            shape=[None,1],
+            shape=[None,2],
             dtype=tf.float32
         )
-
-        self.y = tf.argmax(self.labels_)
-        self.y = self.y * -2
-        self.y = self.y + 1
-        self.y = tf.cast(self.y, tf.float32)
 
         self.W = tf.Variable(
             tf.random_normal(
@@ -95,10 +102,19 @@ class ConvSVM(object):
             name="b"
         )
 
-        self.sess.run(tf.global_variables_initializer())
+        self.sess.run(tf.variables_initializer(var_list=[self.W, self.b]))
+
+        self.y = tf.argmax(self.labels_,1)
+        self.y = self.y * -2
+        self.y = self.y + 1
+        self.y = tf.reshape(tf.cast(self.y, tf.float32),[-1,1])
+
 
 #        the tensorflow saver object used for model checkpointing
         self.saver = tf.train.Saver()
+        self.output = self.Output()
+        self.loss = self.Loss()
+        # self.loss = losses.categorical_crossentropy(self.y, self.output)
         
 
     def Output(self):
@@ -123,7 +139,7 @@ class ConvSVM(object):
         Formats the outputs of the model into a label/list of labels denoting
         what class the model 'believes' the function belongs to
         """
-        return tf.sign(self.Output())
+        return tf.sign(self.output)
 
     def Loss(self):
         """
@@ -141,7 +157,7 @@ class ConvSVM(object):
                 tf.subtract(
                     1.,
                     tf.multiply(
-                        self.Output(),
+                        self.output,
                         self.y
                     )
                 )
@@ -160,12 +176,12 @@ class ConvSVM(object):
         """
         Returns a value for the models loss at a point y
         """
-        sample_loss = self.Loss()
+        sample_loss = self.loss
         feed_dict = {
                 self.input_ : x,
                 self.labels_: y
         }
-        self.LoadModel(self.sess)
+        self.LoadModel(None,self.sess)
         return self.sess.run(sample_loss, feed_dict)
     
     def GetSmoothHinge(self, t):
@@ -178,9 +194,9 @@ class ConvSVM(object):
         
         """
         if t == 0:
-            return self.Loss()
+            return self.loss
         else:
-            s = tf.multiply(self.Output(),self.y)
+            s = tf.multiply(self.output,self.y)
             exp = -(s-1)/t
             max_elem = tf.maximum(exp, tf.zeros_like(exp))
             
@@ -218,20 +234,25 @@ class ConvSVM(object):
         """
         Uses GD to optimise the models loss on evaluation data
         """
-        train_y = self._process_labels(train_y)
+        if val_x is not None:
+            n_steps = 5 * train_x.shape[0] // batch_size
         for i in range(n_steps):
             print("training step: "+str(i))
 #            get a randomly sampled batch of training data
             x, y = self._get_batches(train_x, train_y, batch_size)
             self.sess.run(
 #                    train to reduce loss
-                self.optim.minimize(self.Loss()),
+                self.optim.minimize(self.loss),
                 feed_dict={
                     self.input_: x,
                     self.labels_: y
                 }
             )
-        self.SaveModel(self.sess)
+            if val_x is not None:
+                if i % 10 == 0 and i != 0:
+                    loss, acc = self.EvaluateModel(val_x, val_y, batch_size)
+                    print(f"Validation loss: {loss} \nValidation accuracy: {acc}")
+        self.SaveModel(None,self.sess)
 
 
     def EvaluateModel(self, val_x, val_y, batch_size):
@@ -259,7 +280,6 @@ class ConvSVM(object):
         accuracies = []
         losses = []
 
-        val_y = self._process_labels(val_y)
         for i in range(val_y.shape[0]//batch_size):
 #            Get the accuracy of each batch of evaluation data
             x, y = self._get_batches(val_x, val_y, batch_size)
@@ -274,7 +294,7 @@ class ConvSVM(object):
             )
             losses.append(
                 self.sess.run(
-                    self.Loss(),
+                    self.loss,
                     feed_dict ={
                         self.input_: x,
                         self.labels_: y
@@ -282,7 +302,7 @@ class ConvSVM(object):
                 )
             )
 #        Return mean accuracy on evaluation data
-        return np.mean(accuracies)
+        return [np.mean(losses), np.mean(accuracies)]
 
     def Predict(self, predict_x):
         """
@@ -325,14 +345,14 @@ class ConvSVM(object):
             sess = self.sess
         if model_dir == None:
             model_dir = self.checkpoint_path
-        self.saver.save(sess, os.path.join(model_dir,"wvnw_svm.ckpt"))
+        self.saver.save(sess, os.path.join(model_dir,"model.ckpt"))
 
     def LoadModel(self, model_dir = None, sess=None):
         if sess == None:
             sess = self.sess
         if model_dir == None:
             model_dir = self.checkpoint_path
-        self.saver.restore(sess, os.path.join(model_dir,"wvnw_svm.ckpt"))
+        self.saver.restore(sess, os.path.join(model_dir,"model.ckpt"))
 
     def GetWeights(self):
         """
@@ -342,7 +362,7 @@ class ConvSVM(object):
 #        Influence functions only needs SVM weights as Feature Descriptor are 
 #        pre-determined and do not affect the loss of one point differently to
 #        another
-        self.LoadModel(self.sess)
+        self.LoadModel(None,self.sess)
         
         return [self.W]
     
