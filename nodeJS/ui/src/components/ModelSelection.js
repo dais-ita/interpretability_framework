@@ -19,12 +19,14 @@ class ModelSelection extends Component {
                     "/models-all";
         axios.get(req)
             .then(res => {
+                console.log(res);
                 const models = res.data;
-                this.setState( { models });
+                this.setState({ models });
             })
             .catch(function (error) {
                 console.log(error)
             })
+
 
     }
 

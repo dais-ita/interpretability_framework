@@ -21,10 +21,10 @@ dataset_name = "Gun Wielding Image Classification"
 # model_name = "keras_vgg_with_logits"
 model_name = "keras_api_vgg"
 
-# explanation_name = "LIME"
+explanation_name = "LIME"
 # explanation_name = "LRP"
 # explanation_name = "Shap"
-explanation_name = "Influence Functions"
+# explanation_name = "Influence Functions"
 #####
 
 
@@ -128,7 +128,7 @@ dataset_tool.ProduceDataFromTrainingSplitFile(training_split_file_path, explicit
 
 
 ### get example batch and display an image
-display_example_image = False
+display_example_image = True
 
 if(display_example_image):
 	##select the source for the example
@@ -190,6 +190,18 @@ print(model_instance.Predict(test_x))
 
 print("ground truth classes:")
 print(test_y)
+
+
+display_test_image = True
+if(display_example_image):
+	##select the source for the example
+	# source = "full"
+	# source = "train"
+	# source = "validation"
+	cv2_image = cv2.cvtColor(test_x[0], cv2.COLOR_RGB2BGR)
+	cv2.imshow("image 0",cv2_image)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows()
 
 
 
