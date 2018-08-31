@@ -43,7 +43,6 @@ class InterpretabilitySelection extends Component {
 
         return (
             <div>
-                <Header as='h2'>3. Interpretability Technique Selection</Header>
                 <Table basic='very' structured fixed>
 
                     <Table.Header>

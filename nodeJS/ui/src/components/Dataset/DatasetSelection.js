@@ -49,7 +49,7 @@ class DatasetSelection extends Component {
 
         return (
             <div>
-                <Header as='h2'>1. Dataset Selection</Header>
+
                 <Grid container columns={4}>{dataset_previews}</Grid>
                 {/*<div>*/}
                     {/*<Button content={show_preview ? 'Hide Preview' : 'Show Preview'} onClick={this.togglePreview}  />*/}
