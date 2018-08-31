@@ -15,7 +15,7 @@ class ModelDescription extends Component  {
 
         if (prevProps.options !== this.props.options) {
             // model updates
-            if (this.props.options.model.includes(this.props.model_data.class_name)) {
+            if (this.props.options.model.includes(this.props.model_data.model_name)) {
                 this.setState({colour: "green"})
             } else {
                 this.setState({colour: "grey"})
@@ -52,7 +52,7 @@ class ModelDescription extends Component  {
                         Comments:
                     </Table.Cell>
                     <Table.Cell>
-                        <Button color={this.state.colour} onClick={ () => this.props.setActiveModel(this.props.model_data.class_name)}>
+                        <Button color={this.state.colour} onClick={ () => this.props.setActiveModel(this.props.model_data.model_name)}>
                             Use Model
                         </Button>
                     </Table.Cell>
