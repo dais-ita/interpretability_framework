@@ -14,6 +14,7 @@ class InfluenceExplainer(object):
     def __init__(self,model):
         super(InfluenceExplainer, self).__init__()
         self.model = model
+        self.n_classes = self.model.n_classes
         self.sess = model.sess
         self.params = [tf.reshape(param, [-1,]) for param in model.GetWeights()]
         self.num_params = len(self.params)
@@ -77,10 +78,18 @@ class InfluenceExplainer(object):
             label = additional_args["label"]
         else:
             label = self.model.Predict(test_img)
-        
+
+
+
         if(isinstance(label,list)):
             label = np.array(label)
-        label = label.reshape(-1, 1)
+        if label.size == 1:
+            one_hot_label = np.array([0] * self.n_classes)
+            one_hot_label[label[0]] = 1
+            label = one_hot_label
+        label = label.reshape(-1, self.n_classes)
+
+
 
         if "damping" in additional_args:
             self.damping = additional_args["damping"]
@@ -117,11 +126,10 @@ class InfluenceExplainer(object):
         test_loss_gradient = self.sess.run(self.grad_loss,feed_dict)
         s_test = self._get_approx_inv_hvp(test_loss_gradient)
         s_test = [prod.reshape(-1,) for prod in s_test]
-        influences = []
         for train_pt in zip(self.train_imgs, self.train_lbls):
             influences.append(self._influence_on_loss_at_test_image(s_test,train_pt))
 #           Get the n_max first training images in order of descending influence
-        idcs = np.argsort(influences)[-n_max:]
+        idcs = np.argsort(influences)[-self.n_max:]
         max_imgs = self.train_imgs[idcs]
         if cache:
             self.cached_influence[test_img] = max_imgs
@@ -144,40 +152,36 @@ class InfluenceExplainer(object):
             cols: the number of images per collage row
             rows: the number of images per collage column
         """
+
 #        if cols or rows is 0
         if not (cols and rows):
-            cols = len(img_arr) // 2
-            rows = len(np.split(img_arr,2))
-        
-        thumbnail_width = width // cols
-        thumbnail_height = height // rows
-        size = thumbnail_width, thumbnail_height
-        collage = Pimage.new('RGB', (width, height))
-        imgs = []
-        
-        for arr in img_arr:
-            img = Pimage.fromarray(arr)
-            img.thumbnail(size)
-            imgs.append(img)
-            
-        i = 0
+        #     find nearest square
+            n = 0
+            while (n**2) < img_arr.shape[0]:
+                n = n + 1
+            cols = n
+            rows = n
+            for i in range(img_arr.shape[0], n**2):
+                np.append(img_arr, np.zeros(img_arr.shape[1:]))
+
+        width = img_arr.shape[1]
+        height = img_arr.shape[2]
         x = 0
         y = 0
-        
-        for col in range(cols):
-            for row in range(rows):
-                collage.paste(imgs[i],(x,y))
-                i += 1
-                y += thumbnail_height
-            x += thumbnail_width
+        collage = np.zeros([rows * width, cols * height, img_arr.shape[3]])
+        for i in range(rows):
+            for j in range(cols):
+                collage[x:x + width, y:y + height] = img_arr[i*n+j]
+                y = y + height
             y = 0
-        
-        return collage
+            x = x + width
+
+        return collage[:,:,[2,1,0]]
                 
 
         
         
-    def _influence_on_loss_at_test_image(self, s, train_pt):
+    def _influence_on_loss_at_test_image(self, s, train_pts):
         """
         Approximates the influence an image from the models training set has on
         the loss of the model at a test point.
@@ -191,11 +195,11 @@ class InfluenceExplainer(object):
             train_pt : a 2-tuple containing the image label pair of one training
             point
         """
-        
+
 #        Get loss  Loss(z,w_min)
         feed_dict = {
                 self.input_ : np.expand_dims(train_pt[0],axis=0),
-                self.labels_ : train_pt[1].reshape(-1,1)
+                self.labels_ : train_pt[1].reshape(-1,self.n_classes)
         }
 #        Get gradient of loss at training point: Grad_w x Loss(z,w_min)
         grad_train_loss_w_min = self.sess.run(self.grad_loss, feed_dict)
@@ -220,7 +224,8 @@ class InfluenceExplainer(object):
         hess_fmin_p = self._get_fmin_hvp
 #        callback function
         fmin_cg_callback = self._get_cg_callback(v)
-        
+
+
         approx_inv_hvp = fmin_ncg(
             f = fmin,
             x0 = np.concatenate(v),
@@ -273,8 +278,8 @@ class InfluenceExplainer(object):
     def _minibatch_hvp(self, v):
         num_samples = self.train_imgs.shape[0]
         if self.mini_batch == True:
-            batch_size = 31
-            assert num_samples % batch_size == 0
+            batch_size = 30
+            # assert num_samples % batch_size == 0
         else:
             batch_size = num_samples
             
@@ -350,7 +355,7 @@ class InfluenceExplainer(object):
             idx_to_rm = 5
             
             single_train_ex = np.expand_dims(self.train_imgs[idx_to_rm],axis=0)
-            single_train_lbl = self.train_lbls[idx_to_rm].reshape(-1,1)
+            single_train_lbl = self.train_lbls[idx_to_rm].reshape(-1,self.n_classes)
             feed_dict = {
                     self.input_ : single_train_ex,
                     self.labels_ : single_train_lbl

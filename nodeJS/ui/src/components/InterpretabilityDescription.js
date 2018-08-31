@@ -35,7 +35,7 @@ class InterpretabilityDescription extends Component  {
                 <Table.Cell>{this.props.interpreter_data.description}</Table.Cell>
                 <Table.Cell>
                     <Button color={this.state.colour} onClick={ () => this.props.setActiveInterpreter(this.props.interpreter_data.explanation_name)}>
-                        Use Model
+                        Use Interpreter
                     </Button>
                 </Table.Cell>
             </Table.Row>
