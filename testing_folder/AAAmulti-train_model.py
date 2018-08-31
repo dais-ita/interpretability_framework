@@ -23,6 +23,9 @@ dataset_names = ["Traffic Congestion Image Classification",
 "Gun Wielding Image Classification",
 "CIFAR-10"]
 
+
+dataset_names = ["Gun Wielding Image Classification"]
+
 #MODEL
 # model_name = "conv_svm"
 # model_name = "keras_api_vgg"
@@ -41,12 +44,17 @@ model_names = ["vgg16_imagenet",
 "mobilenet_imagenet",
 "xception_imagenet"]
 
-model_names = ["vgg16_imagenet"]
+model_names = ["inception_v3_imagenet",
+"inception_resent_v2_imagenet",
+"mobilenet_imagenet",
+"xception_imagenet"]
+
+# model_names = ["vgg16_imagenet"]
 
 #TRAINING PARAMETERS
-learning_rate = 0.00001
-batch_size = 32
-num_train_steps = 1
+learning_rate = 0.000001
+batch_size = 64
+num_train_steps = 300
 
 
 #####
