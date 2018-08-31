@@ -13,18 +13,15 @@ import time
 ## Training COnfiguration ##
 
 #DATASET
-# dataset_name = "Traffic Congestion Image Classification"
-# dataset_name = "Traffic Congestion Image Classification (Resized)"
-# dataset_name = "Gun Wielding Image Classification"
+dataset_name = "Traffic Congestion Image Classification"
+dataset_name = "Traffic Congestion Image Classification (Resized)"
+dataset_name = "Gun Wielding Image Classification"
 # dataset_name = "CIFAR-10"
 
-dataset_names = ["Traffic Congestion Image Classification",
-"Traffic Congestion Image Classification (Resized)",
-"Gun Wielding Image Classification",
-"CIFAR-10"]
+dataset_names = ["Gun Wielding Image Classification"]
 
 #MODEL
-# model_name = "conv_svm"
+model_name = "conv_svm"
 # model_name = "keras_api_vgg"
 # model_name = "keras_api_simple"
 # model_name = "vgg16_imagenet"
@@ -41,10 +38,10 @@ model_names = ["vgg16_imagenet",
 "mobilenet_imagenet",
 "xception_imagenet"]
 
-model_names = ["vgg16_imagenet"]
+model_names = ["conv_svm"]
 
 #TRAINING PARAMETERS
-learning_rate = 0.00001
+learning_rate = 0.001
 batch_size = 32
 num_train_steps = 1
 
@@ -185,8 +182,8 @@ with open(model_json_path,"r") as f:
 			model_save_path = os.path.join(models_path,model_json["model_name"],"saved_models",dataset_name.lower().replace(" ","_"))
 			model_instance = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args=additional_args)
 
-			if(os.path.exists(model_save_path)):
-				model_instance.LoadModel(model_save_path)
+			# if(os.path.exists(model_save_path)):
+			# 	model_instance.LoadModel(model_save_path)
 
 
 
