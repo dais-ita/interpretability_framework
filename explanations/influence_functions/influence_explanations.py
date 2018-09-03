@@ -126,6 +126,7 @@ class InfluenceExplainer(object):
         test_loss_gradient = self.sess.run(self.grad_loss,feed_dict)
         s_test = self._get_approx_inv_hvp(test_loss_gradient)
         s_test = [prod.reshape(-1,) for prod in s_test]
+        influences = []
         for train_pt in zip(self.train_imgs, self.train_lbls):
             influences.append(self._influence_on_loss_at_test_image(s_test,train_pt))
 #           Get the n_max first training images in order of descending influence
@@ -181,7 +182,7 @@ class InfluenceExplainer(object):
 
         
         
-    def _influence_on_loss_at_test_image(self, s, train_pts):
+    def _influence_on_loss_at_test_image(self, s, train_pt):
         """
         Approximates the influence an image from the models training set has on
         the loss of the model at a test point.
