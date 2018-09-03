@@ -16,17 +16,15 @@ class InterpretabilitySelection extends Component {
     }
 
 
-
     componentDidMount () {
         const req = "http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER +
             "/explanations-all";
 
-
         axios.get(req)
             .then(res => {
-                console.log(res.data);
                 const interpreters = res.data;
                 this.setState( { interpreters });
+                this.props.setActiveInterpreter(this.state.interpreters[0].explanation_name);
             });
 
     }
@@ -45,7 +43,6 @@ class InterpretabilitySelection extends Component {
 
         return (
             <div>
-                <Header as='h2'>3. Interpretability Technique Selection</Header>
                 <Table basic='very' structured fixed>
 
                     <Table.Header>

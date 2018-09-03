@@ -22,12 +22,11 @@ class ModelSelection extends Component {
                 console.log(res);
                 const models = res.data;
                 this.setState({ models });
+                this.props.setActiveModel(this.state.models[0].model_name)
             })
             .catch(function (error) {
                 console.log(error)
-            })
-
-
+            });
     }
 
     render () {
@@ -42,7 +41,6 @@ class ModelSelection extends Component {
 
         return (
             <div>
-                <Header as='h2'>2. Machine Learning Model</Header>
                 <Table basic='very' structured fixed>
                     <Table.Header>
                         <Table.Row>
@@ -54,7 +52,6 @@ class ModelSelection extends Component {
                     </Table.Header>
                     <Table.Body>
                         {model_selections}
-
                     </Table.Body>
                 </Table>
 

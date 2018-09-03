@@ -49,7 +49,7 @@ class ModelDescription extends Component  {
                         <hr/>
                         Test Accuracy: {this.props.model_data.trained_on[this.state.dataset_id].test_accuracy}
                         <hr/>
-                        Comments:
+                        {/*Comments:*/}
                     </Table.Cell>
                     <Table.Cell>
                         <Button color={this.state.colour} onClick={ () => this.props.setActiveModel(this.props.model_data.model_name)}>
