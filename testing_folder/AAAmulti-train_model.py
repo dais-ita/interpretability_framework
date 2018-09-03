@@ -13,15 +13,12 @@ import time
 ## Training COnfiguration ##
 
 #DATASET
-# dataset_name = "Traffic Congestion Image Classification"
-# dataset_name = "Traffic Congestion Image Classification (Resized)"
-# dataset_name = "Gun Wielding Image Classification"
+dataset_name = "Traffic Congestion Image Classification"
+dataset_name = "Traffic Congestion Image Classification (Resized)"
+dataset_name = "Gun Wielding Image Classification"
 # dataset_name = "CIFAR-10"
 
-dataset_names = ["Traffic Congestion Image Classification",
-"Traffic Congestion Image Classification (Resized)",
-"Gun Wielding Image Classification",
-"CIFAR-10"]
+dataset_names = ["Gun Wielding Image Classification"]
 
 dataset_names = ["Traffic Congestion Image Classification"]
 
@@ -29,7 +26,7 @@ dataset_names = ["Traffic Congestion Image Classification"]
 # dataset_names = ["Gun Wielding Image Classification"]
 
 #MODEL
-# model_name = "conv_svm"
+model_name = "conv_svm"
 # model_name = "keras_api_vgg"
 # model_name = "keras_api_simple"
 # model_name = "vgg16_imagenet"
@@ -64,13 +61,13 @@ model_names = [
 
 # model_names = ["mobilenet_imagenet"]
 
+
 #TRAINING PARAMETERS
+
 learning_rate = 0.0000001
 batch_size = 64
 num_train_steps = 1000
 
-
-#####
 
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # turn off repeated messages from Tensorflow RE GPU allocation
@@ -235,6 +232,9 @@ with open(model_json_path,"r") as f:
 				model_validates_during_test = False
 
 			else:
+				model_validates_during_test = True
+
+			if model_name == "conv_svm":
 				model_validates_during_test = True
 
 			print("train model")

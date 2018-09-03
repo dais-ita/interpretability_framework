@@ -16,7 +16,6 @@
 			"training_time":400.1,
 			"training_steps":211
 			}
-
 		],
 		"additional_arguments":[
 			{"name":"learning_rate",
