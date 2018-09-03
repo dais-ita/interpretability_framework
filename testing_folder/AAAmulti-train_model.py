@@ -41,10 +41,10 @@ model_names = ["vgg16_imagenet",
 "mobilenet_imagenet",
 "xception_imagenet"]
 
-# model_names = ["vgg16_imagenet"]
+model_names = ["conv_svm"]
 
 #TRAINING PARAMETERS
-learning_rate = 0.000001
+learning_rate = 0.001
 batch_size = 64
 num_train_steps = 300
 
@@ -183,8 +183,8 @@ with open(model_json_path,"r") as f:
 			model_save_path = os.path.join(models_path,model_json["model_name"],"saved_models",dataset_name.lower().replace(" ","_"))
 			model_instance = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args=additional_args)
 
-			# if(os.path.exists(model_save_path)):
-			# 	model_instance.LoadModel(model_save_path)
+			if(os.path.exists(model_save_path)):
+				model_instance.LoadModel(model_save_path)
 
 
 
@@ -212,6 +212,9 @@ with open(model_json_path,"r") as f:
 				model_validates_during_test = False
 
 			else:
+				model_validates_during_test = True
+
+			if model_name == "conv_svm":
 				model_validates_during_test = True
 
 			print("train model")
