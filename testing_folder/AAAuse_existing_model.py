@@ -21,10 +21,10 @@ dataset_name = "Gun Wielding Image Classification"
 # model_name = "keras_vgg_with_logits"
 model_name = "keras_api_vgg"
 
-explanation_name = "LIME"
+# explanation_name = "LIME"
 # explanation_name = "LRP"
 # explanation_name = "Shap"
-# explanation_name = "Influence Functions"
+explanation_name = "Influence Functions"
 #####
 
 
@@ -179,7 +179,7 @@ model_instance.LoadModel(model_load_path) ## for this model, this call is redund
 
 ### test the model
 source = "test"
-test_x, test_y = dataset_tool.GetBatch(batch_size = 20,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
+test_x, test_y, batch = dataset_tool.GetBatch(batch_size = 20,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source, return_batch_data=True)
 test_y = dataset_tool.ConvertOneHotToClassNumber(test_y) 
 
 print("num test examples: "+str(len(test_x)))
@@ -236,7 +236,7 @@ if(use_lime):
 if(explanation_name != ""):
 	test_image = test_x[0]
 	test_label = test_y[0]
-
+	filename = batch[0][0].split("/")[-1]
 	source = "train"
 	train_x, train_y, batch = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source, return_batch_data=True)
 
@@ -249,7 +249,8 @@ if(explanation_name != ""):
 	"num_background_samples":50,
 	"train_x":train_x,
 	"train_y":train_y,
-	"max_n_influence_images":9
+	"max_n_influence_images":9,
+	"cache":filename
 	}
 
 
