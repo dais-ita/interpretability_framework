@@ -9,6 +9,7 @@ from tensorflow.python.ops import array_ops
 from six.moves import xrange
 import random
 import PIL.Image as Pimage
+import os
 
 class InfluenceExplainer(object):
     def __init__(self,model):
@@ -66,13 +67,11 @@ class InfluenceExplainer(object):
             self.train_lbls = additional_args["train_y"]
         else:
             raise ValueError('no training labels passed in additional arguments')
-        
 
-        compute = True
         if "max_n_influence_images" in additional_args:
-            self.n_max = additional_args["max_n_influence_images"]
+            n_max = additional_args["max_n_influence_images"]
         else:
-            self.n_max = 9
+            n_max = 9
 
         if "label" in additional_args:
             label = additional_args["label"]
@@ -101,18 +100,26 @@ class InfluenceExplainer(object):
             self.mini_batch = True
 
         """
-        If cache is true, and the image has not been cached before, the resulting max_imgs list will be cached under the test_img
-        If cache is true, and the image has been cached previously, the previously cached results are returned
-        If cache is true, but n_max is different, the results are re-calculated and cached
-        If cache is false, the results are computed regardless
+        If cache is a string, and the image has not been cached before, the resulting max_imgs list will be cached under the test_img
+        at ./cached_images/cache
+        If cache is a string, and the image has been cached previously at ./cached_images/cache, the previously cached results are loaded
+        and returned
         """
+        cached_examples = {}
 
         if "cache" in additional_args:
             cache = additional_args["cache"]
-            if additional_args["cache"]:
-                if test_img in self.cached_influence:
-                    if len(self.cached_influence[test_img]) == n_max: 
-                        return self.FormCollage(self.cached_influence[test_img])
+            cache_file = os.path.join(os.getcwd(), "cached_images", cache)
+            if os.path.isfile(cache_file):
+                cache_file = np.load(cache_file)
+                cached_img = cache_file.files["test_img"]
+            else:
+                cached_img = []
+            if np.array_equal(test_img, cached_img):
+                cached_examples[cache] = cache_file.files["train_imgs"]
+            if cache in cached_examples:
+                if cached_examples[test_img].shape[0] >= n_max:
+                    return self.FormCollage(cached_examples[test_img][:n_max])
         else:
             cache = False
 
@@ -123,6 +130,7 @@ class InfluenceExplainer(object):
             self.labels_: label
         }
 
+
         test_loss_gradient = self.sess.run(self.grad_loss,feed_dict)
         s_test = self._get_approx_inv_hvp(test_loss_gradient)
         s_test = [prod.reshape(-1,) for prod in s_test]
@@ -130,10 +138,11 @@ class InfluenceExplainer(object):
         for train_pt in zip(self.train_imgs, self.train_lbls):
             influences.append(self._influence_on_loss_at_test_image(s_test,train_pt))
 #           Get the n_max first training images in order of descending influence
-        idcs = np.argsort(influences)[-self.n_max:]
+        idcs = np.argsort(influences)[-n_max:]
         max_imgs = self.train_imgs[idcs]
         if cache:
-            self.cached_influence[test_img] = max_imgs
+            cached_examples[cache] = max_imgs
+            self.CacheInfluence(cache, test_img, max_imgs)
             
         max_imgs = self.FormCollage(max_imgs)
             
@@ -180,8 +189,12 @@ class InfluenceExplainer(object):
         return collage[:,:,[2,1,0]]
                 
 
-        
-        
+    def CacheInfluence(self, filename, test_img, train_imgs):
+        # path = os.path.join(os.getcwd(),filename)
+        path = os.path.join(".","cached_images", filename)
+        np.savez(path,test_img=test_img, train_imgs=train_imgs)
+        print("Saved test and train images at: " + path + ".npz")
+
     def _influence_on_loss_at_test_image(self, s, train_pt):
         """
         Approximates the influence an image from the models training set has on

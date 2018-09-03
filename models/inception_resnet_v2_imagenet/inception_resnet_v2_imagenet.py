@@ -29,6 +29,8 @@ class InceptionResNetV2Imagenet(object):
         self.model_dir = model_dir
 
         # model specific variables
+        self.min_height = 139
+        self.min_width = 139
         # Training Parameters
 
         if ("learning_rate" in additional_args):
@@ -66,6 +68,9 @@ class InceptionResNetV2Imagenet(object):
         
 
     def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None):
+        train_x = self.CheckInputArrayAndResize(train_x,self.min_height,self.min_width)
+        val_x = self.CheckInputArrayAndResize(val_x,self.min_height,self.min_width)
+
         if (type(train_x) != dict):
             input_dict = {"input": train_x}
         else:
@@ -76,20 +81,27 @@ class InceptionResNetV2Imagenet(object):
               optimizer=keras.optimizers.Adam(lr=self.learning_rate),
               metrics=['accuracy'])
 
+        early_stop_callback = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.001, patience=30, verbose=0, mode='auto', baseline=None)
+        callbacks = [early_stop_callback]
+
         if(val_x is not None and val_y is not None):
             self.model.fit(train_x, train_y,
               batch_size=batch_size,
               epochs=num_steps,
               verbose=1,
-              validation_data=(val_x, val_y))
+              validation_data=(val_x, val_y),
+              callbacks = callbacks)
         else:
             self.model.fit(train_x, train_y,
-          batch_size=batch_size,
-          epochs=num_steps,
-          verbose=1)
+            batch_size=batch_size,
+            epochs=num_steps,
+            verbose=1,
+            callbacks = callbacks)
 
 
     def EvaluateModel(self, eval_x, eval_y, batch_size):
+        eval_x = self.CheckInputArrayAndResize(eval_x,self.min_height,self.min_width)
+
         if (type(eval_x) != dict):
             input_dict = {"input": eval_x}
         else:
@@ -100,6 +112,8 @@ class InceptionResNetV2Imagenet(object):
 
 
     def Predict(self, predict_x):
+        predict_x = self.CheckInputArrayAndResize(predict_x,self.min_height,self.min_width)
+
         if (type(predict_x) != dict):
             input_dict = {"input": predict_x}
         else:
@@ -171,7 +185,7 @@ class InceptionResNetV2Imagenet(object):
         print("FetchAllVariableValues - not implemented")
 
 
-   def CheckInputDimensions(self,input_shape,min_height,min_width):
+    def CheckInputDimensions(self,input_shape,min_height,min_width):
         if(len(input_shape) == 4):
             image_shape = input_shape[1:]
         else:
