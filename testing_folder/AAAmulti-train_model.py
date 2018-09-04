@@ -20,7 +20,7 @@ dataset_name = "Gun Wielding Image Classification"
 
 dataset_names = ["Gun Wielding Image Classification"]
 
-dataset_names = ["Traffic Congestion Image Classification (Resized)"]
+dataset_names = ["Traffic Congestion Image Classification"]
 
 
 # dataset_names = ["Gun Wielding Image Classification"]
@@ -50,6 +50,10 @@ model_names = [
 "xception_imagenet"]
 
 
+model_names = [
+"inception_v3_imagenet"]
+
+
 # model_names = ["inception_v3_imagenet",
 # "inception_resnet_v2_imagenet",
 # "mobilenet_imagenet",
@@ -59,9 +63,10 @@ model_names = [
 
 
 #TRAINING PARAMETERS
-learning_rate = 0.001
+
+learning_rate = 0.0000001
 batch_size = 64
-num_train_steps = 400
+num_train_steps = 1000
 
 
 
@@ -251,13 +256,14 @@ with open(model_json_path,"r") as f:
 					print("")
 
 
-
+			print("saving model")
 			model_instance.SaveModel(model_save_path)
 			model_train_time = time.time() - model_train_start_time
 			accuracy_after_training = model_instance.EvaluateModel(val_x, val_y, batch_size)
 			print(model_train_time)
 			print(accuracy_after_training)
 
+			completed_epochs = str(len(model_instance.model.history.history["loss"]))
 
 			train_stats_dir = "training_statistics"
 			output_file_name = model_name+"__"+dataset_name+"__"+str(num_train_steps)+".txt"
@@ -265,9 +271,9 @@ with open(model_json_path,"r") as f:
 			output_path = os.path.join(train_stats_dir,output_file_name)
 
 			if(isinstance(accuracy_after_training,list)):
-				output_string = "steps,learning_rate,batch_size,time,loss,accuracy\n"+str(num_train_steps)+","+str(learning_rate)+","+str(batch_size)+","+str(model_train_time)+","+str(accuracy_after_training[0])+","+str(accuracy_after_training[1])
+				output_string = "steps,learning_rate,batch_size,time,loss,accuracy\n"+str(completed_epochs)+","+str(learning_rate)+","+str(batch_size)+","+str(model_train_time)+","+str(accuracy_after_training[0])+","+str(accuracy_after_training[1])
 			else:
-				output_string = "steps,learning_rate,batch_size,time,accuracy\n"+str(num_train_steps)+","+str(learning_rate)+","+str(batch_size)+","+str(model_train_time)+","+str(accuracy_after_training)
+				output_string = "steps,learning_rate,batch_size,time,accuracy\n"+str(completed_epochs)+","+str(learning_rate)+","+str(batch_size)+","+str(model_train_time)+","+str(accuracy_after_training)
 
 			with open(output_path,"w") as f:
 				f.write(output_string)
