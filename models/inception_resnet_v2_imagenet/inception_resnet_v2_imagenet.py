@@ -81,8 +81,10 @@ class InceptionResNetV2Imagenet(object):
               optimizer=keras.optimizers.Adam(lr=self.learning_rate),
               metrics=['accuracy'])
 
-        early_stop_callback = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.001, patience=30, verbose=0, mode='auto', baseline=None)
-        callbacks = [early_stop_callback]
+        callbacks = []
+
+        #early_stop_callback = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=100, verbose=0, mode='auto', baseline=None)
+        #callbacks.append(early_stop_callback)
 
         if(val_x is not None and val_y is not None):
             self.model.fit(train_x, train_y,
@@ -170,7 +172,7 @@ class InceptionResNetV2Imagenet(object):
         return model
 
     def GetWeights(self):
-        return [w for w in self.model.weights if 'dense' in w.name and 'kernel' in w.name]
+        return [w for w in self.model.trainable_weights if 'kernel' in w.name]
 
     def GetPlaceholders(self):
         return [self.input_, self.labels_]
