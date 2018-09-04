@@ -4,7 +4,7 @@ import _ from 'lodash';
 import axios from 'axios';
 
 
-class DatasetPreview extends React.Component {
+class DatasetCard extends React.Component {
     constructor(props) {
         super(props);
         // this.toggleState = this.toggleState.bind(this);
@@ -12,20 +12,18 @@ class DatasetPreview extends React.Component {
         this.state = {
             active: false,
             name: this.props.dataset.dataset_name,
-            preview_image: "data:image/png;base64,",
+            preview_image: "",
             colour: "grey"
         };
     }
 
     componentDidMount () {
-
-        // Gets preview image
         axios.get("http://" + process.env.REACT_APP_SERVER_NAME +
                   ":" + process.env.REACT_APP_PORT_NUMBER +
                   "/dataset-test-image?dataset=" +
                   this.props.dataset.dataset_name)
             .then(res => {
-                this.setState({preview_image: this.state.preview_image + res.data.input})
+                this.setState({preview_image: "data:image/png;base64," + res.data.input})
             })
     }
 
@@ -45,14 +43,6 @@ class DatasetPreview extends React.Component {
     }
 
 
-
-    // toggleState() {
-    //     const currentState = this.state.active;
-    //     this.setState({active: !currentState});
-    // }
-
-
-
     render() {
 
         let label;
@@ -65,22 +55,12 @@ class DatasetPreview extends React.Component {
         return (
             <div onClick={() => this.props.setActiveDataset(this.props.dataset.dataset_name)}>
                 <Card color={this.state.colour}>
-
                     <Image src={this.state.preview_image} size="medium"/>
-
                     <Card.Content>
                         {label}
                         <Card.Header>{this.props.dataset.dataset_name}</Card.Header>
-                        {/*<Card.Description>{this.props.dataset.description}</Card.Description>*/}
-
+                        <Card.Description>{this.props.dataset.description}</Card.Description>
                     </Card.Content>
-                    {/*<Card.Content extra>*/}
-                        {/*<Button*/}
-                            {/*fluid*/}
-                            {/*color={this.state.colour}*/}
-                        {/*>Use this dataset</Button>*/}
-                    {/*</Card.Content>*/}
-
                 </Card>
             </div>
         )
@@ -90,4 +70,4 @@ class DatasetPreview extends React.Component {
 }
 
 
-export default DatasetPreview
+export default DatasetCard
