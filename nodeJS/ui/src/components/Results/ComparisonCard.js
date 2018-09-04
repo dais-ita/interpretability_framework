@@ -27,7 +27,9 @@ class ComparisonCard extends Component {
 
             <div>
                 <Segment padded compact>
-                    <Header as='h3'>{this.state.data.model} trained on {this.state.data.dataset} dataset explained by {this.state.data.interpreter} &nbsp;<a><Icon name='down arrow'/></a> &nbsp;</Header>
+                    <Header as='h3'>
+                        {this.state.data.model} trained on {this.state.data.dataset} dataset explained by&nbsp;
+                        {this.state.data.interpreter} &nbsp;<a><Icon name='down arrow'/></a> &nbsp;</Header>
                     {/*<strong>Timestamp: </strong> 17-Aug-2018 12:2:27 <br/><br/>*/}
                     {/*<strong>Model Prediction:</strong>   Gun Wielder &nbsp; &nbsp;*/}
                     {/*<strong>Ground Truth:</strong> Gun Wielder &nbsp; &nbsp;  <Icon color='green' name='thumbs up' />*/}

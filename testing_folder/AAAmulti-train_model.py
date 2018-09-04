@@ -18,7 +18,23 @@ dataset_name = "Traffic Congestion Image Classification (Resized)"
 dataset_name = "Gun Wielding Image Classification"
 # dataset_name = "CIFAR-10"
 
+
 dataset_names = ["Gun Wielding Image Classification", "Traffic Congestion Image Classification", "Traffic Congestion Image Classification (Resized)"]
+
+
+dataset_names = ["Gun Wielding Image Classification"]
+
+
+dataset_names = ["CIFAR-10"]
+
+
+# dataset_names = ["Traffic Congestion Image Classification (Resized)"]
+# dataset_names = ["Traffic Congestion Image Classification"]
+
+
+# dataset_names = ["Gun Wielding Image Classification"]
+
+
 
 #MODEL
 model_name = "conv_svm"
@@ -31,6 +47,7 @@ model_name = "conv_svm"
 # model_name = "mobilenet_imagenet"
 # model_name = "xception_imagenet"
 
+
 model_names = ["vgg16_imagenet",
 "vgg19_imagenet", 
 "inception_v3_imagenet",
@@ -39,18 +56,25 @@ model_names = ["vgg16_imagenet",
 "xception_imagenet"]
 
 
-model_names = [
-"inception_resnet_v2_imagenet",
-"mobilenet_imagenet",
-"xception_imagenet"]
+# model_names = [
+# "inception_resnet_v2_imagenet",
+# "mobilenet_imagenet",
+# "xception_imagenet"]
+
 
 
 # model_names = ["vgg16_imagenet",
 # "vgg19_imagenet", 
 # "inception_v3_imagenet"]
 
+
 model_names = [
 "inception_v3_imagenet"]
+
+
+# model_names = [
+# "inception_v3_imagenet"]
+
 
 
 model_names = ["conv_svm"]
@@ -60,6 +84,7 @@ model_names = ["conv_svm"]
 # "mobilenet_imagenet",
 # "xception_imagenet"]
 
+
 # model_names = ["mobilenet_imagenet"]
 
 
@@ -67,10 +92,6 @@ model_names = ["conv_svm"]
 learning_rate = 0.00001
 batch_size = 64
 num_train_steps = 400
-
-learning_rate = 0.0000001
-batch_size = 64
-num_train_steps = 1000
 
 
 learning_rate = 0.001
