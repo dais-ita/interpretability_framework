@@ -75,8 +75,9 @@ class InfluenceExplainer(object):
 
         if "label" in additional_args:
             label = additional_args["label"]
+            prediction_scores = ""
         else:
-            label = self.model.Predict(test_img)
+            label, prediction_scores = self.model.Predict(test_img, True)
 
 
 
@@ -145,8 +146,11 @@ class InfluenceExplainer(object):
             self.CacheInfluence(cache, test_img, max_imgs)
             
         max_imgs = self.FormCollage(max_imgs)
+
+        if(not isinstance(prediction_scores,list)):
+            prediction_scores = prediction_scores.tolist()
             
-        return max_imgs, "", np.argmax(label), {}
+        return max_imgs, "", np.argmax(label), {"prediction_scores":prediction_scores}
             
             
     

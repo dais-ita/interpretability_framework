@@ -297,7 +297,7 @@ class ConvSVM(object):
 #        Return mean accuracy on evaluation data
         return [np.mean(losses),np.mean(accuracies)]
 
-    def Predict(self, predict_x):
+    def Predict(self, predict_x, return_prediction_scores = False):
         """
         Return the model output when given a set of unseen samples as input,
         formatted to denote the models estimate for the actual class of each
@@ -323,6 +323,7 @@ class ConvSVM(object):
         )
         
 #        One hot encode the model for use with Explanations
+        prediction_scores = predictions[:]
         predictions[predictions == 1] = 0
         predictions *= -1
         one_hot = []
@@ -330,8 +331,12 @@ class ConvSVM(object):
             if y == 0:
                  one_hot.append([1,0])
             else:
-                 one_hot.append([0,1])   
-        return np.asarray(one_hot)
+                 one_hot.append([0,1])
+
+        if(return_prediction_scores):
+            return np.asarray(one_hot), prediction_scores
+        else:
+            return np.asarray(one_hot)
 
     def SaveModel(self,model_dir=None, sess=None):
         if sess == None:
