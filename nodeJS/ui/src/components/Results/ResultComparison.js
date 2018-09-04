@@ -98,13 +98,7 @@ class ResultComparison extends Component {
             )
         } else {
             input_image = (
-                <Card>
-                    <Image size='medium' src="http://placehold.it/200x200"/>
-                    <Card.Content>
-                        <Card.Header>Image Name</Card.Header>
-                        <Card.Meta>Image Class</Card.Meta>
-                    </Card.Content>
-                </Card>
+               <br/>
             )
         }
 
