@@ -12,13 +12,16 @@ from keras.models import Model
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 
+from keras.applications.vgg16 import VGG16
+from keras.layers import GlobalAveragePooling2D
 
-class KerasApiVGG(object):
-    """VGG-like CNN implemented with keras functional API"""
+
+class VGG16Trainable(object):
+    """VGG16 CNN feature descriptor (fully trained) with re-trained fully connected layers"""
 
     def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,
                  additional_args={}):
-        super(KerasApiVGG, self).__init__()
+        super(VGG16Trainable, self).__init__()
         self.model_input_dim_height = model_input_dim_height
         self.model_input_dim_width = model_input_dim_width
         self.model_input_channels = model_input_channels
@@ -26,6 +29,9 @@ class KerasApiVGG(object):
         self.model_dir = model_dir
 
         # model specific variables
+        self.min_height = 48
+        self.min_width = 48
+        
         # Training Parameters
 
         if ("learning_rate" in additional_args):
@@ -53,7 +59,7 @@ class KerasApiVGG(object):
 
 
     ### Required Model Functions
-    def InitaliseModel(self, model_dir="model_dir"):
+    def InitaliseModel(self, model_dir="saved_models"):
         opts = tf.GPUOptions(allow_growth=True)
         conf = tf.ConfigProto(gpu_options=opts)
         # trainingConfig = tf.estimator.RunConfig(session_config=conf)
@@ -68,6 +74,7 @@ class KerasApiVGG(object):
         else:
             input_dict = train_x
 
+        
         self.model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(lr=self.learning_rate),
               metrics=['accuracy'])
@@ -129,23 +136,22 @@ class KerasApiVGG(object):
         print("Loaded model from:"+ str(load_h5_path))
 
     ### Model Specific Functions
-    def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout):
+    def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout): 
+        
+        model_input_dim_height, model_input_dim_width, model_input_channels = self.CheckInputDimensions((model_input_dim_height, model_input_dim_width, model_input_channels),self.min_height,self.min_width)
+
         vis_input = Input(shape=(model_input_dim_height, model_input_dim_width, model_input_channels), name="absolute_input")
 
-        # x = ZeroPadding2D((1,1))                           (vis_input)
-        # x = Convolution2D(32, 3, 3, activation='relu')     (x)
-        
-        x = Convolution2D(32, 3, 3, activation='relu')     (vis_input)
-        
-        x = Convolution2D(32, 3, 3, activation='relu')     (x)
-        x = MaxPooling2D((2,2), strides=(2,2))             (x)
+        base_model = VGG16(input_tensor=vis_input, weights='imagenet',input_shape=(model_input_dim_height, model_input_dim_width, model_input_channels), include_top=False)
+        # for layer in base_model.layers:
+        #     layer.trainable = False
 
-        x = Convolution2D(64, 3, 3, activation='relu')    (x)
-        x = Convolution2D(64, 3, 3, activation='relu')    (x)
-        x = MaxPooling2D((2,2), strides=(2,2))             (x)
-
-        x = Flatten()                                      (x)
-        x = Dense(256, activation='relu')                 (x)
+        # add a global spatial average pooling layer
+        x = base_model.output
+        x = GlobalAveragePooling2D()(x)
+        
+        # x = Flatten()                                      (x)
+        x = Dense(1024, activation='relu')                 (x)
         x = Dropout(dropout)                                   (x)
         x = Dense(n_classes, name="logits") (x)
         x = Activation('softmax',name="absolute_output") (x)
@@ -168,37 +174,32 @@ class KerasApiVGG(object):
         print("FetchAllVariableValues - not implemented")
 
 
-if __name__ == '__main__':
-    from tensorflow.examples.tutorials.mnist import input_data
+    def CheckInputDimensions(self,input_shape,min_height,min_width):
+        if(len(input_shape) == 4):
+            image_shape = input_shape[1:]
+        else:
+            image_shape = input_shape
 
-    mnist = input_data.read_data_sets("/tmp/data/", one_hot=False)
+        return (max(min_height,image_shape[0]),max(min_width,image_shape[1]),image_shape[2])
 
-    model_input_dim_height = 28
-    model_input_dim_width = 28
-    model_input_channels = 1
-    n_classes = 10
-    learning_rate = 0.001
 
-    batch_size = 128
-    num_train_steps = 200
+    def CheckInputArrayAndResize(self,image_array,min_height,min_width):
+        image_array_shape = image_array.shape
 
-    additional_args = {"learning_rate": learning_rate}
+        if(len(image_array_shape) == 4):
+            image_shape = image_array_shape[1:]
+        else:
+            image_shape = image_array_shape
 
-    cnn_model = KerasApiVGG(model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,
-                          model_dir="mnist", additional_args=additional_args)
+        target_shape = (max(min_height,image_shape[0]),max(min_width,image_shape[1]),image_shape[2])
 
-    verbose_every = 10
-    for step in range(verbose_every, num_train_steps + 1, verbose_every):
-        print("")
-        print("training")
-        print("step:", step)
-        cnn_model.TrainModel(mnist.train.images, mnist.train.labels, batch_size, verbose_every)
-        print("")
+        shape_difference = (np.array(target_shape) - np.array(image_shape))
 
-        print("evaluation")
-        print(cnn_model.EvaluateModel(mnist.test.images[:128], mnist.test.labels[:128], batch_size))
-        print("")
+        add_top = int(shape_difference[0]/2)
+        add_bottom = shape_difference[0] - add_top
 
-    print(cnn_model.Predict(mnist.test.images[:5]))
+        add_left = int(shape_difference[1]/2)
+        add_right = shape_difference[1] - add_left
 
-    print(mnist.test.labels[:5])
+        return np.pad(image_array,((0,0),(add_top,add_bottom),(add_left,add_right),(0,0)), mode='constant', constant_values=0)
+
