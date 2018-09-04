@@ -123,6 +123,7 @@ class InfluenceExplainer(object):
             self.labels_: label
         }
 
+
         test_loss_gradient = self.sess.run(self.grad_loss,feed_dict)
         s_test = self._get_approx_inv_hvp(test_loss_gradient)
         s_test = [prod.reshape(-1,) for prod in s_test]
