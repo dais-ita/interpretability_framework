@@ -18,13 +18,15 @@ class DatasetCard extends React.Component {
     }
 
     componentDidMount () {
+        // console.log("###")
         axios.get("http://" + process.env.REACT_APP_SERVER_NAME +
                   ":" + process.env.REACT_APP_PORT_NUMBER +
                   "/dataset-test-image?dataset=" +
-                  this.props.dataset.dataset_name)
+                  this.props.dataset.dataset_name + "&image=" + this.props.dataset.interesting_images[0])
             .then(res => {
                 this.setState({preview_image: "data:image/png;base64," + res.data.input})
             })
+
     }
 
 
