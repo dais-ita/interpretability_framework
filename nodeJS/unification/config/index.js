@@ -6,7 +6,7 @@ config.unified_apis = {
     "base": {
         "protocol": "http://",
         "server": "0.0.0.0",
-        "port": "1880"
+        "port": "3100"
     },
     "dataset": {
         "all": {
