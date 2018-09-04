@@ -68,8 +68,7 @@ model_names = ["vgg16_imagenet",
 # "inception_v3_imagenet"]
 
 
-model_names = [
-"inception_v3_imagenet"]
+#model_names = ["inception_v3_imagenet"]
 
 
 # model_names = [
@@ -77,7 +76,7 @@ model_names = [
 
 
 
-model_names = ["conv_svm"]
+#model_names = ["conv_svm"]
 
 # model_names = ["inception_v3_imagenet",
 # "inception_resnet_v2_imagenet",
@@ -91,12 +90,12 @@ model_names = ["conv_svm"]
 #TRAINING PARAMETERS
 learning_rate = 0.00001
 batch_size = 64
-num_train_steps = 400
-
-
-learning_rate = 0.001
-batch_size = 64
 num_train_steps = 1000
+
+
+#learning_rate = 0.001
+#batch_size = 64
+#num_train_steps = 1000
 
 
 
