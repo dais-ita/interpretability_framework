@@ -7,7 +7,7 @@ import _ from "lodash";
 
 
 class ChooseInputImage extends Component {
-    state = { images: [], heroes: [], img: "", manual_img: "R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" };
+    state = { images: [], heroes: [], img: "", manual_img: "" };
 
     loadImages(dataset) {
         axios.get("http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER +
