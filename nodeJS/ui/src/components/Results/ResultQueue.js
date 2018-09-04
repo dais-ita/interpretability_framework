@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Grid } from "semantic-ui-react";
 import ResultModal from "./ResultModal";
 import _ from "lodash";
-
+import "./results.css";
 
 class ResultQueue extends Component {
 
@@ -29,7 +29,7 @@ class ResultQueue extends Component {
 
         return (
 
-            <Grid stackable columns={5}>
+            <Grid id="results_display" stackable columns={5}>
                 {interpreter_results}
             </Grid>
         )
