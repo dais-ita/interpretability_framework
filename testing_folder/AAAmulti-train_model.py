@@ -18,21 +18,7 @@ dataset_name = "Traffic Congestion Image Classification (Resized)"
 dataset_name = "Gun Wielding Image Classification"
 # dataset_name = "CIFAR-10"
 
-dataset_names = ["Gun Wielding Image Classification"]
-
-<<<<<<< HEAD
-
-dataset_names = ["Gun Wielding Image Classification",
-"CIFAR-10"]
-
-
-# dataset_names = ["Traffic Congestion Image Classification (Resized)"]
-=======
-dataset_names = ["Traffic Congestion Image Classification"]
->>>>>>> fec985880675e0b5715cf737bd11c615434ad23c
-
-
-# dataset_names = ["Gun Wielding Image Classification"]
+dataset_names = ["Gun Wielding Image Classification", "Traffic Congestion Image Classification", "Traffic Congestion Image Classification (Resized)"]
 
 #MODEL
 model_name = "conv_svm"
@@ -59,15 +45,15 @@ model_names = [
 "xception_imagenet"]
 
 
-<<<<<<< HEAD
 # model_names = ["vgg16_imagenet",
 # "vgg19_imagenet", 
 # "inception_v3_imagenet"]
-=======
+
 model_names = [
 "inception_v3_imagenet"]
->>>>>>> fec985880675e0b5715cf737bd11c615434ad23c
 
+
+model_names = ["conv_svm"]
 
 # model_names = ["inception_v3_imagenet",
 # "inception_resnet_v2_imagenet",
@@ -78,14 +64,16 @@ model_names = [
 
 
 #TRAINING PARAMETERS
-<<<<<<< HEAD
 learning_rate = 0.00001
 batch_size = 64
 num_train_steps = 400
-=======
->>>>>>> fec985880675e0b5715cf737bd11c615434ad23c
 
 learning_rate = 0.0000001
+batch_size = 64
+num_train_steps = 1000
+
+
+learning_rate = 0.001
 batch_size = 64
 num_train_steps = 1000
 
@@ -224,8 +212,8 @@ with open(model_json_path,"r") as f:
 			model_save_path = os.path.join(models_path,model_json["model_name"],"saved_models",dataset_name.lower().replace(" ","_"))
 			model_instance = ModelClass(input_image_height, input_image_width, input_image_channels, n_classes, model_dir=model_save_path, additional_args=additional_args)
 
-			if(os.path.exists(model_save_path)):
-				model_instance.LoadModel(model_save_path)
+			# if(os.path.exists(model_save_path)):
+			# 	model_instance.LoadModel(model_save_path)
 
 
 
