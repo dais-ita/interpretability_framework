@@ -117,7 +117,8 @@ function executeExplain(res, dsJson, modJson, expJson, parmType, parmDs, parmMod
                     JSON.stringify(modJson),
                 "selected_explanation_json":
                     JSON.stringify(expJson),
-                "input": imgJson.input
+                "input": imgJson.input,
+                "input_name": parmImg
             },
             json: true
         };
