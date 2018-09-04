@@ -40,7 +40,9 @@ class ConvSVM(object):
         self.checkpoint_path = model_dir
 
         self.sess = tf.Session()
-        
+        self.model_input_dim_width = model_input_dim_width
+        self.model_input_dim_height = model_input_dim_height
+        self.model_input_channels = model_input_channels
         model_input_dim = [model_input_dim_width, model_input_dim_height , model_input_channels]
         if "learning_rate" in additional_args:
             self.learning_rate = additional_args["learning_rate"]
@@ -67,7 +69,7 @@ class ConvSVM(object):
         
 #        the feature descriptor object uses a conv net to transform images 
 #        into feature space
-        self.feature_desc = FeatureDescriptor(model_input_dim, input_tensor=self.input_ )
+#         self.feature_desc = FeatureDescriptor(model_input_dim, input_tensor=self.input_ )
 
 #        get a graph op representing the feature description
 #         self.feature_vec = self.feature_desc.get_descriptor_op()
@@ -225,8 +227,8 @@ class ConvSVM(object):
         """
         Uses GD to optimise the models loss on evaluation data
         """
-        if val_x is not None:
-            n_steps = 5 * train_x.shape[0] // batch_size
+        # if val_x is not None:
+        #     n_steps = 5 * train_x.shape[0] // batch_size
         for i in range(n_steps):
             print("training step: "+str(i))
 #            get a randomly sampled batch of training data

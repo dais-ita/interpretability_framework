@@ -111,12 +111,12 @@ class ResultComparison extends Component {
 
         return (
             <div>
-                <Header as='h2'>4. Image Selection</Header>
+                <Header as='h2'>&nbsp;Image Selection</Header>
                 {input_image}
 
                 <ChooseInputImage setInputImage={this.setImage} dataset={this.props.options.dataset}/>
 
-                <Header as='h2'>5. Explanation Results</Header>
+                <Header as='h2'>Explanation Results</Header>
                 <Button onClick={this.getResults}>Generate Explanation</Button>
                 <br/>
                 <br/>

@@ -6,9 +6,9 @@
 		"trained_on":[
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
-			"test_accuracy":0.60821,
-			"training_time":412.11,
-			"training_steps":213
+			"test_accuracy":0.6015625,
+			"training_time":228.53,
+			"training_steps":104
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
@@ -16,7 +16,6 @@
 			"training_time":400.1,
 			"training_steps":211
 			}
-
 		],
 		"additional_arguments":[
 			{"name":"learning_rate",

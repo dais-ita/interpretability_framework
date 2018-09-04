@@ -232,6 +232,8 @@ def GetAttributionMap():
 def Explain():
 	raw_json = json.loads(request.data)
 
+	print(raw_json.keys())
+
 	print(type(raw_json['selected_dataset_json']))
 	if(isinstance(raw_json['selected_dataset_json'],str) or isinstance(raw_json['selected_dataset_json'],unicode) ):
 		dataset_json = json.loads(raw_json['selected_dataset_json'])
