@@ -106,7 +106,7 @@ class LRPExplainer(object):
     if(len(input_image.shape) == 3):
         input_image = np.array([input_image])      
     
-    prediction = self.model.Predict(input_image)
+    prediction,prediction_scores = self.model.Predict(input_image, True)
     predicted_class = np.argmax(prediction)
     print("explanation prediction output",prediction)
     print("explanation predicted_class",predicted_class)
@@ -148,8 +148,10 @@ class LRPExplainer(object):
     ## for testing:
     # shap.image_plot(shap_values, np.multiply(input_image,255.0))
 
-      
-    additional_outputs = {"lrp_values":[lrp_value.tolist() for lrp_value in attributions]}
+    if(not isinstance(prediction_scores,list)):
+      prediction_scores = prediction_scores.tolist()
+    
+    additional_outputs = {"lrp_values":[lrp_value.tolist() for lrp_value in attributions],"prediction_scores":prediction_scores}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
     
