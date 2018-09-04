@@ -105,13 +105,19 @@ class ChooseInputImage extends Component {
         );
 
 
+
+
         return (
             <div>
                 <Modal closeIcon='close'
                        closeOnDocumentClick={true}
                        size='fullscreen'
                        onOpen={() => this.loadImages(this.props.dataset)}
-                       trigger={<Button>Choose Image</Button>}>
+                       trigger={
+
+                           <Button>Choose Image</Button>
+
+                       }>
                     <Modal.Header>{this.props.dataset}</Modal.Header>
                     <Modal.Content>
                         {manual_selection}
