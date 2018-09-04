@@ -51,10 +51,9 @@ class FeatureDescriptor(object):
         """
         
         model = self.__load_architecture(self.architecture)
-        
-        return tf.contrib.layers.flatten(
-                model.layers[-1].output,
-        )
+        for layer in model.layers:
+            layer.trainable = False
+        return model.layers[-1].output
 
     def get_premade_model(self):
         return self.__load_architecture(self.architecture)
@@ -76,7 +75,14 @@ class FeatureDescriptor(object):
         return {
             'vgg16': lambda: keras.applications.VGG16(**model_args),
             'vgg19': lambda: keras.applications.VGG19(**model_args),
-            'resnet50': lambda: keras.applications.ResNet50(**model_args)
+            'resnet50': lambda: keras.applications.ResNet50(**model_args),
+            'xception': lambda: keras.applications.Xception(**model_args),
+            'inceptionv2': lambda : keras.applications.InceptionResNetV2(**model_args),
+            'inceptionv3': lambda : keras.applications.InceptionV3(**model_args),
+            'densenet': lambda: keras.applications.DenseNet201(**model_args),
+            'nasnet': lambda: keras.applications.NASNetLarge(**model_args),
+            'nasnetmobile': lambda: keras.applications.NASNetMobile(**model_args),
+            'mobile': lambda: keras.applications.MobileNet(**model_args),
         }[architecture_name]()
 
 

@@ -167,7 +167,7 @@ class InceptionV3Imagenet(object):
         return model
 
     def GetWeights(self):
-        return [w for w in self.model.weights if 'dense' in w.name and 'kernel' in w.name]
+        return [w for w in self.model.trainable_weights if 'kernel' in w.name]
 
     def GetPlaceholders(self):
         return [self.input_, self.labels_]
