@@ -30,10 +30,9 @@ class ResultModal extends Component {
                     {/*<Segment padded compact>*/}
                     {/*<Header as='h3'>{this.state.data.model} trained on {this.state.data.dataset} dataset explained by {this.state.data.interpreter} &nbsp;<a><Icon name='down arrow'/></a> &nbsp;</Header>*/}
 
-                    <strong>Timestamp: </strong>{this.props.results.start_time}
-                    <Divider/>
-                    <strong>Model Prediction:</strong> {this.props.results.ground_truth} &nbsp;  {correct}<br/>
-                    <strong>Ground Truth:</strong> {this.props.results.prediction}
+                    <strong>Timestamp: </strong>{this.props.results.start_time} <br/>
+                    <strong>Model Prediction:</strong> {this.props.results.prediction} &nbsp;  {correct}<br/>
+                    <strong>Ground Truth:</strong> {this.props.results.ground_truth}
 
                     <Divider/>
 

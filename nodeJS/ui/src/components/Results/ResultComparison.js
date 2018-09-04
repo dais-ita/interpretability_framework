@@ -24,7 +24,7 @@ class ResultComparison extends Component {
     }
 
     componentDidMount () {
-        console.log(this.props.options);
+        // console.log(this.props.options);
 
     }
 
@@ -32,7 +32,7 @@ class ResultComparison extends Component {
 
         if (prevProps.options !== this.props.options) {
 
-            console.log(this.state.results);
+            // console.log(this.state.results);
             // this.setState(this.state);
         }
     }
