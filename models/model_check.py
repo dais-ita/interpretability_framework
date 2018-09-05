@@ -2,7 +2,7 @@ import os
 import shutil 
 
 trained_model_dir = "trained_model_files"
-trained_model_dir = ""
+# trained_model_dir = ""
 
 model_dir = "."
 model_folders = os.listdir(model_dir)

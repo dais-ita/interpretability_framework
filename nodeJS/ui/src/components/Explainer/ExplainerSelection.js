@@ -3,9 +3,9 @@ import { Header, Image, Grid, Table } from "semantic-ui-react";
 import _ from 'lodash';
 import axios from "axios";
 
-import InterpretabilityDescription from "./InterpretabilityDescription";
+import ExplainerDescription from "./ExplainerDescription";
 
-class InterpretabilitySelection extends Component {
+class ExplainerSelection extends Component {
     constructor(props) {
         super(props);
 
@@ -34,9 +34,9 @@ class InterpretabilitySelection extends Component {
 
         const interpreter_descriptions = _.times(this.state.interpreters.length, i => (
             <React.Fragment key={i}>
-                <InterpretabilityDescription interpreter_data={this.state.interpreters[i]}
-                                             options={this.props.options}
-                                             setActiveInterpreter={this.props.setActiveInterpreter}/>
+                <ExplainerDescription interpreter_data={this.state.interpreters[i]}
+                                      options={this.props.options}
+                                      setActiveInterpreter={this.props.setActiveInterpreter}/>
             </React.Fragment>
         ));
 
@@ -61,4 +61,4 @@ class InterpretabilitySelection extends Component {
     }
 }
 
-export default InterpretabilitySelection
+export default ExplainerSelection

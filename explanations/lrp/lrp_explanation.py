@@ -40,6 +40,11 @@ class LRPExplainer(object):
 
   def GenerateLRPExplanationImage(self,input_image,LRP_values):
     
+    plt.rcParams['figure.subplot.left'] = 0
+    plt.rcParams['figure.subplot.bottom'] = 0
+    plt.rcParams['figure.subplot.right'] = 1
+    plt.rcParams['figure.subplot.top'] = 1
+
     # LRP_values =LRP_values*1000
 
     # if(len(input_image.shape) == 4):
@@ -59,6 +64,8 @@ class LRPExplainer(object):
         abs_vals = np.stack([np.abs(LRP_values[i].sum(-1)) for i in range(len(LRP_values))], 0).flatten()
     max_val = np.nanpercentile(abs_vals, 70)
 
+    plt.rcParams['figure.figsize'] = [LRP_values.shape[0], LRP_values.shape[1]] # for square canvas
+    
     # i = 0
 
     # sv = shap_values[i] if len(shap_values[i].shape) == 2 else shap_values[i].sum(-1)
@@ -99,7 +106,7 @@ class LRPExplainer(object):
     if(len(input_image.shape) == 3):
         input_image = np.array([input_image])      
     
-    prediction = self.model.Predict(input_image)
+    prediction,prediction_scores = self.model.Predict(input_image, True)
     predicted_class = np.argmax(prediction)
     print("explanation prediction output",prediction)
     print("explanation predicted_class",predicted_class)
@@ -141,8 +148,10 @@ class LRPExplainer(object):
     ## for testing:
     # shap.image_plot(shap_values, np.multiply(input_image,255.0))
 
-      
-    additional_outputs = {"lrp_values":[lrp_value.tolist() for lrp_value in attributions]}
+    if(not isinstance(prediction_scores,list)):
+      prediction_scores = prediction_scores.tolist()
+    
+    additional_outputs = {"lrp_values":[lrp_value.tolist() for lrp_value in attributions],"prediction_scores":prediction_scores}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
     
