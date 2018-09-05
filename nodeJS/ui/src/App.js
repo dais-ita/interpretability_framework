@@ -134,18 +134,6 @@ class Home extends Component {
 
                 <ResultComparison options={this.state}/>
 
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
             </div>
         );
   }
