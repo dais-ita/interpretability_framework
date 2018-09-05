@@ -7,7 +7,7 @@ import _ from "lodash";
 
 
 
-class ChooseInputImage extends Component {
+class InputImageModal extends Component {
     state = { images: [], heroes: [], img: "", manual_img: "" };
 
     loadImages(dataset) {
@@ -100,8 +100,6 @@ class ChooseInputImage extends Component {
                         <Card.Meta>{this.state.manual_img.ground_truth}</Card.Meta>
                     </Card.Content>
                 </Card>
-
-
             </div>
         );
 
@@ -142,4 +140,4 @@ class ChooseInputImage extends Component {
     }
 }
 
-export default ChooseInputImage
+export default InputImageModal
