@@ -7,7 +7,7 @@ import './App.css';
 import Title from "./components/Title";
 import DatasetSelection from './components/Dataset/DatasetSelection';
 import ModelSelection from './components/Model/ModelSelection';
-import InterpretabilitySelection from "./components/Interpreter/InterpretabilitySelection";
+import ExplainerSelection from "./components/Explainer/ExplainerSelection";
 import ResultComparison from "./components/Results/ResultComparison";
 
 
@@ -77,15 +77,16 @@ class Home extends Component {
     }
 
     handleClick = (e, titleProps) => {
-        const { index } = titleProps
-        const { activeIndex } = this.state
-        const newIndex = activeIndex === index ? -1 : index
+        const { index } = titleProps;
+        const { activeIndex } = this.state;
+        const newIndex = activeIndex === index ? -1 : index;
 
         this.setState({ activeIndex: newIndex })
     };
 
     render() {
         const { activeIndex } = this.state;
+
 
         return (
             <div className="App">
@@ -125,7 +126,7 @@ class Home extends Component {
                         </Header>
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 2}>
-                        <InterpretabilitySelection setActiveInterpreter={this.setActiveInterpreter} options={this.state}/>
+                        <ExplainerSelection setActiveInterpreter={this.setActiveInterpreter} options={this.state}/>
                     </Accordion.Content>
                 </Accordion>
 
