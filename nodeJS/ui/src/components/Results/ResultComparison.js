@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { Header, Image, Table, Icon, Segment, Button, Grid, Modal, Card} from "semantic-ui-react";
+import { Header, Image, Table, Icon, Segment, Button, Grid, Modal, Card, Divider} from "semantic-ui-react";
 import _ from "lodash"
 import axios from "axios";
 
-
-
 import ResultQueue from "./ResultQueue";
-import '../Interpreter/Interpret.css';
-import ChooseInputImage from "./ChooseInputImage";
+import InputImageModal from "./InputImageModal";
+import placeholder from "./no_image_selected.png";
 
 
 class ResultComparison extends Component {
@@ -24,7 +22,7 @@ class ResultComparison extends Component {
     }
 
     componentDidMount () {
-        console.log(this.props.options);
+        // console.log(this.props.options);
 
     }
 
@@ -32,7 +30,7 @@ class ResultComparison extends Component {
 
         if (prevProps.options !== this.props.options) {
 
-            console.log(this.state.results);
+            // console.log(this.state.results);
             // this.setState(this.state);
         }
     }
@@ -99,10 +97,10 @@ class ResultComparison extends Component {
         } else {
             input_image = (
                 <Card>
-                    <Image size='medium' src="http://placehold.it/200x200"/>
+                    <Image size='medium' src={placeholder}/>
                     <Card.Content>
-                        <Card.Header>Image Name</Card.Header>
-                        <Card.Meta>Image Class</Card.Meta>
+                        <Card.Header>Image Title</Card.Header>
+                        <Card.Meta>Ground Truth</Card.Meta>
                     </Card.Content>
                 </Card>
             )
@@ -111,12 +109,16 @@ class ResultComparison extends Component {
 
         return (
             <div>
-                <Header as='h2'>&nbsp;Image Selection</Header>
+                <br/>
+
+                <Header dividing as='h2'>Results</Header>
+
+                <Header as='h3'>&nbsp;Image Selection</Header>
                 {input_image}
 
-                <ChooseInputImage setInputImage={this.setImage} dataset={this.props.options.dataset}/>
+                <InputImageModal setInputImage={this.setImage} dataset={this.props.options.dataset}/>
 
-                <Header as='h2'>Explanation Results</Header>
+                <Header as='h3'>Explanations</Header>
                 <Button onClick={this.getResults}>Generate Explanation</Button>
                 <br/>
                 <br/>

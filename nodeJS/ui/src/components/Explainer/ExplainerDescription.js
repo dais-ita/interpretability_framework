@@ -1,7 +1,7 @@
 import {Table, Button, Header} from "semantic-ui-react";
 import React, { Component } from "react";
 
-class InterpretabilityDescription extends Component  {
+class ExplainerDescription extends Component  {
     constructor(props) {
         super(props);
     }
@@ -34,7 +34,7 @@ class InterpretabilityDescription extends Component  {
                 <Table.Cell>{this.props.interpreter_data.description}</Table.Cell>
                 <Table.Cell>
                     <Button color={this.state.colour} onClick={ () => this.props.setActiveInterpreter(this.props.interpreter_data.explanation_name)}>
-                        Use Interpreter
+                        Use Explanation
                     </Button>
                 </Table.Cell>
             </Table.Row>
@@ -44,7 +44,7 @@ class InterpretabilityDescription extends Component  {
 
 }
 
-export default InterpretabilityDescription
+export default ExplainerDescription
 
 
 

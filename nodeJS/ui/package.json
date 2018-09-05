@@ -6,15 +6,17 @@
     "axios": "^0.18.0",
     "dotenv": "^6.0.0",
     "lodash": "^4.17.10",
+    "moment": "^2.22.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-moment": "^0.7.9",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
     "semantic-ui-css": "^2.3.3",
     "semantic-ui-react": "^0.82.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=1880 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
