@@ -535,18 +535,18 @@ class DataSet(object):
         return "/".join(relative_path_list)
 
 if __name__ == '__main__':
-    dataset_folder = "cifar10"
+    dataset_folder = "mnist"
 
-    labels = ["airplane",
-                "automobile",
-                "bird",
-                "cat",
-                "deer",
-                "dog",
-                "frog",
-                "horse",
-                "ship",
-                "truck"]
+    labels = ["0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9"]
    
     
 

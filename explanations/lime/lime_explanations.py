@@ -97,9 +97,9 @@ class LimeExplainer(object):
     else:
       min_weight=0.01
 
-
+    _, prediction_scores = self.model.Predict(np.array([input_image]), True)
     prediction, explanation = self.ClassifyWithLIME(input_image,num_samples=num_samples,labels=list(range(self.model.n_classes)), top_labels=self.model.n_classes)
-
+    
     print("explanation prediction output",prediction)
     predicted_class = np.argmax(prediction)
     print("explanation predicted_class",predicted_class)
@@ -118,7 +118,10 @@ class LimeExplainer(object):
     explanation_image = temp
     explanation_image = cv2.cvtColor(temp,cv2.COLOR_BGR2RGB)
 
-    additional_outputs = {"default_visualisation":temp.tolist(), "mask":mask.tolist(), "attribution_slices":explanation.segments.tolist(), "attribution_slice_weights":explanation.local_exp[predicted_class]}
+    if(not isinstance(prediction_scores,list)):
+            prediction_scores = prediction_scores.tolist()
+
+    additional_outputs = {"default_visualisation":temp.tolist(), "mask":mask.tolist(), "attribution_slices":explanation.segments.tolist(), "attribution_slice_weights":explanation.local_exp[predicted_class],"prediction_scores":prediction_scores}
 
     explanation_text = "Evidence towards predicted class shown in green"
     return explanation_image, explanation_text, predicted_class, additional_outputs

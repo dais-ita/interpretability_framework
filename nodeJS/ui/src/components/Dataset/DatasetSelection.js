@@ -24,8 +24,6 @@ class DatasetSelection extends Component {
                 const datasets = res.data;
                 this.setState( { datasets });
                 this.props.setActiveDataset(datasets[0].dataset_name);
-                // console.log(datasets[0].dataset_name)
-
                 console.log(this.props.options);
             })
     }
