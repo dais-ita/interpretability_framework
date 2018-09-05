@@ -68,6 +68,10 @@ class VGG19Imagenet(object):
         
 
     def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None):
+        train_x = self.CheckInputArrayAndResize(train_x,self.min_height,self.min_width)
+        if(val_x is not None):
+            val_x = self.CheckInputArrayAndResize(val_x,self.min_height,self.min_width)
+
         if (type(train_x) != dict):
             input_dict = {"input": train_x}
         else:
@@ -92,6 +96,8 @@ class VGG19Imagenet(object):
 
 
     def EvaluateModel(self, eval_x, eval_y, batch_size):
+        eval_x = self.CheckInputArrayAndResize(eval_x,self.min_height,self.min_width)
+
         if (type(eval_x) != dict):
             input_dict = {"input": eval_x}
         else:
@@ -101,7 +107,9 @@ class VGG19Imagenet(object):
         return self.model.evaluate(eval_x,eval_y, batch_size=batch_size)
 
 
-    def Predict(self, predict_x):
+    def Predict(self, predict_x, return_prediction_scores = False):
+        predict_x = self.CheckInputArrayAndResize(predict_x,self.min_height,self.min_width)
+        
         if (type(predict_x) != dict):
             input_dict = {"input": predict_x}
         else:
@@ -111,7 +119,10 @@ class VGG19Imagenet(object):
         predictions = self.model.predict(predict_x)
         print("predictions:",predictions)
         print("[np.argmax(prediction) for prediction in predictions]",[np.argmax(prediction) for prediction in predictions])
-        return [np.argmax(prediction) for prediction in predictions]
+        if(return_prediction_scores):
+            return predictions, [np.argmax(prediction) for prediction in predictions]
+        else:
+            return [np.argmax(prediction) for prediction in predictions]
 
 
     def SaveModel(self, save_dir):
