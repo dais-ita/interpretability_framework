@@ -121,7 +121,11 @@ class ShapExplainer(object):
 
   def GenerateShapExplanationImage(self,input_image,shap_values):
     
-    
+    plt.rcParams['figure.subplot.left'] = 0
+    plt.rcParams['figure.subplot.bottom'] = 0
+    plt.rcParams['figure.subplot.right'] = 1
+    plt.rcParams['figure.subplot.top'] = 1
+
     if(len(input_image.shape) == 4):
       input_image = np.squeeze(input_image)
     
@@ -140,6 +144,9 @@ class ShapExplainer(object):
     max_val = np.nanpercentile(abs_vals, 99.9)
 
     i = 0
+
+    plt.rcParams['figure.figsize'] = [x_curr.shape[0], x_curr.shape[1]] # for square canvas
+    
 
     sv = shap_values[i] if len(shap_values[i].shape) == 2 else shap_values[i].sum(-1)
     plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
@@ -205,7 +212,7 @@ class ShapExplainer(object):
     shap_values = e.shap_values(input_image)
     
     
-    prediction = self.model.Predict(input_image)
+    prediction, prediction_scores = self.model.Predict(input_image, True)
     predicted_class = np.argmax(prediction)
     print("explanation prediction output",prediction)
     print("explanation predicted_class",predicted_class)
@@ -223,8 +230,11 @@ class ShapExplainer(object):
       cv2.imshow("explanation image",cv2_image)
       cv2.waitKey(0)
       cv2.destroyAllWindows()
-      
-    additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values]}
+    
+    if(not isinstance(prediction_scores,list)):
+      prediction_scores = prediction_scores.tolist()
+    
+    additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values],"prediction_scores":prediction_scores}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
     
