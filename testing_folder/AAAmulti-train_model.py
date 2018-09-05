@@ -13,19 +13,13 @@ import time
 ## Training COnfiguration ##
 
 #DATASET
-dataset_name = "Traffic Congestion Image Classification"
-dataset_name = "Traffic Congestion Image Classification (Resized)"
-dataset_name = "Gun Wielding Image Classification"
-# dataset_name = "CIFAR-10"
+dataset_names = ["Gun Wielding Image Classification", "Traffic Congestion Image Classification", "Traffic Congestion Image Classification (Resized)","CIFAR-10"]
 
 
-dataset_names = ["Gun Wielding Image Classification", "Traffic Congestion Image Classification", "Traffic Congestion Image Classification (Resized)"]
+# dataset_names = ["Gun Wielding Image Classification"]
 
 
-dataset_names = ["Gun Wielding Image Classification"]
-
-
-dataset_names = ["CIFAR-10"]
+# dataset_names = ["CIFAR-10"]
 
 
 # dataset_names = ["Traffic Congestion Image Classification (Resized)"]
@@ -37,7 +31,7 @@ dataset_names = ["CIFAR-10"]
 
 
 #MODEL
-model_name = "conv_svm"
+# model_name = "conv_svm"
 # model_name = "keras_api_vgg"
 # model_name = "keras_api_simple"
 # model_name = "vgg16_imagenet"
@@ -67,17 +61,11 @@ model_names = ["vgg16_imagenet",
 # "vgg19_imagenet", 
 # "inception_v3_imagenet"]
 
-
-model_names = [
-"inception_v3_imagenet"]
-
-
 # model_names = [
 # "inception_v3_imagenet"]
 
 
 
-model_names = ["conv_svm"]
 
 # model_names = ["inception_v3_imagenet",
 # "inception_resnet_v2_imagenet",
@@ -88,15 +76,14 @@ model_names = ["conv_svm"]
 # model_names = ["mobilenet_imagenet"]
 
 
+model_names=["vgg16"]
+
 #TRAINING PARAMETERS
 learning_rate = 0.00001
 batch_size = 64
-num_train_steps = 400
-
-
-learning_rate = 0.001
-batch_size = 64
 num_train_steps = 1000
+
+
 
 
 
