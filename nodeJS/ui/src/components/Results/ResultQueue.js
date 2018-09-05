@@ -19,12 +19,12 @@ class ResultQueue extends Component {
 
     render (){
 
-
-            const interpreter_results = _.times(this.props.results.length, i => (
-                <Grid.Column key={i}>
-                    <ResultModal results={this.props.results[i]}/>
-                </Grid.Column>
-            ));
+        const results_queue = this.props.results.reverse();
+        const interpreter_results = _.times(results_queue.length, i => (
+            <Grid.Column key={i}>
+                <ResultModal results={results_queue[i]}/>
+            </Grid.Column>
+        ));
 
 
         return (
