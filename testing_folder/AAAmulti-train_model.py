@@ -20,7 +20,7 @@ dataset_name = "Gun Wielding Image Classification"
 
 dataset_names = ["Gun Wielding Image Classification"]
 
-dataset_names = ["Traffic Congestion Image Classification"]
+dataset_names = ["Traffic Congestion Image Classification","Gun Wielding Image Classification"]
 
 
 # dataset_names = ["Gun Wielding Image Classification"]
@@ -44,14 +44,14 @@ model_names = ["vgg16_imagenet",
 "xception_imagenet"]
 
 
-model_names = [
-"inception_resnet_v2_imagenet",
-"mobilenet_imagenet",
-"xception_imagenet"]
-
-
-model_names = [
-"inception_v3_imagenet"]
+# model_names = [
+# "inception_resnet_v2_imagenet",
+# "mobilenet_imagenet",
+# "xception_imagenet"]
+#
+#
+# model_names = [
+# "inception_v3_imagenet"]
 
 
 # model_names = ["inception_v3_imagenet",

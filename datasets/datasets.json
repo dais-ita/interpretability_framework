@@ -80,6 +80,31 @@
 	"references":[""],
 	"description":"Dataset commonly used for benchmarking Machine Learning techniques.",
 	"license":"apache 2"
+	},
+	{
+	"dataset_name":"MNIST",
+	"download_link":"",
+	"folder":"mnist",
+	"labels":[
+				{"label":"0","images":4132},
+				{"label":"1","images":4684},
+				{"label":"2","images":4177},
+				{"label":"3","images":4351},
+				{"label":"4","images":4072},
+				{"label":"5","images":3795},
+				{"label":"6","images":4137},
+				{"label":"7","images":4401},
+				{"label":"8","images":4063},
+				{"label":"9","images":4188}
+			],
+	"image_x":28,
+	"image_y":28,
+	"image_channels":1,
+	"ground_truth_csv_path":"mnist.csv",
+	"default_training_allocation_path":"mnist_train_split.csv",
+	"interesting_images":[],
+	"references":[""],
+	"description":"Handwritten digit dataset commonly used for benchmarking Machine Learning techniques.",
+	"license":"apache 2"
 	}
-
 ]}
