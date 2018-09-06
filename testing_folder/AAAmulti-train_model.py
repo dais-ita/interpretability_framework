@@ -50,8 +50,11 @@ model_names = ["vgg16_imagenet",
 "xception_imagenet"]
 
 
-# model_names = [
-# "inception_resnet_v2_imagenet",
+model_names = [
+ "inception_resnet_v2_imagenet"]
+
+
+ 
 # "mobilenet_imagenet",
 # "xception_imagenet"]
 
@@ -76,12 +79,12 @@ model_names = ["vgg16_imagenet",
 # model_names = ["mobilenet_imagenet"]
 
 
-model_names=["vgg16"]
+#model_names=["vgg16"]
 
 #TRAINING PARAMETERS
-learning_rate = 0.00001
+learning_rate = 0.000001
 batch_size = 64
-num_train_steps = 1000
+num_train_steps = 500
 
 
 
