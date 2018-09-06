@@ -205,10 +205,10 @@ class ShapExplainer(object):
       # set_session(sess)  # set this TensorFlow session as the default session for Keras
 
       try:
-        background = self.model.CheckInputArrayAndResize(background)
+        background = self.model.CheckInputArrayAndResize(background,self.model.min_height,self.model.min_width)
       except:
         print("couldn't use model image size check")
-      
+
       e = shap.DeepExplainer(self.model.model, background)
       self.shap_explainers_dict[additional_args["dataset_name"]][self.model.__class__.__name__] = e
 
