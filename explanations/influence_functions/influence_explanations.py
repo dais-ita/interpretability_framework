@@ -124,6 +124,10 @@ class InfluenceExplainer(object):
         else:
             cache = False
 
+        try:
+            test_img = self.model.CheckInputArrayAndResize(test_img)
+        except:
+            print("couldn't use model image size check")  
         
         print("test_img.shape",test_img.shape)
         feed_dict = {

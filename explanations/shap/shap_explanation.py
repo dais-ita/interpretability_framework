@@ -203,6 +203,12 @@ class ShapExplainer(object):
       # config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
       # sess = tf.Session(config=config)
       # set_session(sess)  # set this TensorFlow session as the default session for Keras
+
+      try:
+        background = self.model.CheckInputArrayAndResize(background)
+      except:
+        print("couldn't use model image size check")
+      
       e = shap.DeepExplainer(self.model.model, background)
       self.shap_explainers_dict[additional_args["dataset_name"]][self.model.__class__.__name__] = e
 
