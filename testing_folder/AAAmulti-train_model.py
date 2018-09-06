@@ -16,6 +16,7 @@ import time
 dataset_names = ["Gun Wielding Image Classification", "Traffic Congestion Image Classification", "Traffic Congestion Image Classification (Resized)","CIFAR-10"]
 
 
+dataset_names = ["Traffic Congestion Image Classification","Gun Wielding Image Classification"]
 # dataset_names = ["Gun Wielding Image Classification"]
 
 
@@ -58,6 +59,12 @@ model_names = [
 # "mobilenet_imagenet",
 # "xception_imagenet"]
 
+#
+#
+# model_names = [
+# "inception_v3_imagenet"]
+
+
 
 
 # model_names = ["vgg16_imagenet",
@@ -66,7 +73,6 @@ model_names = [
 
 # model_names = [
 # "inception_v3_imagenet"]
-
 
 
 

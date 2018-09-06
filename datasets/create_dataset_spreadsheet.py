@@ -4,7 +4,7 @@ observations = []
 
 
 image_dir = "dataset_images"
-dataset_folder = "cifar10"
+dataset_folder = "mnist"
 use_explicit = False
 
 dataset_folder_path = os.path.join(image_dir,dataset_folder)
