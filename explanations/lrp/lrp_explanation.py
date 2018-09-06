@@ -117,7 +117,12 @@ class LRPExplainer(object):
     prediction_mask = np.array(prediction_mask)
 
     print(prediction_mask)
-
+    
+    try:
+      input_image = self.model.CheckInputArrayAndResize(input_image)
+    except:
+      print("couldn't use model image size check")    
+    
     with DeepExplain(session=K.get_session()) as de:  # <-- init DeepExplain context
       # Need to reconstruct the graph in DeepExplain context, using the same weights.
       # With Keras this is very easy:
