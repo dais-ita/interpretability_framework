@@ -212,7 +212,7 @@ class ShapExplainer(object):
     shap_values = e.shap_values(input_image)
     
     
-    prediction = self.model.Predict(input_image)
+    prediction, prediction_scores = self.model.Predict(input_image, True)
     predicted_class = np.argmax(prediction)
     print("explanation prediction output",prediction)
     print("explanation predicted_class",predicted_class)
@@ -230,8 +230,11 @@ class ShapExplainer(object):
       cv2.imshow("explanation image",cv2_image)
       cv2.waitKey(0)
       cv2.destroyAllWindows()
-      
-    additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values]}
+    
+    if(not isinstance(prediction_scores,list)):
+      prediction_scores = prediction_scores.tolist()
+    
+    additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values],"prediction_scores":prediction_scores}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
     

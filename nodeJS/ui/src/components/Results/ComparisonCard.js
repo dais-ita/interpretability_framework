@@ -1,7 +1,6 @@
-import {Header, Icon, Image, Segment} from "semantic-ui-react";
-import { Table } from "semantic-ui-react";
-//import input_1 from "./lime_input.jpg";
-//import output_1 from "./lime_out.jpg";
+import {Header, Icon, Image, Segment, Table } from "semantic-ui-react";
+import { } from "semantic-ui-react";
+
 import React, { Component } from "react";
 
 class ComparisonCard extends Component {
