@@ -221,8 +221,8 @@ class ShapExplainer(object):
         print("reshaping")
         input_image = self.model.CheckInputArrayAndResize(input_image,self.model.min_height,self.model.min_width)
         print("input_image.shape",input_image.shape)
-      except:
-        print("couldn't use model image size check")
+    except:
+      print("couldn't use model image size check")
 
     shap_values = e.shap_values(input_image)
     
