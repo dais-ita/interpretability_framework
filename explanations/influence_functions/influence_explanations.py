@@ -125,7 +125,7 @@ class InfluenceExplainer(object):
             cache = False
 
         try:
-            test_img = self.model.CheckInputArrayAndResize(test_img)
+            test_img = self.model.CheckInputArrayAndResize(test_img,self.model.min_height,self.model.min_width)
         except:
             print("couldn't use model image size check")  
         

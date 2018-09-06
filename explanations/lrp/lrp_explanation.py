@@ -119,7 +119,7 @@ class LRPExplainer(object):
     print(prediction_mask)
     
     try:
-      input_image = self.model.CheckInputArrayAndResize(input_image)
+      input_image = self.model.CheckInputArrayAndResize(input_image,self.model.min_height,self.model.min_width)
     except:
       print("couldn't use model image size check")    
     
