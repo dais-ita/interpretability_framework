@@ -205,7 +205,9 @@ class ShapExplainer(object):
       # set_session(sess)  # set this TensorFlow session as the default session for Keras
 
       try:
+        print("reshaping")
         background = self.model.CheckInputArrayAndResize(background,self.model.min_height,self.model.min_width)
+        print("background.shape",background.shape)
       except:
         print("couldn't use model image size check")
 
@@ -214,6 +216,13 @@ class ShapExplainer(object):
 
     if(len(input_image.shape) == 3 ):
       input_image = np.array([input_image])
+
+    try:
+        print("reshaping")
+        input_image = self.model.CheckInputArrayAndResize(input_image,self.model.min_height,self.model.min_width)
+        print("input_image.shape",input_image.shape)
+      except:
+        print("couldn't use model image size check")
 
     shap_values = e.shap_values(input_image)
     
