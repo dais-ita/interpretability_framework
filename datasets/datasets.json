@@ -102,7 +102,7 @@
 	"image_channels":1,
 	"ground_truth_csv_path":"mnist.csv",
 	"default_training_allocation_path":"mnist_train_split.csv",
-	"interesting_images":[],
+	"interesting_images":["00000_0.jpg","17344_4.jpg","29348_7.jpg","33749_8.jpg"],
 	"references":[""],
 	"description":"Handwritten digit dataset commonly used for benchmarking Machine Learning techniques.",
 	"license":"apache 2"
