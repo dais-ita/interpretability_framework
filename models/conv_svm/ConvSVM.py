@@ -244,7 +244,7 @@ class ConvSVM(object):
             if val_x is not None:
                 if i % 10 == 0 and i != 0:
                     loss, acc = self.EvaluateModel(val_x, val_y, batch_size)
-                    print(f"Validation loss: {loss} \nValidation accuracy: {acc}")
+                    print("Validation loss: "+str(loss)+"\n"+"Validation accuracy: "+str(acc))
         self.SaveModel(None,self.sess)
 
 

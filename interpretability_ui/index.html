@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+	    <meta charset="utf-8" />
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	    <title>DAIS Interpretability Framework</title>
+
+	    <link rel="stylesheet" href="css/site.css" type="text/css">
+	    <link rel="stylesheet" href="css/bootstrap_css/bootstrap.min.css" type="text/css">
+	    <link rel="stylesheet" href="css/framework.css" type="text/css">
+	    
+	</head>
+
+	<body>
+	    <div class="body-content container">
+	    	<h1 id="Framework_heading">Dais Interpretability Framework </h1>
+			
+			<div id="framework-introduction-container">
+			<span id="framework-introduction">This is some text about the framework. This is some text about the framework. This is some text about the framework. This is some text about the framework. This is some text about the framework.</span>
+			</div>
+
+	    	<div class="accordion" id="collapsable-sections-container">
+	    		<div class="section-container foldable-section container card" id="section-container__quick_populate">
+			    	<div class="section-title-bar card-header" id="section-title-bar__quick_populate">
+			    		<span class="section-title" id="section-title__datasets">Quick Populate</span> 
+			    		<span class="section-expansion-symbol btn btn-dark" id="section-expansion-symbol__quick_populate" data-toggle="collapse" data-target="#section-content-container__quick_populate">-</span>
+			    	</div>
+
+			    	<div class="section-content-container container collapse show" id="section-content-container__quick_populate" aria-labelledby="section-title-bar__quick_populate" data-parent="#collapsable-sections-container">
+			    		<div id="card-deck-quick_populate" class="card-deck">
+			    			<!-- QUick populates: -->
+			    			<div class="card mb-4">
+							  <div class="card-body">
+							    <h5 class="card-title">TFL Resized + VGG16 + All Explanations</h5>
+							    <button onclick="PopulateTFLrVGGALL()" class="btn btn-secondary">Populate</button>
+							  </div>
+							</div>
+
+							<div class="card mb-4">
+							  <div class="card-body">
+							    <h5 class="card-title">TFL Resized + VGG16 + LIMEs</h5>
+							    <button onclick="PopulateTFLrVGGLIME()" class="btn btn-secondary">Populate</button>
+							  </div>
+							</div>
+
+							<div class="card mb-4">
+							  <div class="card-body">
+							    <h5 class="card-title">Gun Wielder + VGG16 + All Explanations</h5>
+							    <button onclick="PopulateGUNVGGALL()" class="btn btn-secondary">Populate</button>
+							  </div>
+							</div>
+
+
+			    		</div>
+			    	</div>
+			    </div>
+
+
+
+
+			    <div class="section-container foldable-section container card" id="section-container__datasets">
+			    	<div class="section-title-bar card-header" id="section-title-bar__datasets">
+			    		<span class="section-title" id="section-title__datasets">Select Dataset</span> 
+			    		<span class="selection-name-display badge badge-danger" id="selection-name-display__datasets">None Selected</span>
+			    		<div class="select-item-id-storage" id="select-item-id-storage__datasets"></div>
+			    		<span class="section-expansion-symbol btn btn-dark" id="section-expansion-symbol__datasets" data-toggle="collapse" data-target="#section-content-container__datasets">-</span>
+			    	</div>
+
+			    	<div class="section-content-container container collapse" id="section-content-container__datasets" aria-labelledby="section-title-bar__datasets" data-parent="#collapsable-sections-container">
+			    		<div id="card-deck-datasets" class="card-deck">
+			    			<!-- <div class="card mb-4">
+							  <img class="dataset-item-image card-img-top" src="test_content/testset_1_preview.jpg">
+							  <div class="card-body">
+							    <h5 class="card-title">Testset 1</h5>
+							    <p class="dataset-card-text card-text">This is a test description. This is a test description. This is a test description. This is a test description.</p>
+							    <a href="#" class="btn btn-secondary">Select Dataset</a>
+							  </div>
+							</div>
+						
+							<div class="card mb-4">
+							  <img class="dataset-item-image card-img-top" src="test_content/testset_2_preview.jpg">
+							  <div class="card-body">
+							    <h5 class="card-title">Testset 2</h5>
+							    <p class="dataset-card-text card-text">This is a test description.  This is a test description.</p>
+							    <a href="#" class="btn btn-secondary">Select Dataset</a>
+							  </div>
+							</div>
+						
+							<div class="card mb-4">
+							  <img class="dataset-item-image card-img-top" src="test_content/testset_3_preview.jpg">
+							  <div class="card-body">
+							    <h5 class="card-title">Testset 3</h5>
+							    <p class="dataset-card-text card-text">This is a test description.  This is a test description. This is a test description.</p>
+							    <a href="#" class="btn btn-secondary">Select Dataset</a>
+							  </div>
+							</div> -->
+
+							 <!-- <div class="w-100 d-block d-md-block d-lg-block"> -->
+
+							
+
+							
+
+						</div>
+				    		
+
+			    	</div>
+			    </div>
+
+			    <div class="section-container foldable-section container card" id="section-container__models">
+			    	<div class="section-title-bar card-header" id="section-title-bar__models">
+			    		<span class="section-title" id="section-title__models">Select Model</span> 
+			    		<span class="selection-name-display badge badge-danger" id="selection-name-display__models">None Selected</span>
+			    		<div class="select-item-id-storage" id="select-item-id-storage__models"></div>
+			    		<span class="section-expansion-symbol btn btn-dark collapsed" id="section-expansion-symbol__models" data-toggle="collapse" data-target="#section-content-container__models">-</span>
+			    	</div>
+
+			    	<div class="section-content-container collapse" id="section-content-container__models" aria-labelledby="section-title-bar__models" data-parent="#collapsable-sections-container">
+			    		<ul id="models_lists" class="list-group">
+				    		<!-- <li class="list-group-item"> 
+					    		<div class="row">
+					    			<div class="model-item-name-container col" id="model-item-name-container__test_model_1">
+					    				<span class="model-item-name" id="model-item-name__test_model_1">Test Model 1</span>
+					    			</div> 
+					    			<div class="model-item-toggle-container col-1" id="model-item-toggle-container__test_model_1">
+					    				<button type="button" class="model-toggle-button btn btn-secondary" id="model-toggle-button__test_model_1">Select Model</button>
+					    			</div>
+					    		</div> 
+				    		</li> 
+
+
+				    		<li class="list-group-item"> 
+					    		<div class="row"> 
+					    			<div class="model-item-name-container col" id="model-item-name-container__test_model_2">
+					    				<span class="model-item-name" id="model-item-name__test_model_2">Test Model 2</span>
+					    			</div> 
+					    			<div class="model-item-toggle-container col-1" id="model-item-toggle-container__test_model_2">
+					    				<button type="button" class="model-toggle-button btn btn-secondary" id="model-toggle-button__test_model_2">Select Model</button>
+					    			</div>
+				    			</div> 
+				    		</li> 
+
+
+							<li class="list-group-item"> 
+					    		<div class="row"> 
+					    			<div class="model-item-name-container col" id="model-item-name-container__test_model_3">
+					    				<span class="model-item-name" id="model-item-name__test_model_3">Test Model 3</span>
+					    			</div> 
+					    			<div class="model-item-toggle-container col-1" id="model-item-toggle-container__test_model_3">
+					    				<button type="button" class="model-toggle-button btn btn-secondary" id="model-toggle-button__test_model_3">Select Model</button>
+					    			</div> 
+				    			</div>
+				    		</li> --> 
+
+			    		</ul>
+			    	</div>
+			    </div>
+
+				<div class="section-container foldable-section container card" id="section-container__explanations">
+					<div class="section-title-bar card-header" id="section-title-bar__explanations">
+						<span class="section-title" id="section-title__explanations">Select Explanation</span> 
+			    		<span class="selection-name-display badge badge-danger" id="selection-name-display__explanations">None Selected</span>
+			    		<div class="select-item-id-storage" id="select-item-id-storage__explanations"></div>
+			    		<span class="section-expansion-symbol btn btn-dark collapsed" id="section-expansion-symbol__explanations" data-toggle="collapse" data-target="#section-content-container__explanations">-</span>
+			    	</div>
+
+			    	<div class="section-content-container collapse" id="section-content-container__explanations" aria-labelledby="section-title-bar__explanations" data-parent="#collapsable-sections-container">
+			    		<ul id="explanations_lists" class="list-group">
+				    		<!-- <li class="list-group-item"> 
+					    		<div class="row"> 
+					    			<div class="explanation-item-name-container col" id="explanation-item-name-container__test_explanation_1">
+					    				<span class="explanation-item-name" id="explanation-item-name__test_explanation_1">Test Explanation 1</span>
+					    			</div> 
+					    			<div class="explanation-item-toggle-container col-1" id="explanation-item-toggle-container__test_explanation_1">
+					    				<button type="button" class="explanation-toggle-button btn btn-secondary" id="explanation-toggle-button__test_explanation_1">Select Explanation</button>
+					    			</div> 
+				    			</div>
+				    		</li> 
+
+
+				    		<li class="list-group-item"> 
+					    		<div class="row"> 
+					    			<div class="explanation-item-name-container col" id="explanation-item-name-container__test_explanation_2">
+					    				<span class="explanation-item-name" id="explanation-item-name__test_explanation_2">Test Explanation 2</span>
+					    			</div> 
+					    			<div class="explanation-item-toggle-container col-1" id="explanation-item-toggle-container__test_explanation_2">
+					    				<button type="button" class="explanation-toggle-button btn btn-secondary" id="explanation-toggle-button__test_explanation_2">Select Explanation</button>
+					    			</div> 
+				    			</div>
+				    		</li> 
+
+
+							<li class="list-group-item"> 
+					    		<div class="row"> 
+					    			<div class="explanation-item-name-container col" id="explanation-item-name-container__test_explanation_3">
+					    				<span class="explanation-item-name" id="explanation-item-name__test_explanation_3">Test Explanation 3</span>
+					    			</div> 
+					    			<div class="explanation-item-toggle-container col-1" id="explanation-item-toggle-container__test_explanation_3">
+					    				<button type="button" class="explanation-toggle-button btn btn-secondary" id="explanation-toggle-button__test_explanation_3">Select Explanation</button>
+					    			</div> 
+				    			</div>
+				    		</li>  -->
+
+			    		</ul>
+			    	</div>
+			    </div>
+				
+
+				<div class="modal fade bd-example-modal-lg" id="modal__dataset_browse" tabindex="-1" role="dialog" aria-labelledby="modal-title__dataset_browse" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="modal-title__dataset_browse">Browse Dataset - Testset 1</h5>
+				        <button id="close-browse-dataset-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        
+				    
+
+					    <div class="card text-center" id="dataset-browse-card">
+					    	<div class="var_storage" id="dataset-browse-active-tab">dataset-browse-card-body__all-classes</div>
+						  	<div class="card-header">
+							    <ul id="dataset-browse-links-list" class="nav nav-tabs card-header-tabs">
+							      	<li class="nav-item">
+							        	<a class="nav-link active dataset-browse-link" id="dataset-browse-link__all-classes" href="#dataset-browse-card" onclick="ChangeDatasetBrowseTab(this.id)">All Classes</a>
+							      	</li>
+
+							      	<li class="nav-item">
+							        	<a class="nav-link active dataset-browse-link" id="dataset-browse-link__class_1" href="#dataset-browse-card" onclick="ChangeDatasetBrowseTab(this.id)">Class 1</a>
+							      	</li>
+							      	
+							      	<li class="nav-item">
+							        	<a class="nav-link active dataset-browse-link" id="dataset-browse-link__class_2" href="#dataset-browse-card" onclick="ChangeDatasetBrowseTab(this.id)">Class 2</a>
+							      	</li>
+						      	</ul>
+						    </div>
+							
+							<div class="card-body dataset-browse-card-body" id="dataset-browse-card-body__all-classes">
+						  		<div id="result-card-deck container" class="card-deck">
+						  			<div class="row">
+						    			<div class="card mb-3 col-2 d-flex align-items-stretch dataset-browse-img-card" id="dataset-browse-img-card__testset_1_preview" onclick="DatasetBrowseSelectImage(this.id)">
+						    				<div class="var_storage" id="dataset-browse-img-card-name__testset_1_preview">testset_1_preview.jpg</div>
+										  <img class="result-image card-img-top" id="dataset-browse-img__testset_1_preview" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+									
+									</div>
+
+									<div class="row">
+									
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										
+									</div>
+
+									<div class="row">
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+										
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+									</div>
+											
+
+
+								</div>
+							</div>
+
+
+							<div class="card-body dataset-browse-card-body dataset-browse-card-body-inactive" id="dataset-browse-card-body__class_1">
+						  		<div id="result-card-deck container" class="card-deck">
+						  			<div class="row">
+
+						    			<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+									
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_2_preview.jpg">
+										</div>
+									
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_3_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+									
+									</div>
+
+								</div>
+							</div>
+
+
+							<div class="card-body dataset-browse-card-body dataset-browse-card-body-inactive" id="dataset-browse-card-body__class_2">
+						  		<div id="result-card-deck container" class="card-deck">
+						  			<div class="row">
+						    			<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+									</div>
+
+									<div class="row">
+						    			
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+										<div class="card mb-3 col-2 d-flex align-items-stretch">
+										  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+										</div>
+
+
+
+
+									</div>
+								</div>
+							</div>
+						</div>
+
+				  </div>
+				      
+				    </div>
+				  </div>
+				</div>
+
+			    <div class="section-container container card" id="section-container__image-selection">
+					<div class="section-title-bar card-header" id="section-title-bar__image-selection">
+						<span class="section-title" id="section-title__input">Select Input</span> 
+				    	<span class="selection-name-display badge badge-danger" id="selection-name-display__input">None Selected</span>
+				    	<div class="select-item-id-storage" id="select-item-id-storage__image"></div>
+			    		<span class="section-expansion-symbol btn btn-dark collapsed" id="section-expansion-symbol__image-selection" data-toggle="collapse" data-target="#section-content-container__image-selection">-</span>
+				    </div>
+
+			    	<div class="section-content-container collapse" id="section-content-container__image-selection" aria-labelledby="section-title-bar__image-selection" data-parent="#collapsable-sections-container">
+			    		<div id="input-header-container">
+		    				<span class="input-header">Current Input Image:</span>
+		    				<span id="selected-image-name"></span>
+		    			</div>
+		    			<div class="row" id="input-row">
+			    			<div id="input-image-container" class="col-3">
+			    				<img class="img-thumbnail" id="input-image" src="test_content/testset_3_preview.jpg"/>
+			    			</div>
+			    			<div id="input-browse-container" class="col">
+			    				<ul id="input-selection-list" class="list-group">
+					    		<li class="list-group-item"> 
+						    		 <button type="button" class="btn btn-secondary" id="input-browse-button" data-toggle="modal" data-target="#modal__dataset_browse">Browse Dataset</button>
+			    				
+					    		</li> 
+
+
+					    		<li class="list-group-item"> 
+						    		 <button type="button" class="btn btn-secondary" id="input-browse-button">Random Image</button>
+
+					    		</li> 
+
+
+								<li class="list-group-item"> 
+						    		<div class="input-group mb-3">
+								  		<input type="text" class="form-control" placeholder="Load Image by Name" aria-label="Load Image by Name" aria-describedby="load-input-button">
+								  
+										<div class="input-group-append">
+											<button class="btn btn-secondary" type="button" id="load-input-button">Load</button>
+										</div>
+									</div>
+					    		</li> 
+
+				    		</ul>
+			    				
+			    				
+			    			</div>
+			    		</div>
+			    	</div>
+			    </div>
+
+
+
+			    <div class="modal fade bd-example-modal-lg" id="modal__results_output" tabindex="-1" role="dialog" aria-labelledby="modal-title__results_output" aria-hidden="true">
+				  	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+					    <div class="modal-content">
+						    <div class="modal-header">
+						        <h5 class="modal-title" id="modal-title__results_output">Results Ouput Json</h5>
+						        <button id="close-results_output-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+						    </div>
+					    	<div class="modal-body">
+						        <div id="results_string_output"></div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				      
+				    
+			    <div class="section-container container card" id="section-container__explanation_table">
+					<div class="section-title-bar card-header" id="section-title-bar__explanation_table">
+						<span class="section-title" id="section-title__explanation_table">Explanation Table:</span> 
+			    	</div>
+
+			    	<div class="section-content-container" id="section-content-container__explanation_table">
+			    		<div class="row">
+				    	
+			    		<div class="col">
+				    		<div id="num_inputs_group" class="input-group">
+				    			<div class="input-group-prepend">
+	    							<span class="input-group-text" id="basic-addon3">Number of Input Images:</span>
+	  							</div>
+						  			<input class="form-control" type="number" id="num_explanations_in_table" name="num_explanations_in_table" value="5" step="1" />
+								
+							</div>
+						</div>
+
+						<div class="col">
+				    		<button class="btn btn-success" type="button" id="explanation-table-button" onClick="GenerateExplanationTable()">Generate Explaination Table</button>
+			    		</div>
+
+			    		<div class="col">
+				    		<button class="btn btn-success" type="button" id="explanation-table-save-button" onClick="ProduceJsonForStorage()" data-toggle="modal" data-target="#modal__results_output">Save Results</button>
+			    		</div>
+			    		
+			    		
+			    		</div>
+			    		<!-- <div class="var_storage" id="var_storage__num_results">0</div> -->
+			    		<div id="card-deck__explanation-table" class="card-deck">
+			    			
+				    		<!-- <table id="image_explantion_table__test_img_1" class="table table-bordered image_explantion_table">
+							  <thead>
+							    <tr>
+							      <th scope="col"> 
+							      	<img id="explanation-table-input-image__test_img_1" class="explanation-table-input-image" src="test_content/testset_1_preview.jpg">
+							      </th>
+							      <th class="explanation_header" id="explanation_header__test_img_1__lime" scope="col">LIME</th>
+							      <th class="explanation_header" id="explanation_header__test_img_1__shap" scope="col">Shapley</th>
+							      <th class="explanation_header" id="explanation_header__test_img_1__influence_functions"scope="col">Influence Functions</th>
+							      <th class="explanation_header" id="explanation_header__test_img_1__lrp"scope="col">LRP</th>
+							    </tr>
+							  </thead>
+							  <tbody id="explanation-table-body__test_img_1" class="explanation-table-body">
+							    <tr>
+							      <th class="explanation_row_header" id="explanation_row_header__test_img_1__vgg16_imagenet" scope="row">VGG16</th>
+							      
+							      <td class="explanation_result" id="explanation_result__test_img_1__vgg16_imagenet__lime" >
+							      	<img id="explanation-table-result-image__test_img_1__vgg16_imagenet__lime" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+							      </td>
+							      
+							      <td class="explanation_result" id="explanation_result__test_img_1__vgg16_imagenet__shap" >
+							      	<img id="explanation-table-result-image__test_img_1__vgg16_imagenet__shap" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+							      </td>
+							      
+							      <td class="explanation_result" id="explanation_result__test_img_1__vgg16_imagenet__influence_functions" >
+							      	<img id="explanation-table-result-image__test_img_1__vgg16_imagenet__influence_functions" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+							      </td>
+							      
+							      <td class="explanation_result" id="explanation_result__test_img_1__vgg16_imagenet__lrp" >
+							      	<img id="explanation-table-result-image__test_img_1__vgg16_imagenet__lrp" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+							      </td>
+							    </tr>
+
+							    <tr>
+							      <th class="explanation_row_header" id="explanation_row_header__test_img_1__vgg19_imagenet" scope="row">VGG19</th>
+							      
+							      <td class="explanation_result" id="explanation_result__test_img_1__vgg19_imagenet__lime" >
+							      	<img id="explanation-table-result-image__test_img_1__vgg19_imagenet__lime" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+							      </td>
+							      
+							      <td class="explanation_result" id="explanation_result__test_img_1__vgg19_imagenet__shap" >
+							      	<img id="explanation-table-result-image__test_img_1__vgg19_imagenet__shap" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+							      </td>
+							      
+							      <td class="explanation_result" id="explanation_result__test_img_1__vgg19_imagenet__influence_functions" >
+							      	<img id="explanation-table-result-image__test_img_1__vgg19_imagenet__influence_functions" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+							      </td>
+							      
+							      <td class="explanation_result" id="explanation_result__test_img_1__vgg19_imagenet__lrp" >
+							      	<img id="explanation-table-result-image__test_img_1__vgg19_imagenet__lrp" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+							      </td>
+							    </tr>
+							    
+							   </tbody>
+							</table> -->
+
+						</div>
+			    	</div>	
+			    </div>
+			</div>
+
+			    <!-- <div class="section-container container card" id="section-container__results">
+					<div class="section-title-bar card-header" id="section-title-bar__results">
+						<span class="section-title" id="section-title__results">Results:</span> 
+			    	</div>
+
+			    	<div class="section-content-container" id="section-content-container__results">
+			    		<button class="btn btn-success" type="button" id="explain-button" onClick="Explain()">Generate Explaination(s)</button>
+			    		<div class="var_storage" id="var_storage__num_results">0</div>
+			    		<div id="result-card-deck" class="card-deck">
+				    			<div class="card mb-3">
+								  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+								</div>
+							
+								<div class="card mb-3">
+								  <img class="result-image card-img-top" src="test_content/testset_2_preview.jpg">
+								</div>
+							
+								<div class="card mb-3">
+								  <img class="result-image card-img-top" src="test_content/testset_3_preview.jpg">
+								</div>
+
+								<div class="card mb-3">
+								  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+								</div>
+								
+								<div class="w-100 d-block d-md-block d-lg-block"></div>
+							
+								<div class="card mb-3">
+								  <img class="result-image card-img-top" src="test_content/testset_2_preview.jpg">
+								</div>
+							
+								<div class="card mb-3">
+								  <img class="result-image card-img-top" src="test_content/testset_3_preview.jpg">
+								</div>
+
+								<div class="card mb-3">
+								  <img class="result-image card-img-top" src="test_content/testset_1_preview.jpg">
+								</div>
+							
+								<div class="card mb-3">
+								  <img class="result-image card-img-top" src="test_content/testset_2_preview.jpg">
+								</div>
+							
+								<div class="w-100 d-block d-md-block d-lg-block"></div>
+
+
+						</div>
+			    	</div>
+			    </div> -->
+			</div>
+		</div>
+
+	</body>
+</html>
+
+<script src="scripts/jquery.js"></script> 
+<script src="scripts/bootstrap_js/bootstrap.bundle.min.js"></script> 
+
+<script src="scripts/interpretability_framework.js"></script> 
+<script src="scripts/generate_explanation_table.js"></script> 
+
+<script src="scripts/initialise_framework.js"></script> 
