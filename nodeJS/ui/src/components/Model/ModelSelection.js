@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Table } from 'semantic-ui-react';
+import { Table } from 'semantic-ui-react';
 import axios from 'axios';
 import _ from 'lodash';
 

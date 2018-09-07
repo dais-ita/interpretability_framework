@@ -1,4 +1,4 @@
-import {Image, Modal, Table, Segment, Icon, Divider, Grid} from "semantic-ui-react";
+import {Image, Modal, Table, Icon, Divider } from "semantic-ui-react";
 import React, { Component } from "react";
 import Moment from 'react-moment';
 import moment from 'moment';
@@ -10,14 +10,16 @@ class ResultModal extends Component {
 
         let start = moment(this.props.results.start_time);
         console.log(start.diff(moment(this.props.results.end_time), "seconds"));
+        console.log(this.props);
 
     }
 
+    componentDidUpdate () {
+        console.log(this.props);
+    }
 
 
     render () {
-
-        console.log(this.props);
 
         let correct;
 

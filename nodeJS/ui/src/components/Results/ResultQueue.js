@@ -7,7 +7,7 @@ import "./results.css";
 class ResultQueue extends Component {
 
     componentDidMount() {
-        console.log(this.props.results.length)
+        console.log(this.props.results)
     }
 
     componentDidUpdate(prevProps) {

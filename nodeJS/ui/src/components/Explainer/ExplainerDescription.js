@@ -2,10 +2,6 @@ import {Table, Button, Header} from "semantic-ui-react";
 import React, { Component } from "react";
 
 class ExplainerDescription extends Component  {
-    constructor(props) {
-        super(props);
-    }
-
     state = {
         colour: "grey"
     };

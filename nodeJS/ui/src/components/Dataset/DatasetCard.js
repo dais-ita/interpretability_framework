@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { Header, Image, Card, Grid, Button, Container, Label } from "semantic-ui-react";
-import _ from 'lodash';
+import { Image, Card, Label } from "semantic-ui-react";
 import axios from 'axios';
 
 
-class DatasetCard extends React.Component {
+class DatasetCard extends Component {
     constructor(props) {
         super(props);
         // this.toggleState = this.toggleState.bind(this);

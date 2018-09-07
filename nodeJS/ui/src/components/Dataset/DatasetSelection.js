@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Header, Image, Grid, Button, Transition, Icon } from "semantic-ui-react";
+// import { Grid, Button, Transition, Icon, Header, Image } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import _ from 'lodash';
 import axios from 'axios';
 
@@ -33,7 +34,7 @@ class DatasetSelection extends Component {
 
     render() {
 
-        const { show_preview } = this.state;
+        // const { show_preview } = this.state;
 
         const dataset_previews = _.times(this.state.datasets.length, i => (
             <Grid.Column key={i}>
