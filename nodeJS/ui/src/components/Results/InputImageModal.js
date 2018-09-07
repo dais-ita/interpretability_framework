@@ -1,29 +1,25 @@
-import {Button, Image, Segment, Form} from "semantic-ui-react";
 import React, {Component} from "react";
-import { Modal, Grid, Card, Divider, Header, Input } from "semantic-ui-react";
+import { Modal, Grid, Card, Divider, Header, Button, Image, Form } from "semantic-ui-react";
 import axios from "axios";
 
 import _ from "lodash";
-
-
 
 class InputImageModal extends Component {
     state = { images: [], heroes: [], img: "", manual_img: "" };
 
     loadImages(dataset) {
         axios.get("http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER +
-            "/" + "dataset-test-images?dataset=" + encodeURIComponent(dataset.trim())
-            + "&num_images=100")
+            "/dataset-test-images?dataset=" + encodeURIComponent(dataset.trim()) + "&num_images=100")
             .then(res => {
                 this.setState({images: res.data})
             });
 
         axios.get("http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER +
-            "/" + "dataset-details?dataset=" + encodeURIComponent(dataset.trim()))
+            "/dataset-details?dataset=" + encodeURIComponent(dataset.trim()))
             .then(res => {
                 for (let i = 0; i < res.data.interesting_images.length; i++) {
                     axios.get("http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER +
-                        "/" + "dataset-test-image?dataset=" + encodeURIComponent(dataset.trim()) +
+                        "/dataset-test-image?dataset=" + encodeURIComponent(dataset.trim()) +
                         "&image=" + res.data.interesting_images[i])
                         .then(res => {
                             let heroes = this.state.heroes;
@@ -48,7 +44,7 @@ class InputImageModal extends Component {
 
     handleSubmit = () => {
         axios.get("http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER +
-            "/" + "dataset-test-image?dataset=" + encodeURIComponent(this.props.dataset.trim()) +
+            "/dataset-test-image?dataset=" + encodeURIComponent(this.props.dataset.trim()) +
             "&image=" + this.state.img)
             .then( res => {
                     this.setState({manual_img: res.data})

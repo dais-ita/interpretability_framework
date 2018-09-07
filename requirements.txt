@@ -9,6 +9,7 @@ cycler==0.10.0
 dask==0.18.1
 decorator==4.3.0
 dill==0.2.8.2
+git+https://github.com/marcoancona/DeepExplain.git#egg=deepexplain
 enum34==1.1.6
 Flask==1.0.2
 funcsigs==1.0.2
@@ -39,6 +40,7 @@ scikit-learn==0.19.1
 scipy==1.1.0
 six==1.11.0
 sklearn==0.0
+shap
 subprocess32==3.5.2
 tensorboard==1.8.0
 tensorflow==1.8.0

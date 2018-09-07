@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import {Accordion, Header, Icon, Grid} from "semantic-ui-react";
+import {Accordion, Header, Icon, Button } from "semantic-ui-react";
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 
@@ -16,7 +16,8 @@ class Home extends Component {
         super(props);
 
         this.state = {
-            comparison_mode: false,
+            explainer_comparison: false,
+            use_case: 0,
             dataset: "",
             model: "",
             interpreter: "",
@@ -26,6 +27,7 @@ class Home extends Component {
         this.setActiveDataset = this.setActiveDataset.bind(this);
         this.setActiveModel = this.setActiveModel.bind(this);
         this.setActiveInterpreter = this.setActiveInterpreter.bind(this);
+        this.toggleUseCase = this.toggleUseCase.bind(this);
     }
 
     componentDidMount() {
@@ -37,42 +39,20 @@ class Home extends Component {
     }
 
     setActiveModel(model) {
-
-        if (this.state.comparison_mode) {
-            const model_list = this.state.model;
-
-            if (model_list.includes(model)) {
-                const model_index = model_list.indexOf(model);
-                model_list.splice(model_index, 1);
-                this.setState({model: model_list});
-            } else {
-                model_list.push(model);
-                this.setState({model:model_list});
-            }
-            console.log(this.state.model);
-        } else {
-            this.setState({model:model})
-        }
-
+        this.setState({model:model})
     }
 
     setActiveInterpreter(interpreter) {
+        this.setState({interpreter:interpreter});
+        console.log(this.state.interpreter);
+    }
 
-        if (this.state.comparison_mode) {
-            const interpreter_list = this.state.interpreter;
-
-            if (interpreter_list.includes(interpreter)) {
-                const interpreter_index = interpreter_list.indexOf(interpreter);
-                interpreter_list.splice(interpreter_index, 1);
-                this.setState({interpreter: interpreter_list});
-            } else {
-                interpreter_list.push(interpreter);
-                this.setState({interpreter: interpreter_list});
-            }
-
-            console.log(this.state.interpreter);
+    toggleUseCase() {
+        console.log(this.state);
+        if (this.state.use_case === 0) {
+            this.setState({use_case: 1 });
         } else {
-            this.setState({interpreter:interpreter});
+            this.setState({use_case: 0 });
         }
     }
 
@@ -80,17 +60,57 @@ class Home extends Component {
         const { index } = titleProps;
         const { activeIndex } = this.state;
         const newIndex = activeIndex === index ? -1 : index;
-
         this.setState({ activeIndex: newIndex })
     };
 
     render() {
         const { activeIndex } = this.state;
+        let case_toggle;
+        let explainer_selection;
 
+        if (this.state.use_case === 0) {
+            case_toggle = (
+                <div>
+                    <Header as="h3">Use case: Explore Interpretability Techniques</Header>
+                    <Button onClick={this.toggleUseCase}>Change mode</Button>
+                </div>
+            );
+
+            explainer_selection = (
+                <Accordion>
+                    <Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleClick}>
+                        <Header as='h2'>
+                            <Icon name='dropdown'/>
+                            Interpretability Technique: &nbsp;
+                            {this.state.interpreter}
+                        </Header>
+                    </Accordion.Title>
+                    <Accordion.Content active={activeIndex === 2}>
+                        <ExplainerSelection setActiveInterpreter={this.setActiveInterpreter} options={this.state}/>
+                    </Accordion.Content>
+                </Accordion>
+            )
+        } else {
+            case_toggle = (
+                <div>
+                    <Header as="h3">Use case: Build Intuitions</Header>
+                    <Button onClick={this.toggleUseCase}>Change mode</Button>
+                </div>
+            );
+
+            explainer_selection = (
+                <Accordion>
+                    <Accordion.Title>
+                        <Header as="h2">&nbsp;&nbsp;Interpretability Techniques: All</Header>
+                    </Accordion.Title>
+                </Accordion>
+            )
+        }
 
         return (
             <div className="App">
                 <Title/>
+                {case_toggle}
                 <Accordion>
                         <Accordion.Title active={activeIndex === 0} index={0} onClick={this.handleClick}>
                             <Header as='h2'>
@@ -117,21 +137,7 @@ class Home extends Component {
                     </Accordion.Content>
                 </Accordion>
 
-                <Accordion>
-                    <Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleClick}>
-                        <Header as='h2'>
-                            <Icon name='dropdown'/>
-                            Interpretability Technique: &nbsp;
-                            {this.state.interpreter}
-                        </Header>
-                    </Accordion.Title>
-                    <Accordion.Content active={activeIndex === 2}>
-                        <ExplainerSelection setActiveInterpreter={this.setActiveInterpreter} options={this.state}/>
-                    </Accordion.Content>
-                </Accordion>
-
-
-
+                {explainer_selection}
 
                 <ResultComparison options={this.state}/>
 
@@ -142,8 +148,7 @@ class Home extends Component {
 
 const App = () => (
     <Router>
-        <Route path="/ui" component={Home} />
-        {/*<Route path="/" component={Home} />*/}
+        <Route path="/(ui|)" component={Home} />
     </Router>
 );
 
