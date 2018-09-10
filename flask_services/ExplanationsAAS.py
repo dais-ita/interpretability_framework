@@ -295,7 +295,7 @@ def Explain():
 	additional_args = {
 	"num_samples":100,
 	"num_features":300,
-	"min_weight":0.01, 
+	"min_weight":0.0001, 
 	"model_name":model_name, 
 	"dataset_name":dataset_name, 
 	"num_background_samples":50,
