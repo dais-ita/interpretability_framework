@@ -33,29 +33,29 @@
 			{"dataset_name":"CIFAR-10",
 			"model_path":"saved_models/cifar-10",
 			"training_allocation_path":"dataset_csvs/cifar-10.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":400,
+			"training_time":8118.97,
+			"training_steps":0.30
 			},
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
 			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.68,
+			"training_time":1664,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
 			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.78,
+			"training_time":1805,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.82,
+			"training_time":696,
+			"training_steps":400
 			}
 		],
 		"layers":[
@@ -80,29 +80,29 @@
 			{"dataset_name":"CIFAR-10",
 			"model_path":"saved_models/cifar-10",
 			"training_allocation_path":"dataset_csvs/cifar-10.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":400,
+			"training_time":8119,
+			"training_steps":0.30
 			},
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
 			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.68,
+			"training_time":1664,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
 			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.78,
+			"training_time":1805,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.82,
+			"training_time":696,
+			"training_steps":400
 			}
 		],
 		"layers":[
@@ -127,29 +127,29 @@
 			{"dataset_name":"CIFAR-10",
 			"model_path":"saved_models/cifar-10",
 			"training_allocation_path":"dataset_csvs/cifar-10.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.2,
+			"training_time":9697,
+			"training_steps":1000
 			},
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
 			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.68,
+			"training_time":730,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
 			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.8,
+			"training_time":760,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.73,
+			"training_time":1950,
+			"training_steps":400
 			}
 		],
 		"layers":[
@@ -171,32 +171,25 @@
 		"script_name":"inception_v3_imagenet",
 		"class_name":"InceptionV3Imagenet",
 		"trained_on":[
-			{"dataset_name":"CIFAR-10",
-			"model_path":"saved_models/cifar-10",
-			"training_allocation_path":"dataset_csvs/cifar-10.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			},
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
 			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.73,
+			"training_time":538,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
 			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.67,
+			"training_time":578,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.6,
+			"training_time":1181,
+			"training_steps":400
 			}
 		],
 		"layers":[
@@ -218,32 +211,25 @@
 		"script_name":"inception_resnet_v2_imagenet",
 		"class_name":"InceptionResNetV2Imagenet",
 		"trained_on":[
-			{"dataset_name":"CIFAR-10",
-			"model_path":"saved_models/cifar-10",
-			"training_allocation_path":"dataset_csvs/cifar-10.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			},
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
 			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.63,
+			"training_time":300,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
 			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.63,
+			"training_time":1770,
+			"training_steps":500
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.64,
+			"training_time":5214,
+			"training_steps":1000
 			}
 		],
 		"layers":[
@@ -265,32 +251,25 @@
 		"script_name":"mobilenet_imagenet",
 		"class_name":"MobileNetImagenet",
 		"trained_on":[
-			{"dataset_name":"CIFAR-10",
-			"model_path":"saved_models/cifar-10",
-			"training_allocation_path":"dataset_csvs/cifar-10.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			},
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
 			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.58,
+			"training_time":344,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
 			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
 			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.75,
+			"training_time":420,
+			"training_steps":400
 			},
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.75,
+			"training_time":1185,
+			"training_steps":400
 			}
 		],
 		"layers":[
@@ -312,32 +291,18 @@
 		"script_name":"xception_imagenet",
 		"class_name":"XceptionImagenet",
 		"trained_on":[
-			{"dataset_name":"CIFAR-10",
-			"model_path":"saved_models/cifar-10",
-			"training_allocation_path":"dataset_csvs/cifar-10.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			},
 			{"dataset_name":"Gun Wielding Image Classification",
 			"model_path":"saved_models/gun_wielding_image_classification",
 			"training_allocation_path":"dataset_csvs/wielder_non-wielder_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			},
-			{"dataset_name":"Traffic Congestion Image Classification (Resized)",
-			"model_path":"saved_models/traffic_congestion_image_classification_(resized)",
-			"training_allocation_path":"dataset_csvs/traffic_congestion_image_classification_(resized)_train_split.csv",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
-			},
+			"test_accuracy":0.6,
+			"training_time":4175,
+			"training_steps":400
+			}
 			{"dataset_name":"Traffic Congestion Image Classification",
 			"model_path":"saved_models/traffic_congestion_image_classification",
-			"test_accuracy":0,
-			"training_time":0,
-			"training_steps":0
+			"test_accuracy":0.7,
+			"training_time":1804,
+			"training_steps":400
 			}
 		],
 		"layers":[
