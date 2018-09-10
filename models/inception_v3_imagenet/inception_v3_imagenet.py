@@ -203,9 +203,10 @@ class InceptionV3Imagenet(object):
             image_shape = image_array_shape
 
         target_shape = (max(min_height,image_shape[0]),max(min_width,image_shape[1]),image_shape[2])
-
+        print("target_shape",target_shape)
         shape_difference = (np.array(target_shape) - np.array(image_shape))
-
+        print("shape_difference",shape_difference)
+        
         add_top = int(shape_difference[0]/2)
         add_bottom = shape_difference[0] - add_top
 

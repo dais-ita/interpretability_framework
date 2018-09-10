@@ -19,6 +19,7 @@ class ResultComparison extends Component {
         this.state = {
             results: [],
             images: [],
+            input_images: [],
             image: false,
             multi_results: [],
             interpreters: []
@@ -92,29 +93,45 @@ class ResultComparison extends Component {
 
     getMultipleResults () {
         const req = "http://" + process.env.REACT_APP_SERVER_NAME + ":" + process.env.REACT_APP_PORT_NUMBER;
-        const img = "/dataset-test-image?dataset=" + encodeURIComponent(this.props.options.dataset.trim());
-            // + "&image=" + this.state.image.image_name;
+        const img = "/dataset-test-image?dataset=" + encodeURIComponent(this.props.options.dataset.trim())
+            + "&image=" + this.state.image.image_name;
 
         let result_entry = [];
-
+            // console.log(img);
             axios.get(req + img)
                 .then(res => {
+
+                    const input_images = this.state.input_images;
+                    input_images.push(this.state.image.input);
+
+                    this.setState({input_images});
                     for (let i = 0; i < this.state.interpreters.length; i++ ) {
+                        // console.log(res.data["image_name"]);/**/
                         let result = {};
+
+                        result["image_name"] = this.state.image.image_name;
+                        result["input_image"] = this.state.image.input;
+                        result["ground_truth"] = this.state.image.ground_truth;
+
+
 
                         result["dataset"] = this.props.options.dataset;
                         result["model"] = this.props.options.model;
                         result["interpreter"] = this.state.interpreters[i].explanation_name;
 
+                        // console.log("###");
+                        // console.log(this.state.interpreters[i].explanation_name);
+
                         const explain_req = req + "/explanation-explain?dataset=" +
                             encodeURIComponent(this.props.options.dataset.trim()) + "&model=" + this.props.options.model +
                             // "&image=" + res.data["image_name"] + "&explanation=" + this.state.interpreters[i].explanation_name;
-                            "&image=" + res.data["image_name"] + "&explanation=LIME";
+                            "&image=" + res.data["image_name"] + "&explanation=" +
+                            encodeURIComponent(this.state.interpreters[i].explanation_name.trim());
 
-                        result["input_image"] = res.data["input"];
-                        result["ground_truth"] = res.data["ground_truth"];
-                        result["image_name"] = res.data["image_name"];
-                        console.log("processing");
+                        // result["input_image"] = res.data["input"];
+                        // result["ground_truth"] = res.data["ground_truth"];
+                        // result["image_name"] = res.data["image_name"];
+                        console.log(explain_req);
 
                         axios.get(explain_req)
                             .then(res => {
@@ -126,8 +143,9 @@ class ResultComparison extends Component {
 
                                 // const results = this.state.results;
                                 result_entry.push(result);
-                                console.log(this.state);
+                                // console.log(this.state);
                                 this.setState(this.state);
+                                console.log("request completed.")
 
                             })
                             .catch(function (error) {
@@ -184,7 +202,7 @@ class ResultComparison extends Component {
                 <div>
                     <Button onClick={this.getMultipleResults}>Generate Explanations</Button>
                     {/*<Button onClick={_.times(50, i => (this.getResults))}>Generate 50 Random Explanations</Button>*/}
-                    <ResultTable results={this.state.multi_results} />
+                    <ResultTable inputs ={this.state.input_images} results={this.state.multi_results  } />
                 </div>
             );
 
@@ -196,13 +214,6 @@ class ResultComparison extends Component {
                 </div>
                 );
 
-            image_selection = (
-                <div>
-                    <Header as='h3'>&nbsp;Image Selection</Header>
-                    {input_image}
-                    <InputImageModal setInputImage={this.setImage} dataset={this.props.options.dataset}/>
-                </div>
-            )
         }
 
 
@@ -211,7 +222,11 @@ class ResultComparison extends Component {
             <div>
                 <br/>
                 <Header as='h2'>Explanations</Header>
-                {image_selection}
+                <div>
+                    <Header as='h3'>&nbsp;Image Selection</Header>
+                    {input_image}
+                    <InputImageModal setInputImage={this.setImage} dataset={this.props.options.dataset}/>
+                </div>
 
                 <Header dividing as='h2'>Results</Header>
                 {results}

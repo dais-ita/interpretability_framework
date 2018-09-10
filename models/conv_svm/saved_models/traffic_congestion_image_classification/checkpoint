@@ -1,0 +1,2 @@
+model_checkpoint_path: "/media/mass_storage_1/harborned/repos/p5_afm_2018_demo/models/conv_svm/saved_models/traffic_congestion_image_classification/model.ckpt"
+all_model_checkpoint_paths: "/media/mass_storage_1/harborned/repos/p5_afm_2018_demo/models/conv_svm/saved_models/traffic_congestion_image_classification/model.ckpt"
