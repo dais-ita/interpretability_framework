@@ -1,42 +1,61 @@
-# p5_afm_2018_demo
-Project 5 AFM 2018 Demo - Modular Interpretability Interface
+# DAIS ITA - Interpretabity Framework
+A technique exploration and data generation tool
 
-The demo presents an interface for exploring different explanation types of machine learning models.
+This project provides a framework designed, from the ground up, to allow easy building of dataset-ML model-explanation pipelines.
 
-- The user selects a task (by selecting a dataset and model to use).
-- A list of available explanation types is generated for that task and presented. 
-- The user selects the deseried explanation types and sets any parameters.
-- The user runs a test image from the dataset through the selected model and is presented with an output and explanations for each type selected.
+The framework is structured in three layers:
+  - Item and service layer
+  - Unification API layer
+  - Interface Layer
+  
+## Item and service layer
+### Framework Items
+The codebase for framework items (datasets, machine learning models and explanation techniques) are wrapped in classes designed to unify their input/output signature. This allows the framework to easily form pipelines from the different items and also allows for new items to be added to the framework easily. 
 
-For some tasks, an adversarial attack generator is available. This generator will craft input examples from test data that appear unchanged to the human eye but will cause an incorrect class to be assigned by the model.
-For models that offer the avility to test adversarial attacks, the select is made available during the task selection step.  
+Instructions on how to add items to the framework can be found within the README of each item-type parent folder:
+https://github.com/dais-ita/p5_afm_2018_demo/blob/master/datasets
+https://github.com/dais-ita/p5_afm_2018_demo/blob/master/models
+https://github.com/dais-ita/p5_afm_2018_demo/blob/master/explanations
+
+### Item Services
+For each item category, python flask services exist, located in https://github.com/dais-ita/p5_afm_2018_demo/blob/master/flask_services
+These services handle the instantiation of the framework items and also handle the passing of data to and from the items. 
+
+The services are not currently designed to handle multiple requests concurrently. This is due to the resource dependant nature of machine learning models and explanations. In future revisions, this capability can be added or a more distributed approach to the services can be implemented. The tool is designed for exploration by researchers as well as experiment designing and thus the current use cases do not require a single running instance of the framework to serve multiple users simultaneously. 
 
 
-For each option group,a json file exists that describes the existing options. The interface is built to understand available options and valid configurations via the JSON file. 
+##Unification API layer
+The unification API offers a single point to perform RESTful requests across the framework. The API service itself also offers a simple UI to explore the items within the framework and for many use cases, this UI may suffice. 
+
+##Interface Layer
+At the interface layer, custom interfaces can be built that take advantage of the unification API. Do to the REST API design, many different applications or interfaces can be built to take advantage of the simplistic pipeline building the API provides. 
+
+
+
+For each option group, a JSON file exists that describes the existing options. The interface is built to understand available options and valid configurations via the JSON file. 
 
 Available Datasets (https://github.com/dais-ita/p5_afm_2018_demo/blob/master/datasets)
 - gun wielder image binary classification
-- mnist (not yet integrated)
-- cifar10 (not yet integrated)
-- gun vs not gun , airport airscan (https://www.kaggle.com/c/passenger-screening-algorithm-challenge/data ) (not yet integrated) 
+- mnist
+- cifar10
+- TFL Traffic Congestion
+- TFL Traffic Congestion (Resized)
 
 
 Available Models
-- CNN 1 (with model structure A) (not yet integrated)
-- CNN 2 (With model structure B) (not yet integrated)
-- Pretrained CNN (not yet integrated)
-- Pretrained CNN with transfer learning (not yet integrated)
-- SVM (not yet integrated)
-- RandomForest (not yet integrated)
+- VGG16
+- VGG19
+- Inception V3
+- Inception ResNet V2
+- Xception
+- MobileNet
 
 
 Available Explanations
-- LIME (not yet integrated)
-- LRP Deep Taylor (not yet integrated)
-- Salient Semantic Objects (not yet integrated)
-- Influence Functions (not yet integrated)
-- Training Data Examples (not yet integrated)
-- surrogate model - decision tree (not yet integrated)
+- LIME
+- LRP Deep Taylor
+- Influence Functions
+- Shapley
 
 
 Available Adversarial Attack Generators
