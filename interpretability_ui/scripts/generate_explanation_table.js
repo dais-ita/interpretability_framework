@@ -159,15 +159,18 @@ function CreateAndPopulateExplanationTable(input_images,dataset_name)
 
 		$("#card-deck__explanation-table").html($("#card-deck__explanation-table").html() + explanation_result_table_html);
 
-		for (var model_i = 0; model_i < selected_models.length; model_i++){
-			current_model = selected_models[model_i];
-			for (var explanation_i = 0; explanation_i < selected_explanations.length; explanation_i++){
-				current_explanation = selected_explanations[explanation_i];
+		// for (var model_i = 0; model_i < selected_models.length; model_i++){
+		// 	current_model = selected_models[model_i];
+		// 	for (var explanation_i = 0; explanation_i < selected_explanations.length; explanation_i++){
+		// 		current_explanation = selected_explanations[explanation_i];
 		
-				PopulateExplanationTable(dataset_name,input_image,current_model,current_explanation);
-			}
-		}
+		// 		PopulateExplanationTable(dataset_name,input_image,current_model,current_explanation);
+		// 	}
+		// }
 	}
+
+
+	PopulateExplanationTableSynchronously(dataset_name,input_images,selected_models,selected_explanations);
 
 
 }
@@ -175,8 +178,12 @@ function CreateAndPopulateExplanationTable(input_images,dataset_name)
 
 function PopulateExplanationTable(dataset_name,input_image,model,explanation)
 {
-	GetExplanationForTable(dataset_name,model,explanation,input_image.image_name,false,AddExplanationResultToTable)
+	GetExplanationForTable(dataset_name,model,explanation,input_image.image_name,false,AddExplanationResultToTable);
 }
+
+
+
+
 
 function AddExplanationResultToTable(explanation_result,image_identifier,model_identifier,explanation_identifier)
 {	
@@ -210,6 +217,91 @@ function GetExplanationForTable(dataset_name,model,explanation,image_name,attrib
 	        }
 	    })
 }
+
+
+
+
+
+function PopulateExplanationTableSynchronously(dataset_name,input_images,selected_models,selected_explanations)
+{
+	GetExplanationForTableAndFetchNext(dataset_name,false,AddExplanationResultToTableAndFetchNext,input_images,selected_models,selected_explanations,0,0,0);
+}
+
+function AddExplanationResultToTableAndFetchNext(explanation_result,image_identifier,model_identifier,explanation_identifier,dataset_name,input_images,selected_models,selected_explanations,image_i,model_i,explanation_i)
+{	
+	var image_element_id = `explanation-table-result-image__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	$("#"+image_element_id).attr("src","data:image/jpg;base64,"+explanation_result["explanation_image"]);
+
+	var ground_truth_id = `explanation-table-result-image-prediction__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	$("#"+ground_truth_id).html(explanation_result["prediction"]);
+
+
+	var json_id = `explanation-table-result-json-storage__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	$("#"+json_id).html(JSON.stringify(explanation_result));
+
+	var counters = IncrementCounters(input_images,selected_models,selected_explanations,image_i,model_i,explanation_i);
+
+	image_i = counters[2];
+	model_i = counters[1];
+	explanation_i = counters[0];
+
+	if(image_i != -1)
+	{
+		GetExplanationForTableAndFetchNext(dataset_name,false,AddExplanationResultToTableAndFetchNext,input_images,selected_models,selected_explanations,image_i,model_i,explanation_i);	
+	}
+}
+
+function IncrementCounters(input_images,selected_models,selected_explanations,image_i,model_i,explanation_i)
+{
+	explanation_i++;
+
+	if(explanation_i >= selected_explanations.length)
+	{
+		explanation_i = 0;
+
+		model_i++;
+
+		if(model_i >= selected_models.length)
+		{
+			model_i = 0;
+
+			image_i++;
+
+			if(image_i >= input_images.length)
+			{
+				image_i = -1;
+			}
+		}	
+	}
+
+	return [explanation_i, model_i, image_i];
+}
+
+function GetExplanationForTableAndFetchNext(dataset_name,attribution_map,callback_function,input_images,selected_models,selected_explanations,image_i,model_i,explanation_i)
+{	
+	var input_image = input_images[image_i];
+	var image_name = input_image.image_name;
+	var model = selected_models[model_i];
+	var explanation = selected_explanations[explanation_i];
+
+	var image_identifier = input_image.image_name.replace(".jpg","");
+	var model_identifier = model.class_name;
+	var explanation_identifier = explanation.class_name;
+
+	var explain_url = api_base_url + `/explanation-explain?dataset=${dataset_name}&model=${model.model_name}&image=${image_name}&explanation=${explanation.explanation_name}&attribution_map=${attribution_map}`;
+
+	$.ajax({
+	        url: explain_url,
+	        type: "GET",
+	        success: function (data) 
+	        {
+	        	callback_function(data,image_identifier,model_identifier,explanation_identifier,dataset_name,input_images,selected_models,selected_explanations,image_i,model_i,explanation_i);          
+	        }
+	    })
+}
+
+
+
 
 
 function ProduceJsonForStorage()
