@@ -71,7 +71,7 @@ function CreateAndPopulateExplanationTable(input_images,dataset_name)
 				 	explanation_result_table_html = explanation_result_table_html +`<td class="explanation_result" id="explanation_result__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}" >
 						      	<img id="explanation-table-result-image__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
 						      	<span class="explanation-table-result-image-prediction" id="explanation-table-result-image-prediction__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">"Fetching..."</span>
-							    <span class="explanation-table-result-json-storage json-storage" id="explanation-table-result-json-storage__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}"></span>
+							    <span class="explanation-table-result-json-storage json-storage" id="explanation-table-result-json-storage__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">{}</span>
 							    
 							     
 						      </td>`;
@@ -248,10 +248,10 @@ function ProduceJsonForStorage()
 
 		json_strings.push(json_string);
 	}
-
+	$("#results_string_output").html("Generating JSON for download...");
 	//$("#results_string_output").html('{"results":['+json_strings.join(",<br>")+']}');
 	DownloadTableJson('{"explanation_table_data":{"results":['+json_strings.join(",\n")+']}, \n\n"table_html":'+JSON.stringify({"html":$("#card-deck__explanation-table").html()})+'}');
-	$("#results_string_output").html("Generating JSON for download...");
+	
 }
 
 
@@ -293,9 +293,10 @@ function BuildTableFromJsonString(table_json_string)
 {
 	var table_json = JSON.parse(table_json_string);
 
+	alert("building table...");
 	$("#card-deck__explanation-table").html(table_json.table_html.html);
 
-	alert("building table");
+	
 }
 
 function BuildTableFromFile(f)
