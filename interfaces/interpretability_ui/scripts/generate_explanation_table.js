@@ -96,9 +96,10 @@ function CreateAndPopulateExplanationTable(input_images,dataset_name)
 		// 	}
 		// }
 
-		PopulateExplanationTableSynchronously(dataset_name,input_images,selected_models,selected_explanations);
-
+		
 	}
+
+	PopulateExplanationTableSynchronously(dataset_name,input_images,selected_models,selected_explanations);
 
 
 }
@@ -220,7 +221,7 @@ function GetExplanationForTableAndFetchNext(dataset_name,attribution_map,callbac
 	        {
 	        	callback_function(data,image_identifier,model_identifier,explanation_identifier,dataset_name,input_images,selected_models,selected_explanations,image_i,model_i,explanation_i);          
 	        }
-	    })
+	    });
 }
 
 
@@ -228,6 +229,8 @@ function GetExplanationForTableAndFetchNext(dataset_name,attribution_map,callbac
 
 function ProduceJsonForStorage()
 {
+	$("#results_string_output").html("Generating JSON for download...");
+	
 	var explanation_results = $(".explanation_result");
 
 	var json_strings = [];
@@ -248,7 +251,6 @@ function ProduceJsonForStorage()
 
 		json_strings.push(json_string);
 	}
-	$("#results_string_output").html("Generating JSON for download...");
 	//$("#results_string_output").html('{"results":['+json_strings.join(",<br>")+']}');
 	DownloadTableJson('{"explanation_table_data":{"results":['+json_strings.join(",\n")+']}, \n\n"table_html":'+JSON.stringify({"html":$("#card-deck__explanation-table").html()})+'}');
 	
