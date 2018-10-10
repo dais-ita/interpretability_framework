@@ -243,7 +243,7 @@ function GetExplanationForTableAndFetchNext(dataset_name,attribution_map,callbac
 
 
 
-function ProduceJsonForStorage()
+function OLDProduceJsonForStorage()
 {
 	$("#results_string_output").html("Generating JSON for download...");
 	
@@ -270,21 +270,104 @@ function ProduceJsonForStorage()
 	}
 	//$("#results_string_output").html('{"results":['+json_strings.join(",<br>")+']}');
 	
-	// SaveTableViaService();
+	
 
-	DownloadTableJson('{"explanation_table_scaffold":'+$("#explanation_table_json_storage").html()+',"explanation_table_data":{"results":[\n'+json_strings.join(",\n")+']} }');
+	//DownloadTableJson('{"explanation_table_scaffold":'+$("#explanation_table_json_storage").html()+',"explanation_table_data":{"results":[\n'+json_strings.join(",\n")+']} }');
 	
 }
 
+function ProduceJsonForStorage()
+{
+	var base_api_url = "http://localhost:6101/";
+	
+	var experiment_id = "experiment_" + Date.now().toString()
+
+	var create_folder_url = base_api_url + "create_table_folder/"+experiment_id	
+
+	$.ajax({
+	        url: create_folder_url,
+	        type: "get",
+	        success: function (data) 
+	        {
+	        	var explanation_results = $(".explanation_result");
+
+				SendResultToSaveAPI(explanation_results,0,data);
+
+			}
+	});
+
+}
+
+
+function SendResultToSaveAPI(explanation_results,result_i,experiment_path)
+{
+	var base_api_url = "http://localhost:6101/";
+	var save_json_url = base_api_url + "save_explanation_result_json"
+
+
+	var current_result = explanation_results[result_i];
+	var result_id = current_result.id.replace("explanation_result__","");
+	var result_identifiers = result_id.split("__");
+
+	var result_dict = {};
+
+	result_dict["dataset_identifier"] = result_identifiers[0]
+	result_dict["image_identifier"] = result_identifiers[1];
+	result_dict["model_identifier"] = result_identifiers[2];
+	result_dict["explanation_identifier"] = result_identifiers[3];
+	result_dict["result_json"] = JSON.parse($("#explanation-table-result-json-storage__"+result_id).html());
+
+	var json_string = JSON.stringify(result_dict);
+
+	var data_string = JSON.stringify({"experiment_path":experiment_path,"explanation":json_string});
+	$.ajax({
+        url: save_json_url,
+        type: "POST",
+        crossDomain: true,
+        data:data_string,
+        success: function (data) 
+        {
+        	result_i++;
+        	if(result_i < explanation_results.length)
+        	{
+        		SendResultToSaveAPI(explanation_results,result_i,experiment_path);
+        	}
+        	else
+        	{
+        		CompileJsonFile(experiment_path);
+        	}
+       	}
+    });
+	
+}
+
+function CompileJsonFile(experiment_path)
+{
+	var base_api_url = "http://localhost:6101/";
+	var compile_json_url = base_api_url + "compile_explanation_table_json"
+
+	$.ajax({
+        url: compile_json_url,
+        type: "post",
+        data:JSON.stringify({"experiment_path":experiment_path,"explanation_table_scaffold":$("#explanation_table_json_storage").html()}),
+        success: function (data) 
+        {
+        	alert("Table saved in:"+data);
+        }
+    });
+
+}
+
+
 function SaveTableViaService()
 {
-	var save_table_url = "http://localhost:6101/save_explanation_table";
+	var save_table_url = "http://localhost:6101/save_explanation_table_from_json";
 
-	var table_html = $("#card-deck__explanation-table").html();
+	var table_json = '{"explanation_table_scaffold":'+$("#explanation_table_json_storage").html()+',"explanation_table_data":{"results":[\n'+json_strings.join(",\n")+']} }';
 	$.ajax({
 	        url: save_table_url,
 	        type: "post",
-	        data:table_html,
+	        data:table_json,
 	        success: function (data) 
 	        {
 	        	alert("table html sent to save function");
