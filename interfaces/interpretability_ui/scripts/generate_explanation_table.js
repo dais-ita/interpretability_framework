@@ -33,45 +33,59 @@ function CreateAndPopulateExplanationTable(input_images,dataset_name)
 	// var table_scaffold_json = {"table":{"input_images":input_images,"selected_models":selected_models,"selected_explanations":selected_explanations}};
 
 
+	CreateTable(input_images,dataset_name,selected_models,selected_explanations);	
 
+	PopulateExplanationTableSynchronously(dataset_name,input_images,selected_models,selected_explanations);
+
+
+}
+
+function CreateTable(input_images,dataset_name,selected_models,selected_explanations)
+{
+	var dataset_identifier = dataset_name.split(" ").join("_").replace("(","").replace(")","");
+	
+	$("#card-deck__explanation-table").html('<span id="explanation_table_json_storage"></span>');
+	$("#explanation_table_json_storage").html(JSON.stringify({"input_images":input_images,"dataset_name":dataset_name,"selected_models":selected_models,"selected_explanations":selected_explanations}))
+		
 	for (var img_i = 0; img_i < input_images.length; img_i++){
 		input_image = input_images[img_i];
 
 		var image_identifier = input_image.image_name.replace(".jpg","");
 
-		var explanation_result_table_html = `<table id="image_explantion_table__${image_identifier}" class="table table-bordered image_explantion_table">
+		var explanation_result_table_html = `
+							<table id="image_explantion_table__${dataset_identifier}__${image_identifier}" class="table table-bordered image_explantion_table">
 							  <thead>
 							    <tr>
 							      <th scope="col"> 
-							      	<img id="explanation-table-input-image__${image_identifier}" class="explanation-table-input-image" src="data:image/jpg;base64,${input_image.input}">
-							      	<span class="explanation-table-input-image-ground-truth" id="explanation-table-input-image-ground-truth__${image_identifier}">${input_image.ground_truth}</span>
+							      	<img id="explanation-table-input-image__${dataset_identifier}__${image_identifier}" class="explanation-table-input-image" src="data:image/jpg;base64,${input_image.input}">
+							      	<span class="explanation-table-input-image-ground-truth" id="explanation-table-input-image-ground-truth__${dataset_identifier}__${image_identifier}">${input_image.ground_truth}</span>
 							      </th>`;
 
 		for (var explanation_i = 0; explanation_i < selected_explanations.length; explanation_i++){
 				current_explanation = selected_explanations[explanation_i];
-					explanation_result_table_html = explanation_result_table_html + `<th class="explanation_header" id="explanation_header__${image_identifier}__${current_explanation.class_name}" scope="col">${current_explanation.explanation_name}</th>`;
+					explanation_result_table_html = explanation_result_table_html + `<th class="explanation_header" id="explanation_header__${dataset_identifier}__${image_identifier}__${current_explanation.class_name}" scope="col">${current_explanation.explanation_name}</th>`;
 			}
 
 
 		explanation_result_table_html = explanation_result_table_html +`</tr>
 							  </thead>
-							  <tbody id="explanation-table-body__${image_identifier}" class="explanation-table-body">`;	
+							  <tbody id="explanation-table-body__${dataset_identifier}__${image_identifier}" class="explanation-table-body">`;	
 
 		//create rows							  
 		for (var model_i = 0; model_i < selected_models.length; model_i++){
 			current_model = selected_models[model_i];
 			
 			explanation_result_table_html = explanation_result_table_html +`<tr>
-							      <th class="explanation_row_header" id="explanation_row_header__${image_identifier}__${current_model.class_name}" scope="row">${current_model.model_name}</th>`;
+							      <th class="explanation_row_header" id="explanation_row_header__${dataset_identifier}__${image_identifier}__${current_model.class_name}" scope="row">${current_model.model_name}</th>`;
 							      
 							     
 			//create cells
 			for (var explanation_i = 0; explanation_i < selected_explanations.length; explanation_i++){
 				current_explanation = selected_explanations[explanation_i];
-				 	explanation_result_table_html = explanation_result_table_html +`<td class="explanation_result" id="explanation_result__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}" >
-						      	<img id="explanation-table-result-image__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
-						      	<span class="explanation-table-result-image-prediction" id="explanation-table-result-image-prediction__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">"Fetching..."</span>
-							    <span class="explanation-table-result-json-storage json-storage" id="explanation-table-result-json-storage__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">{}</span>
+				 	explanation_result_table_html = explanation_result_table_html +`<td class="explanation_result" id="explanation_result__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}" >
+						      	<img id="explanation-table-result-image__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
+						      	<span class="explanation-table-result-image-prediction" id="explanation-table-result-image-prediction__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">"Fetching..."</span>
+							    <span class="explanation-table-result-json-storage json-storage" id="explanation-table-result-json-storage__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">{}</span>
 							    
 							     
 						      </td>`;
@@ -87,6 +101,7 @@ function CreateAndPopulateExplanationTable(input_images,dataset_name)
 
 		$("#card-deck__explanation-table").html($("#card-deck__explanation-table").html() + explanation_result_table_html);
 
+		
 		// for (var model_i = 0; model_i < selected_models.length; model_i++){
 		// 	current_model = selected_models[model_i];
 		// 	for (var explanation_i = 0; explanation_i < selected_explanations.length; explanation_i++){
@@ -98,35 +113,33 @@ function CreateAndPopulateExplanationTable(input_images,dataset_name)
 
 		
 	}
-
-	PopulateExplanationTableSynchronously(dataset_name,input_images,selected_models,selected_explanations);
-
-
 }
-
 
 function PopulateExplanationTable(dataset_name,input_image,model,explanation)
 {
-	GetExplanationForTable(dataset_name,model,explanation,input_image.image_name,false,AddExplanationResultToTable)
+	GetExplanationForTable(dataset_name,model,explanation,input_image,false,AddExplanationResultToTable)
 }
 
-function AddExplanationResultToTable(explanation_result,image_identifier,model_identifier,explanation_identifier)
+function AddExplanationResultToTable(explanation_result,dataset_name,image_identifier,model_identifier,explanation_identifier)
 {	
-	var image_element_id = `explanation-table-result-image__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	var dataset_identifier = dataset_name.split(" ").join("_").replace("(","").replace(")","");
+
+	var image_element_id = `explanation-table-result-image__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
 	$("#"+image_element_id).attr("src","data:image/jpg;base64,"+explanation_result["explanation_image"]);
 
-	var ground_truth_id = `explanation-table-result-image-prediction__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	var ground_truth_id = `explanation-table-result-image-prediction__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
 	$("#"+ground_truth_id).html(explanation_result["prediction"]);
 
 
-	var json_id = `explanation-table-result-json-storage__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	var json_id = `explanation-table-result-json-storage__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
 	$("#"+json_id).html(JSON.stringify(explanation_result));
 
 }
 
 
-function GetExplanationForTable(dataset_name,model,explanation,image_name,attribution_map,callback_function)
+function GetExplanationForTable(dataset_name,model,explanation,input_image,attribution_map,callback_function)
 {
+	var image_name = input_image.image_name;
 	var image_identifier = input_image.image_name.replace(".jpg","");
 	var model_identifier = model.class_name;
 	var explanation_identifier = explanation.class_name;
@@ -138,7 +151,7 @@ function GetExplanationForTable(dataset_name,model,explanation,image_name,attrib
 	        type: "GET",
 	        success: function (data) 
 	        {
-	        	callback_function(data,image_identifier,model_identifier,explanation_identifier);          
+	        	callback_function(data,dataset_name,image_identifier,model_identifier,explanation_identifier);          
 	        }
 	    })
 }
@@ -153,14 +166,17 @@ function PopulateExplanationTableSynchronously(dataset_name,input_images,selecte
 
 function AddExplanationResultToTableAndFetchNext(explanation_result,image_identifier,model_identifier,explanation_identifier,dataset_name,input_images,selected_models,selected_explanations,image_i,model_i,explanation_i)
 {	
-	var image_element_id = `explanation-table-result-image__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	var dataset_identifier = dataset_name.split(" ").join("_").replace("(","").replace(")","");
+
+	var image_element_id = `explanation-table-result-image__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
 	$("#"+image_element_id).attr("src","data:image/jpg;base64,"+explanation_result["explanation_image"]);
 
-	var ground_truth_id = `explanation-table-result-image-prediction__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	var ground_truth_id = `explanation-table-result-image-prediction__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
 	$("#"+ground_truth_id).html(explanation_result["prediction"]);
 
 
-	var json_id = `explanation-table-result-json-storage__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	var json_id = `explanation-table-result-json-storage__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	// $("#"+json_id).html(JSON.stringify({"dataset_identifier":dataset_identifier,"image_identifier":image_identifier,"model_identifier":model_identifier,"explanation_identifier":explanation_identifier,"explanation_result":explanation_result}));
 	$("#"+json_id).html(JSON.stringify(explanation_result));
 
 	var counters = IncrementCounters(input_images,selected_models,selected_explanations,image_i,model_i,explanation_i);
@@ -242,9 +258,10 @@ function ProduceJsonForStorage()
 
 		var result_dict = {};
 
-		result_dict["image_name"] = result_identifiers[0];
-		result_dict["model_class_name"] = result_identifiers[1];
-		result_dict["explanation_class_name"] = result_identifiers[2];
+		result_dict["dataset_identifier"] = result_identifiers[0]
+		result_dict["image_identifier"] = result_identifiers[1];
+		result_dict["model_identifier"] = result_identifiers[2];
+		result_dict["explanation_identifier"] = result_identifiers[3];
 		result_dict["result_json"] = JSON.parse($("#explanation-table-result-json-storage__"+result_id).html());
 
 		var json_string = JSON.stringify(result_dict);
@@ -252,8 +269,27 @@ function ProduceJsonForStorage()
 		json_strings.push(json_string);
 	}
 	//$("#results_string_output").html('{"results":['+json_strings.join(",<br>")+']}');
-	DownloadTableJson('{"explanation_table_data":{"results":['+json_strings.join(",\n")+']}, \n\n"table_html":'+JSON.stringify({"html":$("#card-deck__explanation-table").html()})+'}');
 	
+	// SaveTableViaService();
+
+	DownloadTableJson('{"explanation_table_scaffold":'+$("#explanation_table_json_storage").html()+',"explanation_table_data":{"results":[\n'+json_strings.join(",\n")+']} }');
+	
+}
+
+function SaveTableViaService()
+{
+	var save_table_url = "http://localhost:6101/save_explanation_table";
+
+	var table_html = $("#card-deck__explanation-table").html();
+	$.ajax({
+	        url: save_table_url,
+	        type: "post",
+	        data:table_html,
+	        success: function (data) 
+	        {
+	        	alert("table html sent to save function");
+	       	}
+	    });
 }
 
 
@@ -295,10 +331,21 @@ function BuildTableFromJsonString(table_json_string)
 {
 	var table_json = JSON.parse(table_json_string);
 
-	alert("building table...");
-	$("#card-deck__explanation-table").html(table_json.table_html.html);
+	// $("#card-deck__explanation-table").html(table_json.explanation_table_data.table_html.html);
 
+	var table_scaffold = table_json.explanation_table_scaffold;
+
+	CreateTable(table_scaffold.input_images,table_scaffold.dataset_name,table_scaffold.selected_models,table_scaffold.selected_explanations);
+
+	var results = table_json.explanation_table_data.results;
+
+	for (var result_i = 0; result_i < results.length; result_i++){
+		var result = results[result_i];
+
+		AddExplanationResultToTable(result.result_json,result.dataset_identifier,result.image_identifier,result.model_identifier,result.explanation_identifier);	
+	}
 	
+	// LoadItemJsonFromId();
 }
 
 function BuildTableFromFile(f)
