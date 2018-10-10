@@ -1,4 +1,6 @@
 from flask import Flask, Response ,send_file , send_from_directory,request
+from flask_cors import CORS, cross_origin
+
 import os
 
 import cv2
@@ -235,6 +237,76 @@ def SaveExplanationTable():
 
 	return "Saved as: "+file_path
 	
+
+@app.route("/save_explanation_table_from_json", methods=['POST'])
+def SaveExplanationTableFromJson():
+
+	file_path = "table_html.json"
+	with open(file_path,"w") as f:
+		f.write(request.get_data())
+
+	return "Saved as: "+file_path
+
+
+@app.route("/create_table_folder/<table_name>", methods=['GET'])
+@cross_origin()
+def CreateExplanationTableFolder(table_name):
+
+	base_dir = "experiment_tables"
+	
+	table_folder_path = os.path.join(base_dir,table_name)
+
+	if(not os.path.isdir(table_folder_path)):
+		os.mkdir(table_folder_path)
+	
+	return table_folder_path
+
+
+@app.route("/save_explanation_result_json", methods=['POST'])
+@cross_origin()
+def SaveExplanationResultJson():
+	request.get_data()
+	print("request.data",request.data)
+	
+	raw_json = json.loads(request.data)
+	
+	base_dir = raw_json["experiment_path"]
+	explanation =  json.loads(raw_json["explanation"])
+	json_file_name = explanation["dataset_identifier"]+"_"+explanation["image_identifier"]+"_"+explanation["model_identifier"]+"_"+explanation["explanation_identifier"]+".json"
+
+	file_path = os.path.join(base_dir,json_file_name)
+
+	with open(file_path,"w") as f:
+		f.write(json.dumps(explanation))
+
+	return file_path
+
+
+@app.route("/compile_explanation_table_json", methods=['POST'])
+@cross_origin()
+def CompileExplanation():
+	request.get_data()
+	raw_json = json.loads(request.data)
+	experiment_path = raw_json["experiment_path"]
+
+	json_files = os.listdir(experiment_path)
+
+	explanation_list = []
+	for json_file in json_files:
+		json_path = os.path.join(experiment_path,json_file)
+		with open(json_path,"r") as f:
+			explanation_json = json.load(f)
+			explanation_list.append(explanation_json)
+
+	table_json = {"explanation_table_scaffold":json.loads(raw_json["explanation_table_scaffold"]),"explanation_table_data":{"results":explanation_list}}
+
+	output_path = os.path.join(experiment_path,"AAAexplanation_table.json")
+	with open(output_path,"w") as f:
+		f.write(json.dumps(table_json))
+
+	return output_path
+		
+
 
 
 
