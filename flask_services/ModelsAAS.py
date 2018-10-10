@@ -224,6 +224,19 @@ def Predict():
 	return json_data
 
 
+@app.route("/save_explanation_table", methods=['POST'])
+def SaveExplanationTable():
+
+	table_dict = {"explanation_table_data":{"results":[],"table_html":{"html":request.get_data()}}}
+
+	file_path = "table_html.json"
+	with open(file_path,"w") as f:
+		f.write(json.dumps(table_dict))
+
+	return "Saved as: "+file_path
+	
+
+
 
 if __name__ == "__main__":
 	print("load models jsons")
