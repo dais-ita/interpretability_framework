@@ -3,6 +3,16 @@
 	display:none;
 }
 
+#load_table_from_id_progress_container,#fetching_scaffold_done_message, #building_table_scaffold_message, #scaffold_done_message, #progress_container
+{
+	display: none;
+}
+
+#load_table_from_id_progress_container
+{
+	margin-bottom: 10px;
+}
+
 
 /*FRAMEWORK SECTIONS*/
 

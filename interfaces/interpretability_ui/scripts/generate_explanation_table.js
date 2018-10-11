@@ -1,3 +1,7 @@
+base_data_api_url = "http://localhost:6501/";
+base_data_api_url = "http://services.futurelabsolutions.com:6080/";
+	
+
 function GenerateExplanationTable()
 {
 	var num_dataset_images = $("#num_explanations_in_table").val();
@@ -278,11 +282,9 @@ function OLDProduceJsonForStorage()
 
 function ProduceJsonForStorage()
 {
-	var base_api_url = "http://localhost:6101/";
-	
 	var experiment_id = "experiment_" + Date.now().toString()
 
-	var create_folder_url = base_api_url + "create_table_folder/"+experiment_id	
+	var create_folder_url = base_data_api_url + "create_table_folder/"+experiment_id	
 
 	$.ajax({
 	        url: create_folder_url,
@@ -301,8 +303,7 @@ function ProduceJsonForStorage()
 
 function SendResultToSaveAPI(explanation_results,result_i,experiment_path)
 {
-	var base_api_url = "http://localhost:6101/";
-	var save_json_url = base_api_url + "save_explanation_result_json"
+	var save_json_url = base_data_api_url + "save_explanation_result_json"
 
 
 	var current_result = explanation_results[result_i];
@@ -343,8 +344,7 @@ function SendResultToSaveAPI(explanation_results,result_i,experiment_path)
 
 function CompileJsonFile(experiment_path)
 {
-	var base_api_url = "http://localhost:6101/";
-	var compile_json_url = base_api_url + "compile_explanation_table_json"
+	var compile_json_url = base_data_api_url + "compile_explanation_table_json"
 
 	$.ajax({
         url: compile_json_url,
@@ -361,7 +361,7 @@ function CompileJsonFile(experiment_path)
 
 function SaveTableViaService()
 {
-	var save_table_url = "http://localhost:6101/save_explanation_table_from_json";
+	var save_table_url = base_data_api_url+"save_explanation_table_from_json";
 
 	var table_json = '{"explanation_table_scaffold":'+$("#explanation_table_json_storage").html()+',"explanation_table_data":{"results":[\n'+json_strings.join(",\n")+']} }';
 	$.ajax({
@@ -409,6 +409,93 @@ function LoadFromFile()
 	BuildTableFromFile(files[0]);
 	
 }
+
+function LoadFromExperimentId()
+{
+	$("#load_table_from_id_progress_container").show();
+	experiment_id = $("#table_json_id_input").val();
+	
+	var table_scaffold_url = base_data_api_url+"get_table_scaffold/"+experiment_id;
+
+	$.ajax({
+	        url: table_scaffold_url,
+	        type: "get",
+	        crossDomain: true,
+            success: function (data) 
+	        {
+	        	
+	        	var scaffold_json = JSON.parse(data);
+	        	var table_scaffold = scaffold_json.explanation_table_scaffold;
+
+				CreateTable(table_scaffold.input_images,table_scaffold.dataset_name,table_scaffold.selected_models,table_scaffold.selected_explanations);
+
+				$("#scaffold_done_message").show();
+				LoadFetchExplanationsByExperimentId(experiment_id);
+	       	}
+	    });
+
+}
+
+
+function LoadFetchExplanationsByExperimentId(experiment_id)
+{
+
+	var num_explanations_url = base_data_api_url+"get_number_explanations_for_table/"+experiment_id;
+
+	$("#progress_container").show();
+	
+	$.ajax({
+	        url: num_explanations_url,
+	        type: "get",
+	        crossDomain: true,
+            success: function (data) 
+	        {
+	        	var num_explanations = parseInt(data);
+	        	FetchExplanationByExperimentIdAndIndex(experiment_id,0,num_explanations);
+	        	
+	       	}
+	    });
+}
+
+
+function FetchExplanationByExperimentIdAndIndex(experiment_id,explanation_i,total_explanations)
+{
+	var fetch_result_url = base_data_api_url + "get_table_explanation_by_index"
+
+	var data_string = JSON.stringify({"experiment_id":experiment_id,"explanation_i":explanation_i});
+
+	$.ajax({
+        url: fetch_result_url,
+        type: "POST",
+        crossDomain: true,
+        data:data_string,
+        success: function (data) 
+        {
+        	var result = JSON.parse(data)
+        	AddExplanationResultToTable(result.result_json,result.dataset_identifier,result.image_identifier,result.model_identifier,result.explanation_identifier);	
+			
+			UpdateLoadProgressBar(explanation_i,total_explanations);
+        	explanation_i++;
+        	if(explanation_i < total_explanations)
+        	{
+        		FetchExplanationByExperimentIdAndIndex(experiment_id,explanation_i,total_explanations);
+        	}
+        	else
+        	{
+        		alert("table loaded");
+        	}
+       	}
+    });
+	
+}
+
+function UpdateLoadProgressBar(completed_explanation_i,total_explanations)
+{
+	var complete_percentage = Math.round(((completed_explanation_i+1)/total_explanations)*100);
+
+	$("#load_progress_bar").css('width', complete_percentage+'%').attr('aria-valuenow', complete_percentage);
+}
+
 
 function BuildTableFromJsonString(table_json_string)
 {

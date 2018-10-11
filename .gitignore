@@ -127,3 +127,5 @@ saved_models/*
 
 #ignore tensorflow_vgg
 /models/svm/utils/tensorflow_vgg
+
+/flask_services/experiment_tables/*
