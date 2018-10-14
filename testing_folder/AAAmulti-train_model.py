@@ -17,6 +17,7 @@ dataset_names = ["Gun Wielding Image Classification", "Traffic Congestion Image 
 
 
 dataset_names = ["Traffic Congestion Image Classification","Gun Wielding Image Classification"]
+dataset_names = ["Gun Wielding Image Classification Transformed"]
 # dataset_names = ["Gun Wielding Image Classification"]
 
 
@@ -51,8 +52,8 @@ model_names = ["vgg16_imagenet",
 "xception_imagenet"]
 
 
-model_names = [
- "inception_resnet_v2_imagenet"]
+# model_names = [
+#  "inception_resnet_v2_imagenet"]
 
 
  
@@ -241,8 +242,7 @@ with open(model_json_path,"r") as f:
 			print("")
 			source = "train"
 			train_x, train_y = dataset_tool.GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True, split_one_hot = True, batch_source = source)
-			random.shuffle(train_x)
-
+			
 			print("num train examples: "+str(len(train_x)))
 
 
@@ -304,20 +304,5 @@ with open(model_json_path,"r") as f:
 			with open(output_path,"w") as f:
 				f.write(output_string)
 
-		# ### test the model
-		# print("load test data")
-		# print("")
-		# source = "test"
-		# test_x, test_y = dataset_tool.GetBatch(batch_size = 20,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source)
-		# test_y = dataset_tool.ConvertOneHotToClassNumber(test_y) 
-
-		# print("num test examples: "+str(len(test_x)))
-
-		# print("predicted classes:")
-		# print(cnn_model.Predict(test_x))
-
-
-		# print("ground truth classes:")
-		# print(test_y)
 
 

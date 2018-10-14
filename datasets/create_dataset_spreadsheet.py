@@ -4,7 +4,7 @@ observations = []
 
 
 image_dir = "dataset_images"
-dataset_folder = "mnist"
+dataset_folder = "wielder_non-wielder_transformed"
 use_explicit = False
 
 dataset_folder_path = os.path.join(image_dir,dataset_folder)
