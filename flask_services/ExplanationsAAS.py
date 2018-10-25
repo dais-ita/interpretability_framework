@@ -283,27 +283,40 @@ def Explain():
 	explanation_instance = loaded_explanations[explanation_name][model_name][dataset_name]
 
 
-	# load training images for influence functions
-	if(dataset_name not in loaded_training_images):
-		loaded_training_images[dataset_name] = {}
-		source = "train"
-		label_names = loaded_dataset_tools[dataset_name]["label_names"]
-		loaded_training_images[dataset_name]["train_x"], loaded_training_images[dataset_name]["train_y"], loaded_training_images[dataset_name]["batch"] = loaded_dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source, return_batch_data=True)
+	load_dataset_images = False #TODO turn this on and off automatically (for actual use, set this to True unless you don't plan to use influence functions)
 
-		print("loaded_training_images[dataset_name]['train_x'].shape",loaded_training_images[dataset_name]["train_x"].shape)
-	#TODO allow for better handling of additonal arguments, currently additional arguments for ALL explanations must be placed here
-	additional_args = {
-	"num_samples":100,
-	"num_features":300,
-	"min_weight":0.0001, 
-	"model_name":model_name, 
-	"dataset_name":dataset_name, 
-	"num_background_samples":50,
-	"train_x":loaded_training_images[dataset_name]["train_x"],
-	"train_y":loaded_training_images[dataset_name]["train_y"],
-	"max_n_influence_images":9
-	}
+	if(load_dataset_images):
+		# load training images for influence functions
+		if(dataset_name not in loaded_training_images):
+			loaded_training_images[dataset_name] = {}
+			source = "train"
+			label_names = loaded_dataset_tools[dataset_name]["label_names"]
+			loaded_training_images[dataset_name]["train_x"], loaded_training_images[dataset_name]["train_y"], loaded_training_images[dataset_name]["batch"] = loaded_dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source, return_batch_data=True)
 
+			print("loaded_training_images[dataset_name]['train_x'].shape",loaded_training_images[dataset_name]["train_x"].shape)
+		
+		#TODO allow for better handling of additonal arguments, currently additional arguments for ALL explanations must be placed here
+		additional_args = {
+		"num_samples":100,
+		"num_features":300,
+		"min_weight":0.0001, 
+		"model_name":model_name, 
+		"dataset_name":dataset_name, 
+		"num_background_samples":50,
+		"train_x":loaded_training_images[dataset_name]["train_x"],
+		"train_y":loaded_training_images[dataset_name]["train_y"],
+		"max_n_influence_images":9
+		}
+	else:
+		additional_args = {
+		"num_samples":100,
+		"num_features":300,
+		"min_weight":0.0001, 
+		"model_name":model_name, 
+		"dataset_name":dataset_name, 
+		"num_background_samples":50,
+		"max_n_influence_images":9
+		}
 	print(np.amax(input_image))
 	display_explanation_input = False
 	if(display_explanation_input):
@@ -334,7 +347,7 @@ def Explain():
 	display_encoded_image = False
 
 	if(display_encoded_image):
-		decoded_image = readb64(encoded_explanation_image)
+		decoded_image = readb64(encoded_explanation_image,convert_colour=True)
 		cv2_image = decoded_image
 		cv2.imshow("image 0",cv2_image)
 		cv2.waitKey(0)
