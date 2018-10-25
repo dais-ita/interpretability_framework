@@ -158,6 +158,7 @@ class ShapExplainer(object):
     canvas.draw()
 
     w,h = canvas.get_width_height()
+    print("w,h",w,h)
     buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
     buf.shape = ( h, w,3 )
     

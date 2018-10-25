@@ -132,6 +132,7 @@ else:
 image_url_column = "image_path"
 ground_truth_column = "label"
 label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
+label_names.sort()
 print(label_names)
 
 input_image_height = dataset_json["image_y"]

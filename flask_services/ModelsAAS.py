@@ -152,7 +152,7 @@ def GetAvailableModelsJson():
 
 
 def PredictImagePreProcess(image):
-	if(True): #TODO 'cleverly' decide whether this should happen
+	if(np.amax(image) > 1): #TODO 'cleverly' decide whether this should happen
 		image = image/255.0
 	
 	# Add any 'always happen' preprocessing steps e.g. check size and resize if needed etc
@@ -183,9 +183,9 @@ def GetModelZip():
 
 @app.route("/models/predict", methods=['POST'])
 def Predict():
-	# print("request.data:",request.data)
-
+	# print(dir(request))
 	raw_json = json.loads(request.data)
+		
 	if(isinstance(raw_json['selected_dataset_json'],str) or isinstance(raw_json['selected_dataset_json'],unicode)):
 		dataset_json = json.loads(raw_json['selected_dataset_json'])
 	else:

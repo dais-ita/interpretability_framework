@@ -58,12 +58,20 @@ class LRPExplainer(object):
     # if x_curr.max() > 1:
     #     x_curr /= 255.
 
+    print(LRP_values.shape)
+
+    print(np.amax(np.abs(LRP_values)))
+    print(np.amin(np.abs(LRP_values)))
+    print(np.mean(np.abs(LRP_values)))
+    print(np.sum(LRP_values>=np.mean(LRP_values)))
+
     if len(LRP_values[0].shape) == 2:
         abs_vals = np.stack([np.abs(LRP_values[i]) for i in range(len(LRP_values))], 0).flatten()
     else:
         abs_vals = np.stack([np.abs(LRP_values[i].sum(-1)) for i in range(len(LRP_values))], 0).flatten()
     max_val = np.nanpercentile(abs_vals, 70)
 
+    print("LRP_values.shape[0], LRP_values.shape[1]",LRP_values.shape[0], LRP_values.shape[1])
     plt.rcParams['figure.figsize'] = [LRP_values.shape[0], LRP_values.shape[1]] # for square canvas
     
     # i = 0
@@ -75,29 +83,54 @@ class LRPExplainer(object):
     # img_show = plt.imshow(LRP_values,cmap=self.GetColorMap())
     
     # img_show = plt.imshow(LRP_values,cmap="hot", vmin=-max_val, vmax=max_val)
-    img_show = plt.imshow(LRP_values,cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
+    input_img = input_image.reshape(input_image.shape[1],input_image.shape[2],input_image.shape[3])*255
+    print(input_img.shape)
     
-    plt.axis('off')
+    norm = plt.Normalize(vmin=-max_val, vmax=max_val)
+    LRP_image = self.GetColorMap()((norm(LRP_values)))
+    plt.imsave('test.png', LRP_image)
+    print(LRP_image.shape)
 
-    ax = plt.gca()
-    canvas = ax.figure.canvas 
-    canvas.draw()
+    b,g,r,a=cv2.split(LRP_image)
+    overlay_color = cv2.merge((b,g,r)).astype(np.int8)
+    mask=a.astype(np.int8)
 
-    w,h = canvas.get_width_height()
-    buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
-    buf.shape = ( h, w,3 )
+    lrp_overlay = cv2.bitwise_and(overlay_color,overlay_color,mask = mask)
 
-    plt.clf()
-    plt.cla()
-    plt.close()
+    explanation_image = cv2.add(input_img.astype(np.int8), lrp_overlay)
+    print(explanation_image.shape)
+    return explanation_image
 
-    return buf
+    # output = input_image[0][:]
+    # alpha = 1
+    # cv2.addWeighted(LRP_image, alpha, output, 1 - alpha,0, output)
+
+    # plt.imsave('output.jpg', output)
+    
+    # img_show = plt.imshow(LRP_values,cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
+    
+    
+    # plt.axis('off')
+
+    # ax = plt.gca()
+    # canvas = ax.figure.canvas 
+    # canvas.draw()
+
+    # w,h = canvas.get_width_height()
+    # print("w,h",w,h)
+    # buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
+    # buf.shape = ( h, w,3 )
+
+    # plt.clf()
+    # plt.cla()
+    # plt.close()
+
+    # return buf
 
   def Explain(self,input_image, additional_args = {}):
 
     #load additional arguments or set to default
-    input_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
-
+    
     # cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
     # cv2.imshow("x image",cv2_image)
     # cv2.waitKey(0)
@@ -150,6 +183,11 @@ class LRPExplainer(object):
     
     explanation_image = self.GenerateLRPExplanationImage(input_image,lrp_explanation)
     explanation_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+
+    # cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
+    # cv2.imshow("explanation_image LRP",cv2_image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     ## for testing:
     # shap.image_plot(shap_values, np.multiply(input_image,255.0))
 
