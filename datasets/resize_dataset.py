@@ -2,9 +2,9 @@ import os
 
 from DatasetClass import DataSet
 
-dataset_name = "congested_non-congested"
+dataset_name = "mtg_set"
 
-file_path = os.path.join("dataset_csvs","congested_non-congested.csv")
+file_path = os.path.join("dataset_csvs","mtg_set.csv")
 image_url_column = "image_path"
 ground_truth_column = "label"
 

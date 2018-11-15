@@ -120,12 +120,6 @@ class ShapExplainer(object):
     return train_x
 
   def GenerateShapExplanationImage(self,input_image,shap_values):
-    
-    plt.rcParams['figure.subplot.left'] = 0
-    plt.rcParams['figure.subplot.bottom'] = 0
-    plt.rcParams['figure.subplot.right'] = 1
-    plt.rcParams['figure.subplot.top'] = 1
-
     if(len(input_image.shape) == 4):
       input_image = np.squeeze(input_image)
     
@@ -143,11 +137,12 @@ class ShapExplainer(object):
         abs_vals = np.stack([np.abs(shap_values[i].sum(-1)) for i in range(len(shap_values))], 0).flatten()
     max_val = np.nanpercentile(abs_vals, 99.9)
 
-    i = 0
-
-    plt.rcParams['figure.figsize'] = [x_curr.shape[0], x_curr.shape[1]] # for square canvas
+    fig, ax = plt.subplots()
+    fig.subplots_adjust(0,0,1,1)
     
-
+    plt.autoscale(tight=True)
+    plt.gcf().set_size_inches(10,10) 
+    
     sv = shap_values[i] if len(shap_values[i].shape) == 2 else shap_values[i].sum(-1)
     plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
     plt.imshow(sv, cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
@@ -158,10 +153,13 @@ class ShapExplainer(object):
     canvas.draw()
 
     w,h = canvas.get_width_height()
-    print("w,h",w,h)
     buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
     buf.shape = ( h, w,3 )
     
+    buf = cv2.resize(buf, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
+
+    plt.gcf().clear()
+    plt.gca().clear()
     plt.clf()
     plt.cla()
     plt.close()
@@ -175,6 +173,8 @@ class ShapExplainer(object):
       num_background_samples=additional_args["num_background_samples"]
     else:
       num_background_samples=10
+
+    print("num_background_samples",num_background_samples)
 
     if("background_image_pool" in additional_args):
       background_image_pool=additional_args["background_image_pool"]
@@ -193,22 +193,22 @@ class ShapExplainer(object):
     if(not additional_args["dataset_name"] in self.shap_explainers_dict):
       self.shap_explainers_dict[additional_args["dataset_name"]] = {}
     
-    if(self.model.__class__.__name__ in self.shap_explainers_dict[additional_args["dataset_name"]]):
+    load_if_possible = True
+    if(load_if_possible and self.model.__class__.__name__ in self.shap_explainers_dict[additional_args["dataset_name"]]):
       e = self.shap_explainers_dict[additional_args["dataset_name"]][self.model.__class__.__name__]
       print("loaded previously generated shap explainer")
     else:
-      print("generating new shap explainer")
+      print("generating background samples")
       background = background_image_pool[np.random.choice(background_image_pool.shape[0], num_background_samples, replace=False)]
-      print("backgroun images selected, creating explainer")
+      
       # config = tf.ConfigProto()
       # config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
       # sess = tf.Session(config=config)
       # set_session(sess)  # set this TensorFlow session as the default session for Keras
 
       try:
-        print("reshaping")
         background = self.model.CheckInputArrayAndResize(background,self.model.min_height,self.model.min_width)
-        print("background.shape",background.shape)
+
       except:
         print("couldn't use model image size check")
 
@@ -219,9 +219,8 @@ class ShapExplainer(object):
       input_image = np.array([input_image])
 
     try:
-        print("reshaping")
-        input_image = self.model.CheckInputArrayAndResize(input_image,self.model.min_height,self.model.min_width)
-        print("input_image.shape",input_image.shape)
+      input_image = self.model.CheckInputArrayAndResize(input_image,self.model.min_height,self.model.min_width)
+        
     except:
       print("couldn't use model image size check")
 
@@ -230,8 +229,6 @@ class ShapExplainer(object):
     
     prediction, prediction_scores = self.model.Predict(input_image, True)
     predicted_class = np.argmax(prediction)
-    print("explanation prediction output",prediction)
-    print("explanation predicted_class",predicted_class)
     
     explanation = shap_values[predicted_class]
 

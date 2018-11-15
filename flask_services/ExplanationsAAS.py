@@ -283,7 +283,7 @@ def Explain():
 	explanation_instance = loaded_explanations[explanation_name][model_name][dataset_name]
 
 
-	load_dataset_images = False #TODO turn this on and off automatically (for actual use, set this to True unless you don't plan to use influence functions)
+	load_dataset_images = True #TODO turn this on and off automatically (for actual use, set this to True unless you don't plan to use influence functions)
 
 	if(load_dataset_images):
 		# load training images for influence functions
@@ -317,7 +317,7 @@ def Explain():
 		"num_background_samples":50,
 		"max_n_influence_images":9
 		}
-	print(np.amax(input_image))
+	print("np.amax(input_image)",np.amax(input_image))
 	display_explanation_input = False
 	if(display_explanation_input):
 		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)

@@ -25,17 +25,8 @@ b,g,r,a=cv2.split(LRP_image)
 overlay_color = cv2.merge((b,g,r))
 mask=a
 
-cv2.imshow("LRP_image",LRP_image[:,:,:3])
-cv2.waitKey(0)
-cv2.destroyAllWindows
-
 img2_fg = cv2.bitwise_and(overlay_color,overlay_color,mask = mask)
 
-cv2.imshow("img2_fg",img2_fg)
-cv2.waitKey(0)
-cv2.destroyAllWindows
-
-print("add")
 explanation_image = cv2.add(input_image, img2_fg)
 
 cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)

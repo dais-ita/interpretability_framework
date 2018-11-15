@@ -30,7 +30,7 @@ class LRPExplainer(object):
     for l in np.linspace(0, 1, 100):
         colors.append((255./255, 13./255, 87./255,l))
     red_transparent_blue = LinearSegmentedColormap.from_list("red_transparent_blue", colors)
-
+    
     return red_transparent_blue
   
   def DeepExplainAttributionToImage(self, deep_attribution):
@@ -39,94 +39,50 @@ class LRPExplainer(object):
     return img*255
 
   def GenerateLRPExplanationImage(self,input_image,LRP_values):
-    
-    plt.rcParams['figure.subplot.left'] = 0
-    plt.rcParams['figure.subplot.bottom'] = 0
-    plt.rcParams['figure.subplot.right'] = 1
-    plt.rcParams['figure.subplot.top'] = 1
-
-    # LRP_values =LRP_values*1000
-
-    # if(len(input_image.shape) == 4):
-    #   input_image = np.squeeze(input_image)
-    
-    # x_curr = input_image.copy()
-
-    # # make sure
-    # if len(x_curr.shape) == 3 and x_curr.shape[2] == 1:
-    #     x_curr = x_curr.reshape(x_curr.shape[:2])
-    # if x_curr.max() > 1:
-    #     x_curr /= 255.
-
-    print(LRP_values.shape)
-
-    print(np.amax(np.abs(LRP_values)))
-    print(np.amin(np.abs(LRP_values)))
-    print(np.mean(np.abs(LRP_values)))
-    print(np.sum(LRP_values>=np.mean(LRP_values)))
+    if(len(input_image.shape) == 4):
+      input_image = np.squeeze(input_image)
 
     if len(LRP_values[0].shape) == 2:
         abs_vals = np.stack([np.abs(LRP_values[i]) for i in range(len(LRP_values))], 0).flatten()
     else:
         abs_vals = np.stack([np.abs(LRP_values[i].sum(-1)) for i in range(len(LRP_values))], 0).flatten()
-    max_val = np.nanpercentile(abs_vals, 70)
+    max_val = np.nanpercentile(abs_vals, 80)
 
-    print("LRP_values.shape[0], LRP_values.shape[1]",LRP_values.shape[0], LRP_values.shape[1])
-    plt.rcParams['figure.figsize'] = [LRP_values.shape[0], LRP_values.shape[1]] # for square canvas
+    # plt.rcParams['figure.figsize'] = [LRP_values.shape[0], LRP_values.shape[1]] # for square canvas
+    fig, ax = plt.subplots()
+    fig.subplots_adjust(0,0,1,1)
     
-    # i = 0
-
-    # sv = shap_values[i] if len(shap_values[i].shape) == 2 else shap_values[i].sum(-1)
-    # # plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
-    # plt.imshow(sv, cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
-    # img_show = plt.imshow(LRP_values,cmap="hot")
-    # img_show = plt.imshow(LRP_values,cmap=self.GetColorMap())
+    plt.autoscale(tight=True)
+    plt.gcf().set_size_inches(10,10) 
     
-    # img_show = plt.imshow(LRP_values,cmap="hot", vmin=-max_val, vmax=max_val)
-    input_img = input_image.reshape(input_image.shape[1],input_image.shape[2],input_image.shape[3])*255
-    print(input_img.shape)
+    plt_img = plt.imshow(input_image, cmap=plt.get_cmap('gray'), alpha=0.15,extent=(0, input_image.shape[0], input_image.shape[1],0))
     
-    norm = plt.Normalize(vmin=-max_val, vmax=max_val)
-    LRP_image = self.GetColorMap()((norm(LRP_values)))
-    plt.imsave('test.png', LRP_image)
-    print(LRP_image.shape)
-
-    b,g,r,a=cv2.split(LRP_image)
-    overlay_color = cv2.merge((b,g,r)).astype(np.int8)
-    mask=a.astype(np.int8)
-
-    lrp_overlay = cv2.bitwise_and(overlay_color,overlay_color,mask = mask)
-
-    explanation_image = cv2.add(input_img.astype(np.int8), lrp_overlay)
-    print(explanation_image.shape)
-    return explanation_image
-
-    # output = input_image[0][:]
-    # alpha = 1
-    # cv2.addWeighted(LRP_image, alpha, output, 1 - alpha,0, output)
-
-    # plt.imsave('output.jpg', output)
+    img_show = plt.imshow(LRP_values,cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val, extent=(0, LRP_values.shape[0], LRP_values.shape[1],0))
     
-    # img_show = plt.imshow(LRP_values,cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
+    plt.axis('off')
+
+    ax = plt.gca()
+    canvas = ax.figure.canvas 
+    canvas.draw()
+
+    print("canvas to string")
+    w,h = canvas.get_width_height()
+    buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
+    buf.shape = ( h, w,3 )
+
+    print("buf resize")
+    buf = cv2.resize(buf, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
+
+    plt.gcf().clear()
+    plt.gca().clear()
+    plt.clf()
+    plt.cla()
+    plt.close()
     
+    print("image generated")
+    return buf
+
     
-    # plt.axis('off')
-
-    # ax = plt.gca()
-    # canvas = ax.figure.canvas 
-    # canvas.draw()
-
-    # w,h = canvas.get_width_height()
-    # print("w,h",w,h)
-    # buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
-    # buf.shape = ( h, w,3 )
-
-    # plt.clf()
-    # plt.cla()
-    # plt.close()
-
-    # return buf
-
   def Explain(self,input_image, additional_args = {}):
 
     #load additional arguments or set to default
@@ -156,6 +112,8 @@ class LRPExplainer(object):
     except:
       print("couldn't use model image size check")    
     
+    attributions = None
+
     with DeepExplain(session=K.get_session()) as de:  # <-- init DeepExplain context
       # Need to reconstruct the graph in DeepExplain context, using the same weights.
       # With Keras this is very easy:
@@ -181,7 +139,7 @@ class LRPExplainer(object):
     
     
     
-    explanation_image = self.GenerateLRPExplanationImage(input_image,lrp_explanation)
+    explanation_image = self.GenerateLRPExplanationImage(input_image,lrp_explanation[:])
     explanation_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)
 
     # cv2_image = cv2.cvtColor(explanation_image, cv2.COLOR_RGB2BGR)

@@ -1,5 +1,4 @@
 {"datasets":[
-
 	{
 		"dataset_name":"Gun Wielding Image Classification",
 		"download_link":"",
@@ -16,38 +15,6 @@
 		"interesting_images":["00048_gun_wielder.jpg","01061_non-wielder.jpg", "00450_gun_wielder.jpg", "00762_gun_wielder.jpg"],
 		"references":["http://sci2s.ugr.es/weapons-detection","http://www.di.ens.fr/willow/research/stillactions/"],
 		"description":"Image classification of people holding guns and people who aren't holding guns. Gun wielding images were taken from 'sci2s weapons-detection' dataset. Negative class examples taken from 'willow action image dataset'.",
-		"license":"apache 2"
-	},
-	{
-		"dataset_name":"Gun Wielding Image Classification Transformed",
-		"download_link":"",
-		"folder":"wielder_non-wielder_transformed",
-		"labels":[
-					{"label":"gun_wielder","images":163776},
-					{"label":"non-wielder","images":163776}
-				],
-		"image_x":128,
-		"image_y":128,
-		"image_channels":3,
-		"ground_truth_csv_path":"wielder_non-wielder_transformed.csv",
-		"interesting_images":["00322_gun_wielder_0_0_0_5_1-5_1-5_0_0_0_0.jpg"],
-		"references":["http://sci2s.ugr.es/weapons-detection","http://www.di.ens.fr/willow/research/stillactions/"],
-		"description":"Image classification of people holding guns and people who aren't holding guns. Gun wielding images were taken from 'sci2s weapons-detection' dataset. Negative class examples taken from 'willow action image dataset'.",
-		"augmentation":{
-			"rotation_angle_max":90,
-			"shift_x_max":0,
-			"shift_y_max":0,     
-			"shear_max":10,   
-			"zoom_x_max":1.5,  
-			"zoom_y_max":1.5,
-			"flip_horizontal_max":1,
-			"flip_vertical_max":1, 
-			"channel_shift_intencity_max":0,
-			"brightness_max":0,
-			"rotation_angle_step":30,
-			"zoom_x_step":0.5,
-			"zoom_y_step":0.5
-		},
 		"license":"apache 2"
 	},
 	{
