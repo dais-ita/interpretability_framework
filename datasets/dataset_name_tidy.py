@@ -2,7 +2,7 @@ import os
 
 image_dir = "dataset_images"
 
-dataset_name = "mnist"
+dataset_name = "mtg_set"
 
 dataset_image_path = os.path.join(image_dir,dataset_name)
 

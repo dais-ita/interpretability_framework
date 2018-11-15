@@ -21,6 +21,7 @@ dataset_names = ["Traffic Congestion Image Classification",
 "Gun Wielding Image Classification",
 "CIFAR-10"]
 
+dataset_name = "MtG Set"
 #MODEL
 # model_name = "conv_svm"
 # model_name = "keras_api_vgg"
@@ -39,10 +40,12 @@ model_names = ["vgg16_imagenet",
 "mobilenet_imagenet",
 "xception_imagenet"]
 
+model_name = "keras_api_simple"
+
 #TRAINING PARAMETERS
 learning_rate = 0.0001
 batch_size = 128
-num_train_steps = 20
+num_train_steps = 500
 
 
 #####

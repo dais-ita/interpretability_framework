@@ -92,7 +92,7 @@ def CreateExplanationTableFolder(table_name):
 @cross_origin()
 def SaveExplanationResultJson():
 	request.get_data()
-	print("request.data",request.data)
+	# print("request.data",request.data)
 	
 	raw_json = json.loads(request.data)
 	
@@ -179,7 +179,7 @@ def GetTableScaffold(table_name):
 @cross_origin()
 def GetTableExplanationByIndex():
 	request.get_data()
-	print("request.data",request.data)
+	# print("request.data",request.data)
 	
 	raw_json = json.loads(request.data)
 	

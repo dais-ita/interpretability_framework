@@ -21,7 +21,7 @@ dataset_names = ["Gun Wielding Image Classification Transformed"]
 # dataset_names = ["Gun Wielding Image Classification"]
 
 
-# dataset_names = ["CIFAR-10"]
+dataset_names = ["CIFAR-10"]
 
 
 # dataset_names = ["Traffic Congestion Image Classification (Resized)"]
@@ -51,6 +51,7 @@ model_names = ["vgg16_imagenet",
 "mobilenet_imagenet",
 "xception_imagenet"]
 
+model_names = ["vgg16_imagenet"]
 
 # model_names = [
 #  "inception_resnet_v2_imagenet"]
