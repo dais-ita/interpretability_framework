@@ -58,7 +58,7 @@ The unification API offers a single point to perform RESTful requests across the
 ## Interface Layer
 At the interface layer, custom interfaces can be built that take advantage of the unification API. Do to the REST API design, many different applications or interfaces can be built to take advantage of the simplistic pipeline building the API provides. 
 
-
+## Available Items
 
 For each option group, a JSON file exists that describes the existing options. The interface is built to understand available options and valid configurations via the JSON file. 
 
