@@ -1,7 +1,35 @@
 # DAIS ITA - Interpretabity Framework
-A technique exploration and data generation tool
+An interpretability technique exploration and data generation tool
 
-This project provides a framework designed, from the ground up, to allow easy building of dataset-ML model-explanation pipelines.
+This project provides a framework designed, from the ground up to allow easy building of dataset -> model -> explanation technqiue pipelines.
+
+## Getting Started
+### Preparing Python Framework Services
+- install python
+- install requirements from requirements.txt
+- navigate to flask_services
+
+run:
+
+- python DatasetsAAS.py
+- python ModelsAAS.py
+- python ExplanationsAAS.py
+- python DatastoreAAS.py
+
+### Preparing Unification Layer
+- Install npm
+- navigate to nodeJS/unification 
+- run npm install
+- run npm start
+
+### Open an interface
+The framework is designed to take advantage of custom built interfaces that utilise the unification layer api, however it also includes general purpose interfaces. Using one such interface can be done by:
+- navigate to: interfaces/interpretability_ui/scripts
+- open interpretability_framework.js and ensure the variable api_base_url is set to the address of the unification api you wish to use (usually: "http:localhost:3100" but can be a remotely hosted api if desired)
+- navigate to: interfaces/interpretability_ui
+- open index.html in your browser of choice. 
+
+## Framework Structure
 
 The framework is structured in three layers:
   - Item and service layer
@@ -24,13 +52,13 @@ These services handle the instantiation of the framework items and also handle t
 The services are not currently designed to handle multiple requests concurrently. This is due to the resource dependant nature of machine learning models and explanations. In future revisions, this capability can be added or a more distributed approach to the services can be implemented. The tool is designed for exploration by researchers as well as experiment designing and thus the current use cases do not require a single running instance of the framework to serve multiple users simultaneously. 
 
 
-##Unification API layer
+## Unification API layer
 The unification API offers a single point to perform RESTful requests across the framework. The API service itself also offers a simple UI to explore the items within the framework and for many use cases, this UI may suffice. 
 
-##Interface Layer
+## Interface Layer
 At the interface layer, custom interfaces can be built that take advantage of the unification API. Do to the REST API design, many different applications or interfaces can be built to take advantage of the simplistic pipeline building the API provides. 
 
-
+## Available Items
 
 For each option group, a JSON file exists that describes the existing options. The interface is built to understand available options and valid configurations via the JSON file. 
 
