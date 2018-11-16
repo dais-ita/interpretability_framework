@@ -29,6 +29,7 @@ The framework is designed to take advantage of custom built interfaces that util
 - navigate to: interfaces/interpretability_ui
 - open index.html in your browser of choice. 
 
+## Framework Structure
 
 The framework is structured in three layers:
   - Item and service layer
