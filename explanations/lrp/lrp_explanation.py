@@ -73,10 +73,18 @@ class LRPExplainer(object):
     print("buf resize")
     buf = cv2.resize(buf, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
 
+    print("plt.gcf().clear()")
     plt.gcf().clear()
+    print("plt.gca().clear()")
     plt.gca().clear()
+    print("plt.clf()")
+    
     plt.clf()
+    print("plt.cla")
+    
     plt.cla()
+    print("plt.close()")
+    
     plt.close()
     
     print("image generated")
