@@ -116,6 +116,6 @@ Available Explanations
 - Shapley
 
 
-Available Adversarial Attack Generators
-CleverHans (not yet integrated)
-GenAttack (not yet integrated)
+Adversarial Attack Generators (not yet integrated)
+- CleverHans (not yet integrated)
+- GenAttack (not yet integrated)
