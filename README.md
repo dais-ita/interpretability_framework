@@ -9,7 +9,7 @@ steps marked with * only need to be done once
 - install python *
 - install requirements from requirements.txt *
 
-### Adding/Downloading Datasets and Models *
+### Adding/Downloading Datasets and Models 
 #### Downloading Datasets*
 - Download Archives from: https://drive.google.com/drive/folders/1tMYRvVOQkvJqyIV6XWjITEJgkOGCWxYf?usp=sharing
 - unzip and place dataset root folder (e.g. "cifar-10" in datasets/dataset_images)
