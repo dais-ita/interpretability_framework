@@ -22,7 +22,7 @@ steps marked with * only need to be done once
 - run models/place_models_in_directories.py to automatically take the models found in the extracted folder in to the correct locations within the models. 
 
 #### Adding your own Datasets
-(this is a top level description and deeper documentation will be provided in the future)
+(further documentation found: https://github.com/dais-ita/p5_afm_2018_demo/blob/master/datasets)
 - place a root folder in datasets/dataset_images which contains sub-directories for each class label (root_folder/class_1 contains all the images from class 1 from your dataset)
 - edit and run the "create_dataset_spreadsheet.py" file
 - add an entry to datasets/datasets.json
@@ -70,7 +70,9 @@ The codebase for framework items (datasets, machine learning models and explanat
 
 Instructions on how to add items to the framework can be found within the README of each item-type parent folder:
 https://github.com/dais-ita/p5_afm_2018_demo/blob/master/datasets
+
 https://github.com/dais-ita/p5_afm_2018_demo/blob/master/models
+
 https://github.com/dais-ita/p5_afm_2018_demo/blob/master/explanations
 
 ### Item Services
