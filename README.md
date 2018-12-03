@@ -4,9 +4,37 @@ An interpretability technique exploration and data generation tool
 This project provides a framework designed, from the ground up to allow easy building of dataset -> model -> explanation technqiue pipelines.
 
 ## Getting Started
-### Preparing Python Framework Services
-- install python
-- install requirements from requirements.txt
+steps marked with * only need to be done once
+### Preparing Python* 
+- install python *
+- install requirements from requirements.txt *
+
+### Adding/Downloading Datasets and Models *
+#### Downloading Datasets*
+- Download Archives from: https://drive.google.com/drive/folders/1tMYRvVOQkvJqyIV6XWjITEJgkOGCWxYf?usp=sharing
+- unzip and place dataset root folder (e.g. "cifar-10" in datasets/dataset_images)
+- repository should already have the required dataset csvs for the downloaded datasets but if you encounter errors (or you add your own datasets) edit and run the "create_dataset_spreadsheet.py" file
+- repository should already have a datasets.json entry for the downloaded datasets but if you encounter errors (or if you add your own datasets) be sure the appropriate entries are found in datasets/datasets.json
+
+#### Download Model Archive*
+- Download the trained model archive from: https://drive.google.com/open?id=1x8_2kGe-0h0Fy_ECjpGvq5IzyRDqqo1Q
+- extract "trained_model_files" folder to models/
+- run models/place_models_in_directories.py to automatically take the models found in the extracted folder in to the correct locations within the models. 
+
+#### Adding your own Datasets
+(this is a top level description and deeper documentation will be provided in the future)
+- place a root folder in datasets/dataset_images which contains sub-directories for each class label (root_folder/class_1 contains all the images from class 1 from your dataset)
+- edit and run the "create_dataset_spreadsheet.py" file
+- add an entry to datasets/datasets.json
+
+#### Adding your own Models
+(this is a top level description and deeper documentation will be provided in the future)
+- wrap your model using the class structure defined for the framework (this is not yet documented but the existing models provide examples of how to do this)
+- train your model and place the saved parameter file (or any files needed to load your trained model in the "saved_models" directory (How you load your model is determined by you in the "LoadModel" class function ).
+- add an entry for your model to the models/models.json file
+
+
+### Starting Python Services
 - navigate to flask_services
 
 run:
@@ -16,10 +44,10 @@ run:
 - python ExplanationsAAS.py
 - python DatastoreAAS.py
 
-### Preparing Unification Layer
-- Install npm
+### Preparing and Starting Unification Layer
+- Install npm *
 - navigate to nodeJS/unification 
-- run npm install
+- run npm install *
 - run npm start
 
 ### Open an interface
