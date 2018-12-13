@@ -93,12 +93,12 @@ class ShapExplainer(object):
       ground_truth_column = "label"
       label_names = [label["label"] for label in dataset_json["labels"]] # gets all labels in dataset. To use a subset of labels, build a list manually
       label_names.sort()
-      print(label_names)
+      #print(label_names)
 
       
       ### instantiate dataset tool
       csv_path = os.path.join(datasets_path,"dataset_csvs",file_path)
-      print(csv_path)
+      #print(csv_path)
       dataset_images_dir_path =  os.path.join(datasets_path,"dataset_images")
 
       dataset_tool = DataSet(csv_path,image_url_column,ground_truth_column,explicit_path_suffix =dataset_images_dir_path) #instantiates a dataset tool
@@ -174,7 +174,7 @@ class ShapExplainer(object):
     else:
       num_background_samples=10
 
-    print("num_background_samples",num_background_samples)
+    #print("num_background_samples",num_background_samples)
 
     if("background_image_pool" in additional_args):
       background_image_pool=additional_args["background_image_pool"]
@@ -227,8 +227,10 @@ class ShapExplainer(object):
     shap_values = e.shap_values(input_image)
     
     
-    prediction, prediction_scores = self.model.Predict(input_image, True)
-    predicted_class = np.argmax(prediction)
+    prediction_scores,prediction  = self.model.Predict(input_image, True)
+    print(prediction)
+    print(prediction_scores)
+    predicted_class = np.argmax(prediction_scores)
     
     explanation = shap_values[predicted_class]
 
@@ -247,7 +249,10 @@ class ShapExplainer(object):
     if(not isinstance(prediction_scores,list)):
       prediction_scores = prediction_scores.tolist()
     
-    additional_outputs = {"shap_values":[shap_value.tolist() for shap_value in shap_values],"prediction_scores":prediction_scores}
+    attributions_list = [shap_value.tolist() for shap_value in shap_values]
+    attributions_list = attributions_list[0][0]
+    
+    additional_outputs = {"attribution_map":attributions_list,"shap_values":[shap_value.tolist() for shap_value in shap_values],"prediction_scores":prediction_scores[0]}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
     

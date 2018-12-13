@@ -106,13 +106,13 @@ def DecodeTestImages(images):
 
 def FilterExplanations(explanations_json,dataset_name,model_name):
 	available_explanations = [explanation for explanation in explanations_json["explanations"] if (dataset_name in [dataset["dataset_name"] for dataset in explanation["compatible_datasets"]]) and (model_name in [model["model_name"] for model in explanation["compatible_models"]])]
-	print("filtering by :" +dataset_name + " and " + model_name)
+	#print("filtering by :" +dataset_name + " and " + model_name)
 	return {"explanations":available_explanations}
 
 
 @app.route("/explanations/get_available_for_filters/<string:filters>", methods=['GET'])
 def GetAvailableExplanationsJSONforFilters(filters):
-	print("filters",filters)
+	#print("filters",filters)
 	filters_split = filters.split(",")
 	dataset_name = filters_split[0]
 	model_name = filters_split[1]
@@ -230,11 +230,13 @@ def GetAttributionMap():
 
 @app.route("/explanations/explain", methods=['POST'])
 def Explain():
+	#global loaded_models
+	print(loaded_models.keys())
 	raw_json = json.loads(request.data)
 
-	print(raw_json.keys())
+	#print(raw_json.keys())
 
-	print(type(raw_json['selected_dataset_json']))
+	#print(type(raw_json['selected_dataset_json']))
 	if(isinstance(raw_json['selected_dataset_json'],str) or isinstance(raw_json['selected_dataset_json'],unicode) ):
 		dataset_json = json.loads(raw_json['selected_dataset_json'])
 	else:
@@ -305,7 +307,8 @@ def Explain():
 		"num_background_samples":50,
 		"train_x":loaded_training_images[dataset_name]["train_x"],
 		"train_y":loaded_training_images[dataset_name]["train_y"],
-		"max_n_influence_images":9
+		"max_n_influence_images":4,
+		"dataset_class_labels":[l["label"] for l in dataset_json["labels"]]
 		}
 	else:
 		additional_args = {
@@ -315,9 +318,10 @@ def Explain():
 		"model_name":model_name, 
 		"dataset_name":dataset_name, 
 		"num_background_samples":50,
-		"max_n_influence_images":9
+		"max_n_influence_images":4,
+		"dataset_class_labels":[l["label"] for l in dataset_json["labels"]]
 		}
-	print("np.amax(input_image)",np.amax(input_image))
+	#print("np.amax(input_image)",np.amax(input_image))
 	display_explanation_input = False
 	if(display_explanation_input):
 		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
@@ -357,10 +361,10 @@ def Explain():
 	labels = [label["label"] for label in dataset_json["labels"]]
 	labels.sort()
 
-	print("prediction:"+str(labels[int(prediction)]))#+" - "+labels[prediction)
+	#print("prediction:"+str(labels[int(prediction)]))#+" - "+labels[prediction)
 	# json_data = json.dumps({'prediction': labels[prediction[0]],"explanation_text":explanation_text,"explanation_image":encoded_explanation_image})
 	json_data = json.dumps({'prediction': labels[int(prediction)],"explanation_text":explanation_text,"explanation_image":encoded_explanation_image, "additional_outputs":additional_outputs})
-
+	#loaded_models = {}
 	return json_data
 
 

@@ -62,7 +62,7 @@ function CreateTable(input_images,dataset_name,selected_models,selected_explanat
 							    <tr>
 							      <th scope="col"> 
 							      	<img id="explanation-table-input-image__${dataset_identifier}__${image_identifier}" class="explanation-table-input-image" src="data:image/jpg;base64,${input_image.input}">
-							      	<span class="explanation-table-input-image-ground-truth" id="explanation-table-input-image-ground-truth__${dataset_identifier}__${image_identifier}">${input_image.ground_truth}</span>
+							      	<span class="explanation-table-input-image-ground-truth" id="explanation-table-input-image-ground-truth__${dataset_identifier}__${image_identifier}">${img_i+1}) ${input_image["image_name"]} - ${input_image.ground_truth}</span>
 							      </th>`;
 
 		for (var explanation_i = 0; explanation_i < selected_explanations.length; explanation_i++){
@@ -88,7 +88,8 @@ function CreateTable(input_images,dataset_name,selected_models,selected_explanat
 				current_explanation = selected_explanations[explanation_i];
 				 	explanation_result_table_html = explanation_result_table_html +`<td class="explanation_result" id="explanation_result__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}" >
 						      	<img id="explanation-table-result-image__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}" class="explanation-table-result-image" src="test_content/testset_1_preview.jpg">
-						      	<span class="explanation-table-result-image-prediction" id="explanation-table-result-image-prediction__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">"Fetching..."</span>
+						      	<span class="explanation-table-result-image-prediction" id="explanation-table-result-image-prediction__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">Fetching...</span>
+							    <span class="explanation-table-result-text" id="explanation-table-result-text__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}"></span>
 							    <span class="explanation-table-result-json-storage json-storage" id="explanation-table-result-json-storage__${dataset_identifier}__${image_identifier}__${current_model.class_name}__${current_explanation.class_name}">{}</span>
 							    
 							     
@@ -134,6 +135,10 @@ function AddExplanationResultToTable(explanation_result,dataset_name,image_ident
 	var ground_truth_id = `explanation-table-result-image-prediction__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
 	$("#"+ground_truth_id).html(explanation_result["prediction"]);
 
+	var ground_truth_id = `explanation-table-result-text__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	$("#"+ground_truth_id).html(explanation_result["explanation_text"]);
+
+	
 
 	var json_id = `explanation-table-result-json-storage__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
 	$("#"+json_id).html(JSON.stringify(explanation_result));
@@ -177,6 +182,9 @@ function AddExplanationResultToTableAndFetchNext(explanation_result,image_identi
 
 	var ground_truth_id = `explanation-table-result-image-prediction__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
 	$("#"+ground_truth_id).html(explanation_result["prediction"]);
+
+	var ground_truth_id = `explanation-table-result-text__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;
+	$("#"+ground_truth_id).html(explanation_result["explanation_text"]);
 
 
 	var json_id = `explanation-table-result-json-storage__${dataset_identifier}__${image_identifier}__${model_identifier}__${explanation_identifier}`;

@@ -153,8 +153,12 @@ class InfluenceExplainer(object):
 
         if(not isinstance(prediction_scores,list)):
             prediction_scores = prediction_scores.tolist()
-            
-        return max_imgs, "", np.argmax(label), {"prediction_scores":prediction_scores}
+        print(self.train_lbls[idcs])
+
+        
+        influence_gt_labels = [additional_args["dataset_class_labels"][np.argmax(l_i)] for l_i in self.train_lbls[idcs]]
+        print(influence_gt_labels)
+        return max_imgs, "From top left to bottom right: \n"+",".join(influence_gt_labels), np.argmax(label), {"prediction_scores":prediction_scores}
             
             
     

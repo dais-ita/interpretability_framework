@@ -18,12 +18,12 @@ class LimeExplainer(object):
       X = self.MakeInputGray(X)
     
     predictions = list(self.model.Predict(X))
-    print("explanation - predictions: ",predictions)
+   # print("explanation - predictions: ",predictions)
     
     if(predictions[0].size == self.model.n_classes): #check if model prediction function returns one hot vector predictions
       return predictions
     else: #if it doesn't, convert predictions to one hot vectors
-      print("creating one-hot predections")
+      #print("creating one-hot predections")
       one_hot_predictions = []
       for prediction in predictions:
         # print("explain prediciton", prediction)
@@ -31,7 +31,7 @@ class LimeExplainer(object):
         one_hot[prediction] = 1
         one_hot_predictions.append(one_hot[:])
         # print("one_hot_predictions[-1]", one_hot_predictions[-1])
-      print("explanation - one_hot_predictions: ",one_hot_predictions)
+      #print("explanation - one_hot_predictions: ",one_hot_predictions)
       return one_hot_predictions
 
   def MakeInputGray(self,X):
@@ -97,12 +97,25 @@ class LimeExplainer(object):
     else:
       min_weight=0.01
 
-    _, prediction_scores = self.model.Predict(np.array([input_image]), True)
+    prediction_scores, _ = self.model.Predict(np.array([input_image]), True)
+    #print("lime prediction_scores",prediction_scores)
     prediction, explanation = self.ClassifyWithLIME(input_image,num_samples=num_samples,labels=list(range(self.model.n_classes)), top_labels=self.model.n_classes)
     
-    print("explanation prediction output",prediction)
+    #print("explanation prediction output",prediction)
     predicted_class = np.argmax(prediction)
-    print("explanation predicted_class",predicted_class)
+    
+    ## Calculate min_weight based on weights in this example:
+    print("")
+    print(explanation.local_exp[predicted_class])
+    weights = [w[1] for w in explanation.local_exp[predicted_class]]
+    largest_pro_evidence = max(weights)
+    largest_against_evidence = min(weights)
+
+    min_weight = min(largest_pro_evidence,abs(largest_against_evidence)) #set a minimum such that you will show the smallest number of regions that includes both the largest pro and largest con evidence. 
+
+    print(min_weight)
+
+    #print("explanation predicted_class",predicted_class)
     temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=False, num_features=num_features, hide_rest=False,min_weight=min_weight)
 
     display_explanation_image = False
@@ -121,11 +134,20 @@ class LimeExplainer(object):
     if(not isinstance(prediction_scores,list)):
             prediction_scores = prediction_scores.tolist()
 
-    additional_outputs = {"default_visualisation":temp.tolist(), "mask":mask.tolist(), "attribution_slices":explanation.segments.tolist(), "attribution_slice_weights":explanation.local_exp[predicted_class],"prediction_scores":prediction_scores}
+    additional_outputs = {"default_visualisation":temp.tolist(), "mask":mask.tolist(), "attribution_slices":explanation.segments.tolist(), "attribution_slice_weights":explanation.local_exp[predicted_class],"attribution_map":self.CreateAttributionMap(explanation.segments.tolist(),explanation.local_exp[predicted_class]).tolist(),"prediction_scores":prediction_scores[0]}
 
     explanation_text = "Evidence towards predicted class shown in green"
     return explanation_image, explanation_text, predicted_class, additional_outputs
-  
+
+
+  def CreateAttributionMap(self,attribution_slice,slice_weights):
+    output_map = np.array(attribution_slice).astype(np.float32)
+
+    for region_weight in slice_weights:
+            # print(region_weight[0],region_weight[1])
+      output_map[output_map == region_weight[0]] = region_weight[1]
+
+    return output_map
 
 
 if __name__ == '__main__':
@@ -202,4 +224,5 @@ if __name__ == '__main__':
 
   print(explanation_text)
   cv2.imshow("explanation",explanation_image)
-  
+
+

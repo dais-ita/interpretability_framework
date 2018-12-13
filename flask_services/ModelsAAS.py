@@ -183,47 +183,51 @@ def GetModelZip():
 
 @app.route("/models/predict", methods=['POST'])
 def Predict():
-	# print(dir(request))
-	raw_json = json.loads(request.data)
+    # print(dir(request))
+    raw_json = json.loads(request.data)
 		
-	if(isinstance(raw_json['selected_dataset_json'],str) or isinstance(raw_json['selected_dataset_json'],unicode)):
-		dataset_json = json.loads(raw_json['selected_dataset_json'])
-	else:
-		dataset_json = raw_json['selected_dataset_json']
+    if(isinstance(raw_json['selected_dataset_json'],str) or isinstance(raw_json['selected_dataset_json'],unicode)):
+        dataset_json = json.loads(raw_json['selected_dataset_json'])
+    else:
+        dataset_json = raw_json['selected_dataset_json']
 
-	input_image = PredictImagePreProcess(readb64(raw_json['input'],convert_colour=False))
-
-
-	display_prediction_input = False
-	if(display_prediction_input):
-		cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
-		cv2.imshow("prediciton image: input_image",cv2_image)
-		cv2.waitKey(0)
-		cv2.destroyAllWindows()
+    input_image = PredictImagePreProcess(readb64(raw_json['input'],convert_colour=False))
 
 
-	model_name = raw_json['selected_model']
+    display_prediction_input = False
+    if(display_prediction_input):
+        cv2_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
+        cv2.imshow("prediciton image: input_image",cv2_image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    if("selected_model_json" in raw_json):
+        model_name = raw_json['selected_model_json']["model_name"]
+    else:  
+        model_name = raw_json['selected_model']
+  
+    dataset_name = dataset_json["dataset_name"]
 
-	dataset_name = dataset_json["dataset_name"]
+
+    if(not model_name in loaded_models):
+        loaded_models[model_name] = {}
+
+    if(not dataset_name in loaded_models[model_name] ):
+        loaded_models[model_name][dataset_name] = LoadModelFromName(model_name,dataset_json)
 
 
-	if(not model_name in loaded_models):
-		loaded_models[model_name] = {}
+	#print(np.amax(input_image))
+    prediction_scores,prediction = loaded_models[model_name][dataset_name].Predict(np.array([input_image]),return_prediction_scores=True)
+    
+    if(not isinstance(prediction_scores,list)):
+        prediction_scores = prediction_scores.tolist()
+  
+    labels = [label["label"] for label in dataset_json["labels"]]
+    labels.sort()
+    #print("raw prediction:", prediction)
+    #print("prediction:"+str(prediction[0])+" - "+labels[prediction[0]])
+    json_data = json.dumps({'prediction': labels[prediction[0]],'prediction_scores':prediction_scores[0]})
 
-	if(not dataset_name in loaded_models[model_name] ):
-		loaded_models[model_name][dataset_name] = LoadModelFromName(model_name,dataset_json)
-
-
-	print(np.amax(input_image))
-	prediction = loaded_models[model_name][dataset_name].Predict(np.array([input_image]))
-	
-	labels = [label["label"] for label in dataset_json["labels"]]
-	labels.sort()
-	print("raw prediction:", prediction)
-	print("prediction:"+str(prediction[0])+" - "+labels[prediction[0]])
-	json_data = json.dumps({'prediction': labels[prediction[0]]})
-
-	return json_data
+    return json_data
 
 
 if __name__ == "__main__":
