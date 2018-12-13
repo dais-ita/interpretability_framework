@@ -65,29 +65,29 @@ class LRPExplainer(object):
     canvas = ax.figure.canvas 
     canvas.draw()
 
-    print("canvas to string")
+    #print("canvas to string")
     w,h = canvas.get_width_height()
     buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
     buf.shape = ( h, w,3 )
 
-    print("buf resize")
+   # print("buf resize")
     buf = cv2.resize(buf, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
 
-    print("plt.gcf().clear()")
+   # print("plt.gcf().clear()")
     plt.gcf().clear()
-    print("plt.gca().clear()")
+   # print("plt.gca().clear()")
     plt.gca().clear()
-    print("plt.clf()")
+    #print("plt.clf()")
     
     plt.clf()
-    print("plt.cla")
+   # print("plt.cla")
     
     plt.cla()
-    print("plt.close()")
+   # print("plt.close()")
     
     plt.close()
     
-    print("image generated")
+   # print("image generated")
     return buf
 
     
@@ -103,17 +103,17 @@ class LRPExplainer(object):
     if(len(input_image.shape) == 3):
         input_image = np.array([input_image])      
     
-    prediction,prediction_scores = self.model.Predict(input_image, True)
-    predicted_class = np.argmax(prediction)
-    print("explanation prediction output",prediction)
-    print("explanation predicted_class",predicted_class)
+    prediction_scores,prediction = self.model.Predict(input_image, True)
+    predicted_class = np.argmax(prediction_scores)
+    #print("explanation prediction output",prediction)
+    #print("explanation predicted_class",predicted_class)
 
     ####LRP
     prediction_mask = [0]* self.model.n_classes
     prediction_mask[predicted_class] = 1
     prediction_mask = np.array(prediction_mask)
 
-    print(prediction_mask)
+    #print(prediction_mask)
     
     try:
       input_image = self.model.CheckInputArrayAndResize(input_image,self.model.min_height,self.model.min_width)
@@ -160,7 +160,10 @@ class LRPExplainer(object):
     if(not isinstance(prediction_scores,list)):
       prediction_scores = prediction_scores.tolist()
     
-    additional_outputs = {"lrp_values":[lrp_value.tolist() for lrp_value in attributions],"prediction_scores":prediction_scores}
+    attributions_list = attributions.tolist()
+    attributions_list = attributions_list[0]
+        
+    additional_outputs = {"attribution_map":attributions_list, "lrp_values":[lrp_value.tolist() for lrp_value in attributions],"prediction_scores":prediction_scores[0]}
 
     explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
     

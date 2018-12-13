@@ -118,8 +118,8 @@ class VGG16Imagenet(object):
 
         
         predictions = self.model.predict(predict_x)
-        print("predictions:",predictions)
-        print("[np.argmax(prediction) for prediction in predictions]",[np.argmax(prediction) for prediction in predictions])
+        #print("predictions:",predictions)
+        #print("[np.argmax(prediction) for prediction in predictions]",[np.argmax(prediction) for prediction in predictions])
         if(return_prediction_scores):
             return predictions, [np.argmax(prediction) for prediction in predictions]
         else:
