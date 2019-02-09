@@ -26,11 +26,11 @@ class LRPExplainer(object):
   def GetColorMap(self):
     colors = []
     for l in np.linspace(1, 0, 100):
-        colors.append((30./255, 136./255, 229./255,l))
+        colors.append((0./255, 0./255, (129.+l*100)/255,l))
     for l in np.linspace(0, 1, 100):
-        colors.append((255./255, 13./255, 87./255,l))
+        colors.append(((155.+l*100)/255, 0./255, 0./255,l))
     red_transparent_blue = LinearSegmentedColormap.from_list("red_transparent_blue", colors)
-    
+
     return red_transparent_blue
   
   def DeepExplainAttributionToImage(self, deep_attribution):
@@ -38,56 +38,55 @@ class LRPExplainer(object):
     
     return img*255
 
-  def GenerateLRPExplanationImage(self,input_image,LRP_values):
+  def GenerateLRPExplanationImage(self,input_image,explanation_values):
+    # print(np.max(explanation_values))
+    # print(np.min(explanation_values))
+    # print("explanation_values.shape",explanation_values.shape)
+    
     if(len(input_image.shape) == 4):
       input_image = np.squeeze(input_image)
+    
+    x_curr = input_image.copy()
 
-    if len(LRP_values[0].shape) == 2:
-        abs_vals = np.stack([np.abs(LRP_values[i]) for i in range(len(LRP_values))], 0).flatten()
+    # make sure
+    if len(x_curr.shape) == 3 and x_curr.shape[2] == 1:
+        x_curr = x_curr.reshape(x_curr.shape[:2])
+    if x_curr.max() > 1:
+        x_curr /= 255.
+
+    if len(explanation_values[0].shape) == 2:
+        abs_vals = np.stack([np.abs(explanation_values[i]) for i in range(len(explanation_values))], 0).flatten()
     else:
-        abs_vals = np.stack([np.abs(LRP_values[i].sum(-1)) for i in range(len(LRP_values))], 0).flatten()
-    max_val = np.nanpercentile(abs_vals, 80)
+        abs_vals = np.stack([np.abs(explanation_values[i].sum(-1)) for i in range(len(explanation_values))], 0).flatten()
+    max_val = np.nanpercentile(abs_vals, 70)
 
-    # plt.rcParams['figure.figsize'] = [LRP_values.shape[0], LRP_values.shape[1]] # for square canvas
     fig, ax = plt.subplots()
     fig.subplots_adjust(0,0,1,1)
     
     plt.autoscale(tight=True)
     plt.gcf().set_size_inches(10,10) 
     
-    plt_img = plt.imshow(input_image, cmap=plt.get_cmap('gray'), alpha=0.15,extent=(0, input_image.shape[0], input_image.shape[1],0))
-    
-    img_show = plt.imshow(LRP_values,cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val, extent=(0, LRP_values.shape[0], LRP_values.shape[1],0))
-    
+    sv = explanation_values
+    plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
+    plt.imshow(sv, cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
     plt.axis('off')
 
     ax = plt.gca()
     canvas = ax.figure.canvas 
     canvas.draw()
 
-    #print("canvas to string")
     w,h = canvas.get_width_height()
     buf = np.fromstring ( canvas.tostring_rgb(), dtype=np.uint8 )
     buf.shape = ( h, w,3 )
-
-   # print("buf resize")
+    
     buf = cv2.resize(buf, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
 
-   # print("plt.gcf().clear()")
     plt.gcf().clear()
-   # print("plt.gca().clear()")
     plt.gca().clear()
-    #print("plt.clf()")
-    
     plt.clf()
-   # print("plt.cla")
-    
     plt.cla()
-   # print("plt.close()")
-    
     plt.close()
     
-   # print("image generated")
     return buf
 
     
@@ -165,7 +164,7 @@ class LRPExplainer(object):
         
     additional_outputs = {"attribution_map":attributions_list, "lrp_values":[lrp_value.tolist() for lrp_value in attributions],"prediction_scores":prediction_scores[0]}
 
-    explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
+    explanation_text = "Evidence towards predicted class shown in blue, evidence against shown in red."
     
     return explanation_image, explanation_text, predicted_class, additional_outputs
   

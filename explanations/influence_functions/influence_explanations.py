@@ -142,8 +142,10 @@ class InfluenceExplainer(object):
         influences = []
         for train_pt in zip(self.train_imgs, self.train_lbls):
             influences.append(self._influence_on_loss_at_test_image(s_test,train_pt))
-#           Get the n_max first training images in order of descending influence
+
+        #Get the n_max first training images in order of descending influence
         idcs = np.argsort(influences)[-n_max:]
+
         max_imgs = self.train_imgs[idcs]
         if cache:
             cached_examples[cache] = max_imgs

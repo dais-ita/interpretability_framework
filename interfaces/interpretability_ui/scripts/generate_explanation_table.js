@@ -54,7 +54,7 @@ function CreateTable(input_images,dataset_name,selected_models,selected_explanat
 	for (var img_i = 0; img_i < input_images.length; img_i++){
 		input_image = input_images[img_i];
 
-		var image_identifier = input_image.image_name.replace(".jpg","");
+		var image_identifier = input_image.image_name.replace(".jpg","").replace(".JPEG","");
 
 		var explanation_result_table_html = `
 							<table id="image_explantion_table__${dataset_identifier}__${image_identifier}" class="table table-bordered image_explantion_table">
@@ -149,7 +149,7 @@ function AddExplanationResultToTable(explanation_result,dataset_name,image_ident
 function GetExplanationForTable(dataset_name,model,explanation,input_image,attribution_map,callback_function)
 {
 	var image_name = input_image.image_name;
-	var image_identifier = input_image.image_name.replace(".jpg","");
+	var image_identifier = input_image.image_name.replace(".jpg","").replace(".JPEG","");
 	var model_identifier = model.class_name;
 	var explanation_identifier = explanation.class_name;
 
@@ -236,7 +236,7 @@ function GetExplanationForTableAndFetchNext(dataset_name,attribution_map,callbac
 	var model = selected_models[model_i];
 	var explanation = selected_explanations[explanation_i];
 
-	var image_identifier = input_image.image_name.replace(".jpg","");
+	var image_identifier = input_image.image_name.replace(".jpg","").replace(".JPEG","");
 	var model_identifier = model.class_name;
 	var explanation_identifier = explanation.class_name;
 

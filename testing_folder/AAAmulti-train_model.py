@@ -23,6 +23,8 @@ dataset_names = ["Gun Wielding Image Classification Transformed"]
 
 dataset_names = ["CIFAR-10"]
 
+dataset_names = ["ImageNet Vehicles Birds 10 Class (Resized)"]
+
 
 # dataset_names = ["Traffic Congestion Image Classification (Resized)"]
 # dataset_names = ["Traffic Congestion Image Classification"]
@@ -90,9 +92,9 @@ model_names = ["vgg16_imagenet"]
 #model_names=["vgg16"]
 
 #TRAINING PARAMETERS
-learning_rate = 0.000001
+learning_rate = 0.0001
 batch_size = 64
-num_train_steps = 500
+num_train_steps = 200
 
 
 
@@ -210,6 +212,7 @@ with open(model_json_path,"r") as f:
 			dataset_tool.ProduceDataFromTrainingSplitFile(csv_path,explicit_path_suffix =dataset_images_dir_path)
 		else:
 			dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
+			dataset_tool.OutputTrainingSplitAllocation(csv_path.replace(".csv","_split.csv"))
 
 		for model_name in model_names:
 			### instantiate the model

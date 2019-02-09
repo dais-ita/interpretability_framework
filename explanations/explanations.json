@@ -18,7 +18,10 @@
 			{"dataset_name":"Gun Wielding Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)"},
-			{"dataset_name":"CIFAR-10"}
+			{"dataset_name":"CIFAR-10"},
+			{"dataset_name":"ImageNet 20 Class (Resized)"},
+			{"dataset_name":"ImageNet 10 Class (Resized)"},
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"}
 
 
 				],
@@ -69,7 +72,10 @@
 			{"dataset_name":"Gun Wielding Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)"},
-			{"dataset_name":"CIFAR-10"}
+			{"dataset_name":"CIFAR-10"},
+			{"dataset_name":"ImageNet 20 Class (Resized)"},
+			{"dataset_name":"ImageNet 10 Class (Resized)"},
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"}
 				],
 		"modality":"imagery",
 		"description":"",
@@ -109,7 +115,10 @@
 			{"dataset_name":"Gun Wielding Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)"},
-			{"dataset_name":"CIFAR-10"}
+			{"dataset_name":"CIFAR-10"},
+			{"dataset_name":"ImageNet 20 Class (Resized)"},
+			{"dataset_name":"ImageNet 10 Class (Resized)"},
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"}
 				],
 		"modality":"imagery",
 		"description":"An explanation by example method that finds accurate approximations of the difference in loss at a test image due caused by retraining the model with the exclusion of a train image",
@@ -148,7 +157,10 @@
 			{"dataset_name":"Gun Wielding Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification"},
 			{"dataset_name":"Traffic Congestion Image Classification (Resized)"},
-			{"dataset_name":"CIFAR-10"}
+			{"dataset_name":"CIFAR-10"},
+			{"dataset_name":"ImageNet 20 Class (Resized)"},
+			{"dataset_name":"ImageNet 10 Class (Resized)"},
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"}
 				],
 		"modality":"imagery",
 		"description":"",

@@ -7,16 +7,20 @@ from PIL import Image
 import os
 from skimage import io
 import cv2
+import tensorflow as tf
 
 
 class DataSet(object):
     """docstring for DataSet"""
 
-    def __init__(self, file_path, image_url_column, ground_truth_column, explicit_path_suffix=""):
+    def __init__(self, file_path, image_url_column, ground_truth_column, explicit_path_suffix="",mean=None,std=None):
         super(DataSet, self).__init__()
         self.file_path = file_path
         self.image_url_column = image_url_column
         self.ground_truth_column = ground_truth_column
+
+        self.dataset_mean = mean
+        self.dataset_std = std
 
         self.explicit_path_suffix = explicit_path_suffix  # if not empty, this will be added to the urls found in the csv
 
@@ -533,6 +537,35 @@ class DataSet(object):
         relative_path_list =  split_path[split_path.index(image_dir)+1:]
 
         return "/".join(relative_path_list)
+
+
+    def GetMean(self):
+        if(self.dataset_mean is None):
+            Xs, Ys = self.GetBatch(batch_size=-1, even_examples=True, split_batch=True, split_one_hot=True,batch_source="full", return_batch_data=False)
+            x = np.concatenate([np.asarray(Xs[i][0]) for i in range(len(Xs))])
+            self.dataset_mean = np.mean(x,axis=(0))
+            print("mean: ",self.dataset_mean)
+        return self.dataset_mean
+
+    def GetSTD(self):
+        if(self.dataset_std is None):
+            Xs, Ys = self.GetBatch(batch_size=-1, even_examples=True, split_batch=True, split_one_hot=True,batch_source="full", return_batch_data=False)
+            x = np.concatenate([np.asarray(Xs[i][0]) for i in range(len(Xs))])
+            self.dataset_std = np.std(x,axis=(0))
+            print("std: ",self.dataset_std)
+        return self.dataset_std
+        
+
+    def StandardizeImages(self,images):
+        if(self.dataset_mean is None):
+            self.GetMean()
+
+        if(self.dataset_std is None):
+            self.GetSTD()
+
+        return (images - self.dataset_mean) / float(self.dataset_std)
+
+
 
 if __name__ == '__main__':
     dataset_folder = "mnist"
