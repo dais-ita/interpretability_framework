@@ -4,7 +4,7 @@ observations = []
 
 
 image_dir = "dataset_images"
-dataset_folder = "mtg_set"
+dataset_folder = "imagenet_vehicles_birds_10_class_resized"
 use_explicit = False
 
 dataset_folder_path = os.path.join(image_dir,dataset_folder)

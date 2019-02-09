@@ -29,9 +29,9 @@ class ShapExplainer(object):
   def GetColorMap(self):
     colors = []
     for l in np.linspace(1, 0, 100):
-        colors.append((30./255, 136./255, 229./255,l))
+        colors.append((0./255, 0./255, (129.+l*100)/255,l))
     for l in np.linspace(0, 1, 100):
-        colors.append((255./255, 13./255, 87./255,l))
+        colors.append(((155.+l*100)/255, 0./255, 0./255,l))
     red_transparent_blue = LinearSegmentedColormap.from_list("red_transparent_blue", colors)
 
     return red_transparent_blue
@@ -119,7 +119,10 @@ class ShapExplainer(object):
     
     return train_x
 
-  def GenerateShapExplanationImage(self,input_image,shap_values):
+  def GenerateShapExplanationImage(self,input_image,explanation_values):
+    # print(np.max(explanation_values))
+    # print(np.min(explanation_values))
+    
     if(len(input_image.shape) == 4):
       input_image = np.squeeze(input_image)
     
@@ -131,10 +134,10 @@ class ShapExplainer(object):
     if x_curr.max() > 1:
         x_curr /= 255.
 
-    if len(shap_values[0].shape) == 2:
-        abs_vals = np.stack([np.abs(shap_values[i]) for i in range(len(shap_values))], 0).flatten()
+    if len(explanation_values[0].shape) == 2:
+        abs_vals = np.stack([np.abs(explanation_values[i]) for i in range(len(explanation_values))], 0).flatten()
     else:
-        abs_vals = np.stack([np.abs(shap_values[i].sum(-1)) for i in range(len(shap_values))], 0).flatten()
+        abs_vals = np.stack([np.abs(explanation_values[i].sum(-1)) for i in range(len(explanation_values))], 0).flatten()
     max_val = np.nanpercentile(abs_vals, 99.9)
 
     fig, ax = plt.subplots()
@@ -143,7 +146,7 @@ class ShapExplainer(object):
     plt.autoscale(tight=True)
     plt.gcf().set_size_inches(10,10) 
     
-    sv = shap_values[i] if len(shap_values[i].shape) == 2 else shap_values[i].sum(-1)
+    sv = explanation_values[i] if len(explanation_values[i].shape) == 2 else explanation_values[i].sum(-1)
     plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
     plt.imshow(sv, cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
     plt.axis('off')
@@ -254,7 +257,7 @@ class ShapExplainer(object):
     
     additional_outputs = {"attribution_map":attributions_list,"shap_values":[shap_value.tolist() for shap_value in shap_values],"prediction_scores":prediction_scores[0]}
 
-    explanation_text = "Evidence towards predicted class shown in red, evidence against shown in blue."
+    explanation_text = "Evidence towards predicted class shown in blue, evidence against shown in red."
     
     return explanation_image, explanation_text, predicted_class, additional_outputs
   

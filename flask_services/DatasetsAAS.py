@@ -112,7 +112,7 @@ def EncodeSpecificImage(dataset_name,image_name):
 	
 	image_name_split = image_name.split("_")
 	image_id = image_name_split[0]
-	label = image_name.replace(".jpg","").replace(image_id+"_","")
+	label = image_name.replace(".JPEG","").replace(".jpg","").replace(image_id+"_","")
 	
 	dataset_path = os.path.join(datasets_path,"dataset_images",dataset_json["folder"])
 	label_folder_path = os.path.join(dataset_path,label)

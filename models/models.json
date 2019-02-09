@@ -95,7 +95,26 @@
 			"test_accuracy":0.82,
 			"training_time":696,
 			"training_steps":400
+			},
+			{"dataset_name":"ImageNet 20 Class (Resized)",
+			"model_path":"saved_models/imagenet_20_class_(resized)",
+			"test_accuracy":0.6,
+			"training_time":0,
+			"training_steps":200
+			},
+			{"dataset_name":"ImageNet 10 Class (Resized)",
+			"model_path":"saved_models/imagenet_10_class_(resized)",
+			"test_accuracy":0.5,
+			"training_time":0,
+			"training_steps":200
+			},
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)",
+			"model_path":"saved_models/imagenet_vehicles_birds_10_class_(resized)",
+			"test_accuracy":0.71,
+			"training_time":0,
+			"training_steps":200
 			}
+			
 		],
 		"layers":[
 			

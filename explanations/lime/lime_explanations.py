@@ -105,15 +105,15 @@ class LimeExplainer(object):
     predicted_class = np.argmax(prediction)
     
     ## Calculate min_weight based on weights in this example:
-    print("")
-    print(explanation.local_exp[predicted_class])
+    # print("")
+    # print(explanation.local_exp[predicted_class])
     weights = [w[1] for w in explanation.local_exp[predicted_class]]
     largest_pro_evidence = max(weights)
     largest_against_evidence = min(weights)
 
     min_weight = min(largest_pro_evidence,abs(largest_against_evidence)) #set a minimum such that you will show the smallest number of regions that includes both the largest pro and largest con evidence. 
 
-    print(min_weight)
+    # print(min_weight)
 
     #print("explanation predicted_class",predicted_class)
     temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=False, num_features=num_features, hide_rest=False,min_weight=min_weight)
