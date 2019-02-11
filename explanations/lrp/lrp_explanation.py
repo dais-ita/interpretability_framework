@@ -23,6 +23,8 @@ class LRPExplainer(object):
     super(LRPExplainer, self).__init__()
     self.model = model
 
+    self.requires_fresh_session = True
+		
   def GetColorMap(self):
     colors = []
     for l in np.linspace(1, 0, 100):

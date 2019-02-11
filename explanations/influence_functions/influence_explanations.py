@@ -32,6 +32,8 @@ class InfluenceExplainer(object):
         self.hvp = self._get_approx_hvp(self.grad_loss, self.params, self.v_placeholder)
         self.vec_to_list = self._get_vec_to_list()
         self.cached_influence = {}
+
+        self.requires_fresh_session = False
                 
         
     def Explain(self, test_img, additional_args):

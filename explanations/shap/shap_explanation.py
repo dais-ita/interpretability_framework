@@ -26,6 +26,8 @@ class ShapExplainer(object):
     self.dataset_tool_dict = {}
     self.shap_explainers_dict = {}
 
+    self.requires_fresh_session = False
+
   def GetColorMap(self):
     colors = []
     for l in np.linspace(1, 0, 100):
