@@ -144,6 +144,10 @@ class VGG16Imagenet(object):
 
             self.model.load_weights(load_h5_path)
         
+        self.model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adam(lr=self.learning_rate),
+              metrics=['accuracy'])
+        
         print("Loaded model from:"+ str(load_h5_path))
 
     ### Model Specific Functions
