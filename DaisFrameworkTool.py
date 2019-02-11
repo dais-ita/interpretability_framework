@@ -43,7 +43,6 @@ class DaisFrameworkTool():
 
 		self.model_save_path = None
 
-
 		self.InitialiseTool()
 
 

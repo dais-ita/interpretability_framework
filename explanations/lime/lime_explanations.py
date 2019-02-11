@@ -13,6 +13,8 @@ class LimeExplainer(object):
     super(LimeExplainer, self).__init__()
     self.model = model
 
+    self.requires_fresh_session = False
+
   def PredictFunction(self,X):
     if(X.shape[-1] == 3 and self.model.model_input_channels == 1):
       X = self.MakeInputGray(X)
