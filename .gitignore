@@ -129,3 +129,6 @@ saved_models/*
 /models/svm/utils/tensorflow_vgg
 
 /flask_services/experiment_tables/*
+
+#ignore ROAR saved models
+*ROAR_*
