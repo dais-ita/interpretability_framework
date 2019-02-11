@@ -230,6 +230,7 @@ if __name__ == '__main__':#
 
 	dataset_name = "ImageNet Vehicles Birds 10 Class (Resized)"
 
+	explanation_name = "LIME"
 
 	#TRAINING PARAMETERS
 	learning_rate = 0.001
@@ -238,7 +239,7 @@ if __name__ == '__main__':#
 
 
 	#INSTANTIATE TOOL
-	framework_tool = DaisFrameworkTool()
+	framework_tool = DaisFrameworkTool(explicit_framework_base_path="") ##if using the tool outside of the framework repo root folder, then you must provide an explicit path to it, otherwise use ""
 
 
 	#LOAD DATASET
@@ -262,10 +263,45 @@ if __name__ == '__main__':#
 	print("num validation examples: "+str(len(val_x)))
 
 	
+
+	
 	#INSTANTIATE MODEL
 	model_instance = framework_tool.InstantiateModelFromName(model_name,model_save_path_suffix,dataset_json,additional_args = {"learning_rate":learning_rate})
 	
+	#LOAD OR TRAIN MODEL
+	load_base_model_if_exist = True
+	train_model = False
+	
+	#LOAD MODEL
+	model_load_path = ""
+	if(load_base_model_if_exist == True and os.path.exists(model_load_path) == True):
+		model_instance.LoadModel(model_load_path)
+	else:
+		train_model = True
+	
+	if(train_model):
+		#OR TRAIN MODEL
+		framework_tool.TrainModel(model_instance,train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
 
 
-	#TRAIN MODEL
-	framework_tool.TrainModel(model_instance,train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
+
+
+	#INSTANTIATE EXPLANTION
+	explanation_instance = framework_tool.InstantiateExplanationFromName(explanation_name,model_instance)
+
+	additional_args = {
+        "num_samples":100,
+        "num_features":300,
+        "min_weight":0.01, 
+        "num_background_samples":50,
+        "train_x":train_x,
+        "train_y":train_y,
+        "max_n_influence_images":9,
+        "dataset_name":dataset_name,
+        "background_image_pool":train_x
+        }
+	
+	#EXPLAIN AN IMAGE
+	image_x = train_x[0]
+
+	explanation_instance.Explain(image_x,additional_args=additional_args) 

@@ -3,6 +3,14 @@ An interpretability technique exploration and data generation tool
 
 This project provides a framework designed, from the ground up to allow easy building of dataset -> model -> explanation technqiue pipelines.
 
+The framework offers three main methods of use. 
+
+- Web Interface: flask and nodeJS services are provided that together form an API. This API can be used by web interfaces(some are provided) to give the easiest access to interpretability pipelines.
+- Programtic (Services): The sames services above can be accessed within code (or your own web interfaces).
+- *new* Framework Tool: A DaisFrameworkTool class exists that allows the usage of the items in the framework without requiring the services to be running. This can be useful but removes some of the simplicty of the above options.   
+
+(Docs specifically for the DaisFrameworkTool class are not yet provided. However, the class file itself includes an example of using it.)
+
 ## Getting Started
 steps marked with * only need to be done once
 ### Preparing Python* 
