@@ -17,10 +17,10 @@ import numpy as np
 
 
 ### Setup Sys path for easy imports
-# base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
-# base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
+# base_dir = "/media/harborned/ShutUpN/repos/dais/interpretability_framework"
+# base_dir = "/media/upsi/fs1/harborned/repos/interpretability_framework"
 
-def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+def GetProjectExplicitBase(base_dir_name="interpretability_framework"):
 	cwd = os.getcwd()
 	split_cwd = cwd.split("/")
 
@@ -36,7 +36,7 @@ def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
 
 	return base_dir_path
 
-base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+base_dir = GetProjectExplicitBase(base_dir_name="interpretability_framework")
 
 
 
@@ -180,6 +180,9 @@ def LoadModelFromJson(model_json,dataset_json):
 
 	additional_args = {"learning_rate":learning_rate,"dropout":dropout}
 
+	print(dataset_name)
+	print("")
+	print(model_json)
 	trained_on_json = [dataset for dataset in model_json["trained_on"] if dataset["dataset_name"] == dataset_name][0]
 
 	model_path = os.path.join(models_path,model_name,trained_on_json["model_path"])
@@ -281,7 +284,7 @@ def Explain():
 	if(not dataset_name in loaded_explanations[explanation_name][model_name]):
 		loaded_explanations[explanation_name][model_name][dataset_name] = LoadExplainerFromJson(explanation_json,loaded_models[model_name][dataset_name])
 
-
+	#TODO: temporary solution to the new session problem
 	explanation_instance = loaded_explanations[explanation_name][model_name][dataset_name]
 
 

@@ -44,7 +44,7 @@ class ShapExplainer(object):
       return self.dataset_tool_dict[dataset_name]
     else:
       
-      def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+      def GetProjectExplicitBase(base_dir_name="interpretability_framework"):
         cwd = os.getcwd()
         split_cwd = cwd.split("/")
 
@@ -60,7 +60,7 @@ class ShapExplainer(object):
 
         return base_dir_path
 
-      base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+      base_dir = GetProjectExplicitBase(base_dir_name="interpretability_framework")
 
       #add dataset folder to sys path to allow for easy import
       datasets_path = os.path.join(base_dir,"datasets")
@@ -271,10 +271,10 @@ if __name__ == '__main__':
   
 
   ### Setup Sys path for easy imports
-  # base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
-  # base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
+  # base_dir = "/media/harborned/ShutUpN/repos/dais/interpretability_framework"
+  # base_dir = "/media/upsi/fs1/harborned/repos/interpretability_framework"
 
-  def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+  def GetProjectExplicitBase(base_dir_name="interpretability_framework"):
     cwd = os.getcwd()
     split_cwd = cwd.split("/")
 
@@ -290,7 +290,7 @@ if __name__ == '__main__':
 
     return base_dir_path
 
-  base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+  base_dir = GetProjectExplicitBase(base_dir_name="interpretability_framework")
 
 
   #add all model folders to sys path to allow for easy import

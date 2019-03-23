@@ -24,7 +24,7 @@ import shutil
 # base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
 # base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
 
-def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+def GetProjectExplicitBase(base_dir_name="interpretability_framework"):
 	cwd = os.getcwd()
 	split_cwd = cwd.split("/")
 
@@ -40,7 +40,7 @@ def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
 
 	return base_dir_path
 
-base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+base_dir = GetProjectExplicitBase(base_dir_name="interpretability_framework")
 
 #add dataset folder to sys path to allow for easy import
 datasets_path = os.path.join(base_dir,"datasets")
@@ -64,6 +64,8 @@ def readb64(base64_string):
     sbuf.write(base64.b64decode(base64_string))
     pimg = Image.open(sbuf)
     return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
+
+
 
 def encIMG64(image,convert_colour = False):
     if(convert_colour):
