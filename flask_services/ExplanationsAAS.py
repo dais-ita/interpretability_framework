@@ -296,7 +296,7 @@ def Explain():
 			loaded_training_images[dataset_name] = {}
 			source = "train"
 			label_names = loaded_dataset_tools[dataset_name]["label_names"]
-			loaded_training_images[dataset_name]["train_x"], loaded_training_images[dataset_name]["train_y"], loaded_training_images[dataset_name]["batch"] = loaded_dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = -1,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source, return_batch_data=True)
+			loaded_training_images[dataset_name]["train_x"], loaded_training_images[dataset_name]["train_y"], loaded_training_images[dataset_name]["batch"] = loaded_dataset_tools[dataset_name]["dataset_tool"].GetBatch(batch_size = 100,even_examples=True, y_labels_to_use=label_names, split_batch = True,split_one_hot = True, batch_source = source, return_batch_data=True)
 
 			print("loaded_training_images[dataset_name]['train_x'].shape",loaded_training_images[dataset_name]["train_x"].shape)
 		

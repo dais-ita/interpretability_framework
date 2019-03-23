@@ -131,7 +131,11 @@ class LimeExplainer(object):
     # explanation_image = mark_boundaries(temp,mask)
 
     explanation_image = temp
-    explanation_image = cv2.cvtColor(temp,cv2.COLOR_BGR2RGB)
+
+    if("denormalise_function" in additional_args):
+      explanation_image = additional_args["denormalise_function"](explanation_image)
+
+    explanation_image = cv2.cvtColor(explanation_image,cv2.COLOR_BGR2RGB)
 
     if(not isinstance(prediction_scores,list)):
             prediction_scores = prediction_scores.tolist()

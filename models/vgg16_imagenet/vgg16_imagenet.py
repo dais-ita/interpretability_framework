@@ -68,7 +68,7 @@ class VGG16Imagenet(object):
         self.model = self.BuildModel(self.model_input_dim_height, self.model_input_dim_width, self.model_input_channels, self.n_classes,self.dropout)
         
 
-    def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None):
+    def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None, early_stop=True, save_best_name=""):
         train_x = self.CheckInputArrayAndResize(train_x,self.min_height,self.min_width)
         if(val_x is not None):
             val_x = self.CheckInputArrayAndResize(val_x,self.min_height,self.min_width)
@@ -78,7 +78,16 @@ class VGG16Imagenet(object):
         else:
             input_dict = train_x
 
+        callbacks=[]
+        if(early_stop):
+            es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
+            callbacks.append(es)
+
+        if(save_best_name != ""):    
+            mc = ModelCheckpoint(save_best_name+'.h5', monitor='val_loss', mode='min', save_best_only=True)
+            callbacks.append(mc)
         
+
         self.model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(lr=self.learning_rate),
               metrics=['accuracy'])
@@ -88,12 +97,12 @@ class VGG16Imagenet(object):
               batch_size=batch_size,
               epochs=num_steps,
               verbose=1,
-              validation_data=(val_x, val_y))
+              validation_data=(val_x, val_y),callbacks=callbacks)
         else:
             self.model.fit(train_x, train_y,
           batch_size=batch_size,
           epochs=num_steps,
-          verbose=1)
+          verbose=1,callbacks=callbacks)
 
 
     def EvaluateModel(self, eval_x, eval_y, batch_size):

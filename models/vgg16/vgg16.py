@@ -7,6 +7,8 @@ from keras.layers import Conv2D, MaxPooling2D, Convolution2D, MaxPooling2D, Zero
 from keras.models import Sequential
 from keras.models import model_from_json
 
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+
 from keras.models import Model
 
 import tensorflow as tf
@@ -22,15 +24,16 @@ class VGG16Trainable(object):
     def __init__(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes, model_dir,
                  additional_args={}):
         super(VGG16Trainable, self).__init__()
-        self.model_input_dim_height = model_input_dim_height
-        self.model_input_dim_width = model_input_dim_width
+        # model specific variables
+        self.min_height = 48
+        self.min_width = 48
+        
+        self.model_input_dim_height = max(model_input_dim_height,self.min_height)
+        self.model_input_dim_width = max(model_input_dim_width,self.min_width)
         self.model_input_channels = model_input_channels
         self.n_classes = n_classes
         self.model_dir = model_dir
 
-        # model specific variables
-        self.min_height = 48
-        self.min_width = 48
         
         # Training Parameters
 
@@ -68,7 +71,7 @@ class VGG16Trainable(object):
         self.model = self.BuildModel(self.model_input_dim_height, self.model_input_dim_width, self.model_input_channels, self.n_classes,self.dropout)
         
 
-    def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None):
+    def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None, early_stop=True, save_best_name=""):
         train_x = self.CheckInputArrayAndResize(train_x,self.min_height,self.min_width)
         if(val_x is not None):
             val_x = self.CheckInputArrayAndResize(val_x,self.min_height,self.min_width)
@@ -79,7 +82,16 @@ class VGG16Trainable(object):
         else:
             input_dict = train_x
 
-        
+        callbacks=[]
+        if(early_stop):
+            es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
+            callbacks.append(es)
+
+        if(save_best_name != ""):    
+            mc = ModelCheckpoint(save_best_name+'.h5', monitor='val_loss', mode='min', save_best_only=True)
+            callbacks.append(mc)
+            
+
         self.model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(lr=self.learning_rate),
               metrics=['accuracy'])
@@ -89,12 +101,12 @@ class VGG16Trainable(object):
               batch_size=batch_size,
               epochs=num_steps,
               verbose=1,
-              validation_data=(val_x, val_y))
+              validation_data=(val_x, val_y),callbacks=callbacks)
         else:
             self.model.fit(train_x, train_y,
           batch_size=batch_size,
           epochs=num_steps,
-          verbose=1)
+          verbose=1,callbacks=callbacks)
 
 
     def EvaluateModel(self, eval_x, eval_y, batch_size):
@@ -143,6 +155,10 @@ class VGG16Trainable(object):
             load_h5_path = load_dir+".h5"
 
             self.model.load_weights(load_h5_path)
+        
+        self.model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adam(lr=self.learning_rate),
+              metrics=['accuracy'])
         
         print("Loaded model from:"+ str(load_h5_path))
 

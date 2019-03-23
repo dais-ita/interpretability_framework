@@ -133,11 +133,11 @@ class DaisFrameworkTool():
 
 
 	#DATASET FUNCTIONS
-	def LoadFrameworkDataset(self,dataset_name):
+	def LoadFrameworkDataset(self,dataset_name,load_split_if_available = True, train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1):
 		dataset_json = [dataset for dataset in self.datasets_json["datasets"] if dataset["dataset_name"] == dataset_name][0]
 
 		### gather required information about the dataset
-		if("default_training_allocation_path" in dataset_json.keys()):
+		if(load_split_if_available and "default_training_allocation_path" in dataset_json.keys()):
 			file_path = dataset_json["default_training_allocation_path"]
 			load_split = True
 		else:
@@ -166,7 +166,7 @@ class DaisFrameworkTool():
 		if(load_split):
 			dataset_tool.ProduceDataFromTrainingSplitFile(csv_path,explicit_path_suffix =dataset_images_dir_path)
 		else:
-			dataset_tool.SplitLiveData(train_ratio=0.8,validation_ratio=0.1,test_ratio=0.1) #splits the live dataset examples in to train, validation and test sets
+			dataset_tool.SplitLiveData(train_ratio=train_ratio,validation_ratio=validation_ratio,test_ratio=test_ratio) #splits the live dataset examples in to train, validation and test sets
 			dataset_tool.OutputTrainingSplitAllocation(csv_path.replace(".csv","_split.csv"))
 
 
@@ -192,12 +192,12 @@ class DaisFrameworkTool():
 
 
 
-	def TrainModel(self,model_instance,train_x, train_y, batch_size, num_train_steps, val_x= None, val_y=None):
+	def TrainModel(self,model_instance,train_x, train_y, batch_size, num_train_steps, val_x= None, val_y=None, early_stop=True, save_best_name=""):
 		print("train model")
 		print("")
 		model_train_start_time = time.time()
 		
-		model_instance.TrainModel(train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
+		model_instance.TrainModel(train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y, early_stop=early_stop, save_best_name=save_best_name)
 		model_train_time = time.time() - model_train_start_time
 		print(model_train_time)
 

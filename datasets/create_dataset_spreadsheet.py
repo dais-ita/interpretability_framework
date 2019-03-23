@@ -41,7 +41,7 @@ def CreateDatasetSpreadsheet(image_dir, dataset_folder, use_explicit=False):
 if __name__ == '__main__':
 
 	image_dir = "dataset_images"
-	dataset_folder = "imagenet_vehicles_birds_10_class_resized"
+	dataset_folder = "svrt_problem_1_10image"
 	use_explicit = False
 
 	if(len(sys.argv) > 1):

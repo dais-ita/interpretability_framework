@@ -82,21 +82,19 @@ if __name__ == '__main__':
 
 	dataset_jsons = []
 
+	dataset_attributes = {
+	"dataset_name": "SVRT Problem 1 10 image"
+	,"dataset_folder": "svrt_problem_1_10image"
 
-	for i in range(1,24):
-		dataset_attributes = {
-		"dataset_name": "SVRT Problem "+str(i)
-		,"dataset_folder": "svrt_problem_"+str(i)
+	,"image_x": "128"
+	,"image_y": "128"
+	,"image_channels": "3"
 
-		,"image_x": "128"
-		,"image_y": "128"
-		,"image_channels": "3"
+	,"description":"10 examples per class from problem 1 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)"
+	,"license":"apache 2"
+	}
 
-		,"description":"Examples from problem "+str(i)+" of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)"
-		,"license":"apache 2"
-		}
-
-		dataset_jsons.append(CreateJsonEntryText(dataset_attributes))
+	dataset_jsons.append(CreateJsonEntryText(dataset_attributes))
 
 
 	print(",\n\t".join(dataset_jsons))
