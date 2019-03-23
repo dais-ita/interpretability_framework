@@ -67,7 +67,7 @@ class InceptionResNetV2Imagenet(object):
         self.model = self.BuildModel(self.model_input_dim_height, self.model_input_dim_width, self.model_input_channels, self.n_classes,self.dropout)
         
 
-    def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None):
+    def TrainModel(self, train_x, train_y, batch_size, num_steps, val_x= None, val_y=None, early_stop=True, save_best_name=""):
         train_x = self.CheckInputArrayAndResize(train_x,self.min_height,self.min_width)
         val_x = self.CheckInputArrayAndResize(val_x,self.min_height,self.min_width)
 
@@ -76,12 +76,22 @@ class InceptionResNetV2Imagenet(object):
         else:
             input_dict = train_x
 
+        callbacks=[]
+        if(early_stop):
+            es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
+            callbacks.append(es)
+
+        if(save_best_name != ""):    
+            mc = ModelCheckpoint(save_best_name+'.h5', monitor='val_loss', mode='min', save_best_only=True)
+            callbacks.append(mc)
+        
+
+
         
         self.model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(lr=self.learning_rate),
               metrics=['accuracy'])
 
-        callbacks = []
 
         #early_stop_callback = keras.callbacks.EarlyStopping(monitor='val_acc', min_delta=0.0001, patience=30, verbose=0, mode='auto', baseline=None)
         #early_stop_callback = keras.callbacks.EarlyStopping(monitor='val_acc', value=0.71, verbose=1)

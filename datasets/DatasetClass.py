@@ -1,3 +1,5 @@
+from __future__ import division
+
 import csv
 import math
 import random
@@ -95,7 +97,7 @@ class DataSet(object):
 
         return live_data
 
-    def SplitLiveData(self, train_ratio=0.8, validation_ratio=0.1, test_ratio=0.1, split_output_path=""):
+    def SplitLiveData(self, train_ratio=0.8, validation_ratio=0.1, test_ratio=0.1, split_output_path="", even_examples=True):
         """
         creates a split of the dataset according to specified ratio. each subset is
         stored in class variables for access by the GetBatch function
@@ -104,31 +106,112 @@ class DataSet(object):
             split_output_path = self.file_path.replace(".csv","_train_split.csv")
 
         if len(self.live_dataset) == 0:
-            self.live_dataset = self.CreateLiveDataSet(even_examples=True, y_labels_to_use=[]) #default to use even examples and all labels
+            self.live_dataset = self.CreateLiveDataSet(even_examples=even_examples, y_labels_to_use=[]) #default to use even examples and all labels
 
         total_examples = len(self.live_dataset)
-
-        remaining_index_set = set(range(total_examples))
-
         num_train = int(math.floor(total_examples * train_ratio))
         num_validation = int(math.floor(total_examples * validation_ratio))
         num_test = total_examples - num_train - num_validation
-
+        
         print("train: " + str(num_train) + "   validation: " + str(num_validation) + "  test: " + str(num_test))
 
-        train_index = random.sample(remaining_index_set, num_train)
-        remaining_index_set = remaining_index_set - set(train_index)
+        if(even_examples):
+            #build index by labels dict
+            remaining_index_by_label = {}
 
-        validation_index = random.sample(remaining_index_set, num_validation)
-        remaining_index_set = remaining_index_set - set(validation_index)
+            for example_i in range(len(self.live_dataset)):
+                example = self.live_dataset[example_i]
+
+                if(example[1]not in remaining_index_by_label):
+                    remaining_index_by_label[example[1]] = set([])
+                
+                remaining_index_by_label[example[1]].add(example_i)
+            
+            #calculate the number of examples per label for each split
+            num_labels = len(remaining_index_by_label.keys())
+            training_per_label = int(num_train / num_labels)
+            validation_per_label = int(num_validation / num_labels)
+            test_per_label = int(num_test / num_labels)
+            
+            #produce indexes for each split 
+            train_index = []
+            validation_index = []
+            test_index = []
+            
+            for label in remaining_index_by_label.keys():
+                train_index += random.sample(remaining_index_by_label[label], training_per_label)
+                remaining_index_by_label[label] = remaining_index_by_label[label] - set(train_index)
+
+                validation_index += random.sample(remaining_index_by_label[label], validation_per_label)
+                remaining_index_by_label[label] = remaining_index_by_label[label] - set(validation_index)
+
+                test_index += random.sample(remaining_index_by_label[label], test_per_label)
+                remaining_index_by_label[label] = remaining_index_by_label[label] - set(test_index)
+
+        else:
+            remaining_index_set = set(range(total_examples))
+            
+            train_index = random.sample(remaining_index_set, num_train)
+            remaining_index_set = remaining_index_set - set(train_index)
+
+            validation_index = random.sample(remaining_index_set, num_validation)
+            remaining_index_set = remaining_index_set - set(validation_index)
+
+            test_index = random.sample(remaining_index_set, num_test)
+            remaining_index_set = remaining_index_set - set(test_index)
+
 
         full_source = np.array(self.live_dataset)
 
         self.live_training = full_source[train_index]
         self.live_validation = full_source[validation_index]
-        self.live_test = full_source[list(remaining_index_set)]
+        self.live_test = full_source[test_index]
 
         self.OutputTrainingSplitAllocation(split_output_path)
+
+
+    def CreateNewValidationFold(self, split_output_path=""):
+        num_train = len(self.live_training)
+        num_validation = len(self.live_validation)
+
+        working_image_set = np.concatenate((self.live_training, self.live_validation), axis=0)
+
+        #build index by labels dict
+        remaining_index_by_label = {}
+
+        for example_i in range(len(working_image_set)):
+            example = working_image_set[example_i]
+
+            if(example[1]not in remaining_index_by_label):
+                remaining_index_by_label[example[1]] = set([])
+            
+            remaining_index_by_label[example[1]].add(example_i)
+        
+        #calculate the number of examples per label for each split
+        num_labels = len(remaining_index_by_label.keys())
+        training_per_label = int(num_train / num_labels)
+        validation_per_label = int(num_validation / num_labels)
+        
+        #produce indexes for each split 
+        train_index = []
+        validation_index = []
+        
+        for label in remaining_index_by_label.keys():
+            train_index += random.sample(remaining_index_by_label[label], training_per_label)
+            remaining_index_by_label[label] = remaining_index_by_label[label] - set(train_index)
+
+            validation_index += random.sample(remaining_index_by_label[label], validation_per_label)
+            remaining_index_by_label[label] = remaining_index_by_label[label] - set(validation_index)
+
+            
+        
+        self.live_training = working_image_set[train_index]
+        self.live_validation = working_image_set[validation_index]
+        
+        if(split_output_path != ""):
+            self.OutputTrainingSplitAllocation(split_output_path)
+
+        
 
     def GetBatch(self, batch_size=-1, even_examples=True, y_labels_to_use=[], split_batch=True, split_one_hot=True,
                  batch_source="full", return_batch_data=False):
@@ -408,7 +491,7 @@ class DataSet(object):
         if batch_size == -1:
             batch_size = len(x)
 
-        num_batches = len(x) / batch_size
+        num_batches = int(len(x) / batch_size)
         last_batch_size = len(x) % batch_size
         if last_batch_size:
             num_batches += 1
@@ -563,8 +646,44 @@ class DataSet(object):
         if(self.dataset_std is None):
             self.GetSTD()
 
-        return (images - self.dataset_mean) / float(self.dataset_std)
+        # return np.array( (images - self.dataset_mean) / self.dataset_std ).astype(np.float32)
+        return (images - self.dataset_mean) / self.dataset_std
 
+    def CreateStandardizeFuntion(self):
+        if(self.dataset_mean is None):
+            self.GetMean()
+
+        if(self.dataset_std is None):
+            self.GetSTD()
+
+        def StandardizeImagesPortable(images):
+            return np.array( (images - self.dataset_mean) / self.dataset_std ).astype(np.float32)
+
+        return StandardizeImagesPortable
+    
+
+
+    def DestandardizeImages(self,images):
+        if(self.dataset_mean is None):
+            self.GetMean()
+
+        if(self.dataset_std is None):
+            self.GetSTD()
+
+        return np.array( (images * self.dataset_std) + self.dataset_mean ).astype(np.float32)
+
+    def CreateDestandardizeFuntion(self):
+        if(self.dataset_mean is None):
+            self.GetMean()
+
+        if(self.dataset_std is None):
+            self.GetSTD()
+        
+
+        def DestandardizeImagesPortable(images):
+            return np.array( (images * self.dataset_std) + self.dataset_mean ).astype(np.float32)
+
+        return DestandardizeImagesPortable
 
 
 if __name__ == '__main__':
