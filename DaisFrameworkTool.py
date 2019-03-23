@@ -49,12 +49,16 @@ class DaisFrameworkTool():
 	### Directory Handling Functions
 	def GetProjectExplicitBase(self):
 		cwd = os.getcwd()
+		print("cwd: ", cwd)
 		split_cwd = cwd.split("/")
 
 		base_path_list = []
 		for i in range(1, len(split_cwd)):
 			if(split_cwd[-i] == self.base_dir_name):
-				base_path_list = split_cwd[:-i+1]
+				if(i == 1):
+					base_path_list = split_cwd[:]
+				else:
+					base_path_list = split_cwd[:-i+1]
 
 		if(base_path_list == []):
 			raise IOError('base project path could not be constructed. Are you running within: '+self.base_dir_name)
@@ -223,19 +227,42 @@ class DaisFrameworkTool():
 
 
 if __name__ == '__main__':#
+	
+
 	#ARGUMENTS
 	model_name = "vgg16_imagenet"
 	model_save_path_suffix = "test_001" 
 
 	dataset_name = "ImageNet Vehicles Birds 10 Class (Resized)"
 
-	explanation_name = "LIME"
+	explanation_name = "LRP"
+
+	if(len(sys.argv) > 1):
+		dataset_name = sys.argv[1]
+		
+	if(len(sys.argv) > 2):
+		model_name = sys.argv[2]
+		
+
+	if(len(sys.argv) > 3):
+		model_save_path_suffix = sys.argv[3]
+		
+
+	if(len(sys.argv) > 4):
+		explanation_name = sys.argv[4]
+		
+	print("Dataset Name: ", dataset_name)
+	print("Model Name: ", model_name)
+	print("Model Save Suffix: ", model_save_path_suffix)
+	print("Explanation Name: ", explanation_name)
+
 
 	#TRAINING PARAMETERS
-	learning_rate = 0.001
-	batch_size = 64
-	num_train_steps = 2
-
+	learning_rate = 0.01
+	batch_size = 128
+	num_train_steps = 40
+	train_model_after_loading = True
+	second_epochs_threshold = 0.9
 
 	#INSTANTIATE TOOL
 	framework_tool = DaisFrameworkTool(explicit_framework_base_path="") ##if using the tool outside of the framework repo root folder, then you must provide an explicit path to it, otherwise use ""
@@ -269,10 +296,10 @@ if __name__ == '__main__':#
 	
 	#LOAD OR TRAIN MODEL
 	load_base_model_if_exist = True
-	train_model = False
+	train_model = train_model_after_loading
 	
 	#LOAD MODEL
-	model_load_path = ""
+	model_load_path = framework_tool.model_save_path
 	if(load_base_model_if_exist == True and os.path.exists(model_load_path) == True):
 		model_instance.LoadModel(model_load_path)
 	else:
@@ -280,27 +307,38 @@ if __name__ == '__main__':#
 	
 	if(train_model):
 		#OR TRAIN MODEL
-		framework_tool.TrainModel(model_instance,train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
-
-
+		training_stats = framework_tool.TrainModel(model_instance,train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
+		#{"training_time":model_train_time,"accuracy_after_training":accuracy_after_training,"completed_epochs":completed_epochs}
+		if(float(training_stats["accuracy_after_training"][0]) < second_epochs_threshold):
+			training_stats = framework_tool.TrainModel(model_instance,train_x, train_y, batch_size, num_train_steps, val_x= val_x, val_y=val_y)
+		
+	with open("training_accuracies.csv","a") as f:
+		f.write(dataset_name + "," + str(training_stats["accuracy_after_training"][1]) +"\n")
 
 
 	#INSTANTIATE EXPLANTION
-	explanation_instance = framework_tool.InstantiateExplanationFromName(explanation_name,model_instance)
+	if(explanation_name != ""):
+		explanation_instance = framework_tool.InstantiateExplanationFromName(explanation_name,model_instance)
 
-	additional_args = {
-        "num_samples":100,
-        "num_features":300,
-        "min_weight":0.01, 
-        "num_background_samples":50,
-        "train_x":train_x,
-        "train_y":train_y,
-        "max_n_influence_images":9,
-        "dataset_name":dataset_name,
-        "background_image_pool":train_x
-        }
-	
-	#EXPLAIN AN IMAGE
-	image_x = train_x[0]
+		additional_args = {
+	        "num_samples":100,
+	        "num_features":300,
+	        "min_weight":0.01, 
+	        "num_background_samples":50,
+	        "train_x":train_x,
+	        "train_y":train_y,
+	        "max_n_influence_images":9,
+	        "dataset_name":dataset_name,
+	        "background_image_pool":train_x
+	        }
+		
+		#EXPLAIN AN IMAGE
+		image_x = train_x[0]
 
-	explanation_instance.Explain(image_x,additional_args=additional_args) 
+		explanation_image, explanation_text, predicted_class, additional_outputs = explanation_instance.Explain(image_x,additional_args=additional_args) 
+
+		print("Prediction: ", predicted_class)
+
+		cv2.imshow("Explanation Image",explanation_image)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()

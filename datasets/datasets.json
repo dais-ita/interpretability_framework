@@ -1,5 +1,419 @@
 {"datasets":[
 	{
+		"dataset_name":"SVRT Problem 1",
+		"download_link":"",
+		"folder":"svrt_problem_1",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_1.csv",
+		"default_training_allocation_path":"svrt_problem_1_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 1 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 2",
+		"download_link":"",
+		"folder":"svrt_problem_2",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_2.csv",
+		"default_training_allocation_path":"svrt_problem_2_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 2 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 3",
+		"download_link":"",
+		"folder":"svrt_problem_3",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_3.csv",
+		"default_training_allocation_path":"svrt_problem_3_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 3 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 4",
+		"download_link":"",
+		"folder":"svrt_problem_4",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_4.csv",
+		"default_training_allocation_path":"svrt_problem_4_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 4 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 5",
+		"download_link":"",
+		"folder":"svrt_problem_5",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_5.csv",
+		"default_training_allocation_path":"svrt_problem_5_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 5 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 6",
+		"download_link":"",
+		"folder":"svrt_problem_6",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_6.csv",
+		"default_training_allocation_path":"svrt_problem_6_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 6 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 7",
+		"download_link":"",
+		"folder":"svrt_problem_7",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_7.csv",
+		"default_training_allocation_path":"svrt_problem_7_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 7 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 8",
+		"download_link":"",
+		"folder":"svrt_problem_8",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_8.csv",
+		"default_training_allocation_path":"svrt_problem_8_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 8 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 9",
+		"download_link":"",
+		"folder":"svrt_problem_9",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_9.csv",
+		"default_training_allocation_path":"svrt_problem_9_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 9 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 10",
+		"download_link":"",
+		"folder":"svrt_problem_10",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_10.csv",
+		"default_training_allocation_path":"svrt_problem_10_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 10 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 11",
+		"download_link":"",
+		"folder":"svrt_problem_11",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_11.csv",
+		"default_training_allocation_path":"svrt_problem_11_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 11 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 12",
+		"download_link":"",
+		"folder":"svrt_problem_12",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_12.csv",
+		"default_training_allocation_path":"svrt_problem_12_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 12 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 13",
+		"download_link":"",
+		"folder":"svrt_problem_13",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_13.csv",
+		"default_training_allocation_path":"svrt_problem_13_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 13 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 14",
+		"download_link":"",
+		"folder":"svrt_problem_14",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_14.csv",
+		"default_training_allocation_path":"svrt_problem_14_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 14 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 15",
+		"download_link":"",
+		"folder":"svrt_problem_15",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_15.csv",
+		"default_training_allocation_path":"svrt_problem_15_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 15 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 16",
+		"download_link":"",
+		"folder":"svrt_problem_16",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_16.csv",
+		"default_training_allocation_path":"svrt_problem_16_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 16 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 17",
+		"download_link":"",
+		"folder":"svrt_problem_17",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_17.csv",
+		"default_training_allocation_path":"svrt_problem_17_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 17 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 18",
+		"download_link":"",
+		"folder":"svrt_problem_18",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_18.csv",
+		"default_training_allocation_path":"svrt_problem_18_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 18 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 19",
+		"download_link":"",
+		"folder":"svrt_problem_19",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_19.csv",
+		"default_training_allocation_path":"svrt_problem_19_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 19 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 20",
+		"download_link":"",
+		"folder":"svrt_problem_20",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_20.csv",
+		"default_training_allocation_path":"svrt_problem_20_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 20 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 21",
+		"download_link":"",
+		"folder":"svrt_problem_21",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_21.csv",
+		"default_training_allocation_path":"svrt_problem_21_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 21 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 22",
+		"download_link":"",
+		"folder":"svrt_problem_22",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_22.csv",
+		"default_training_allocation_path":"svrt_problem_22_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 22 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},
+	{
+		"dataset_name":"SVRT Problem 23",
+		"download_link":"",
+		"folder":"svrt_problem_23",
+		"labels":[
+					{"label":"negative","images":2000},
+				{"label":"positive","images":2000}
+				],
+		"image_x":128,
+		"image_y":128,
+		"image_channels":3,
+		"ground_truth_csv_path":"svrt_problem_23.csv",
+		"default_training_allocation_path":"svrt_problem_23_split.csv",
+		"interesting_images":["03434_positive.png", "01150_negative.png"],
+		"references":[""],
+		"description":"Examples from problem 23 of the SVRT. Images containing shapes are either generated following a specific rule (positive) or they explicitly don't follow the rule (negative)",
+		"license":"apache 2"
+	},	
+	{
 		"dataset_name":"Gun Wielding Image Classification",
 		"download_link":"",
 		"folder":"wielder_non-wielder",

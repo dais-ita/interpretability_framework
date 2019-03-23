@@ -12,7 +12,9 @@
 			{"model_name":"inception_v3_imagenet"},
 			{"model_name":"inception_resnet_v2_imagenet"},
 			{"model_name":"mobilenet_imagenet"},
-			{"model_name":"xception_imagenet"}
+			{"model_name":"xception_imagenet"},
+			{"model_name":"vgg16"}
+			
 				],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -21,7 +23,8 @@
 			{"dataset_name":"CIFAR-10"},
 			{"dataset_name":"ImageNet 20 Class (Resized)"},
 			{"dataset_name":"ImageNet 10 Class (Resized)"},
-			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"}
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"},
+			{"dataset_name":"SVRT Problem 1"}			
 
 
 				],
@@ -66,7 +69,8 @@
 			{"model_name":"inception_v3_imagenet"},
 			{"model_name":"inception_resnet_v2_imagenet"},
 			{"model_name":"mobilenet_imagenet"},
-			{"model_name":"xception_imagenet"}
+			{"model_name":"xception_imagenet"},
+			{"model_name":"vgg16"}
 			],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -75,7 +79,8 @@
 			{"dataset_name":"CIFAR-10"},
 			{"dataset_name":"ImageNet 20 Class (Resized)"},
 			{"dataset_name":"ImageNet 10 Class (Resized)"},
-			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"}
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"},
+			{"dataset_name":"SVRT Problem 1"}			
 				],
 		"modality":"imagery",
 		"description":"",
@@ -109,7 +114,8 @@
 			{"model_name":"inception_v3_imagenet"},
 			{"model_name":"inception_resnet_v2_imagenet"},
 			{"model_name":"mobilenet_imagenet"},
-			{"model_name":"xception_imagenet"}		
+			{"model_name":"xception_imagenet"},
+			{"model_name":"vgg16"}		
 		],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -118,7 +124,8 @@
 			{"dataset_name":"CIFAR-10"},
 			{"dataset_name":"ImageNet 20 Class (Resized)"},
 			{"dataset_name":"ImageNet 10 Class (Resized)"},
-			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"}
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"},
+			{"dataset_name":"SVRT Problem 1"}			
 				],
 		"modality":"imagery",
 		"description":"An explanation by example method that finds accurate approximations of the difference in loss at a test image due caused by retraining the model with the exclusion of a train image",
@@ -151,7 +158,8 @@
 			{"model_name":"inception_v3_imagenet"},
 			{"model_name":"inception_resnet_v2_imagenet"},
 			{"model_name":"mobilenet_imagenet"},
-			{"model_name":"xception_imagenet"}
+			{"model_name":"xception_imagenet"},
+			{"model_name":"vgg16"}
 							],
 		"compatible_datasets":[
 			{"dataset_name":"Gun Wielding Image Classification"},
@@ -160,7 +168,8 @@
 			{"dataset_name":"CIFAR-10"},
 			{"dataset_name":"ImageNet 20 Class (Resized)"},
 			{"dataset_name":"ImageNet 10 Class (Resized)"},
-			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"}
+			{"dataset_name":"ImageNet Vehicles Birds 10 Class (Resized)"},
+			{"dataset_name":"SVRT Problem 1"}			
 				],
 		"modality":"imagery",
 		"description":"",

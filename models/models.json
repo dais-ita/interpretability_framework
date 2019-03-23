@@ -65,6 +65,233 @@
 			}
 		]
 		},
+		{"model_name":"vgg16",
+		"script_name":"vgg16",
+		"class_name":"VGG16Trainable",
+		"trained_on":[
+				
+	{
+		"dataset_name":"SVRT Problem 1",
+		"model_path":"saved_models/svrt_problem_1_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_1_train_split.csv",
+		"test_accuracy":0.86328125,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 2",
+		"model_path":"saved_models/svrt_problem_2_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_2_train_split.csv",
+		"test_accuracy":1,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 3",
+		"model_path":"saved_models/svrt_problem_3_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_3_train_split.csv",
+		"test_accuracy":1,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 4",
+		"model_path":"saved_models/svrt_problem_4_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_4_train_split.csv",
+		"test_accuracy":1,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 5",
+		"model_path":"saved_models/svrt_problem_5_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_5_train_split.csv",
+		"test_accuracy":0.96875,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 6",
+		"model_path":"saved_models/svrt_problem_6_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_6_train_split.csv",
+		"test_accuracy":0.8828125,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 7",
+		"model_path":"saved_models/svrt_problem_7_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_7_train_split.csv",
+		"test_accuracy":0.5,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 8",
+		"model_path":"saved_models/svrt_problem_8_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_8_train_split.csv",
+		"test_accuracy":1,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 9",
+		"model_path":"saved_models/svrt_problem_9_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_9_train_split.csv",
+		"test_accuracy":0.98828125,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 10",
+		"model_path":"saved_models/svrt_problem_10_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_10_train_split.csv",
+		"test_accuracy":0.9921875,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 11",
+		"model_path":"saved_models/svrt_problem_11_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_11_train_split.csv",
+		"test_accuracy":1,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 12",
+		"model_path":"saved_models/svrt_problem_12_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_12_train_split.csv",
+		"test_accuracy":1,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 13",
+		"model_path":"saved_models/svrt_problem_13_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_13_train_split.csv",
+		"test_accuracy":0.9765625,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 14",
+		"model_path":"saved_models/svrt_problem_14_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_14_train_split.csv",
+		"test_accuracy":0.93359375,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 15",
+		"model_path":"saved_models/svrt_problem_15_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_15_train_split.csv",
+		"test_accuracy":0.97265625,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 16",
+		"model_path":"saved_models/svrt_problem_16_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_16_train_split.csv",
+		"test_accuracy":0.97265625,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 17",
+		"model_path":"saved_models/svrt_problem_17_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_17_train_split.csv",
+		"test_accuracy":0.93359375,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 18",
+		"model_path":"saved_models/svrt_problem_18_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_18_train_split.csv",
+		"test_accuracy":0.95703125,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 19",
+		"model_path":"saved_models/svrt_problem_19_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_19_train_split.csv",
+		"test_accuracy":0.859375,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 20",
+		"model_path":"saved_models/svrt_problem_20_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_20_train_split.csv",
+		"test_accuracy":0.58984375,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 21",
+		"model_path":"saved_models/svrt_problem_21_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_21_train_split.csv",
+		"test_accuracy":0.765625,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 22",
+		"model_path":"saved_models/svrt_problem_22_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_22_train_split.csv",
+		"test_accuracy":0.9609375,
+		"training_time":0,
+		"training_steps":40
+	},
+	
+	{
+		"dataset_name":"SVRT Problem 23",
+		"model_path":"saved_models/svrt_problem_23_",
+		"training_allocation_path":"dataset_csvs/svrt_problem_23_train_split.csv",
+		"test_accuracy":0.9921875,
+		"training_time":0,
+		"training_steps":40
+	}
+		],
+		"layers":[
+			
+		],
+		"additional_arguments":[
+			{"name":"learning_rate",
+			"description":""
+			},
+			{"name":"dropout",
+			"description":""
+			}
+		],
+		"references":["https://keras.io/applications/"],
+		"description":"A keras api VGG16.",
+		"license":"apache 2"
+		},
 		{"model_name":"vgg16_imagenet",
 		"script_name":"vgg16_imagenet",
 		"class_name":"VGG16Imagenet",

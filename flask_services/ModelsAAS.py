@@ -38,7 +38,7 @@ def zipdir(path, zip_path):
 # base_dir = "/media/harborned/ShutUpN/repos/dais/p5_afm_2018_demo"
 # base_dir = "/media/upsi/fs1/harborned/repos/p5_afm_2018_demo"
 
-def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+def GetProjectExplicitBase(base_dir_name="interpretability_framework"):
 	cwd = os.getcwd()
 	split_cwd = cwd.split("/")
 
@@ -54,7 +54,7 @@ def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
 
 	return base_dir_path
 
-base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+base_dir = GetProjectExplicitBase(base_dir_name="interpretability_framework")
 
 
 #add all model folders to sys path to allow for easy import
