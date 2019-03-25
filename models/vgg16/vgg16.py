@@ -18,6 +18,7 @@ from keras.applications.vgg16 import VGG16
 from keras.layers import GlobalAveragePooling2D
 
 
+
 class VGG16Trainable(object):
     """VGG16 CNN feature descriptor (fully trained) with re-trained fully connected layers"""
 
