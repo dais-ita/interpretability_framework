@@ -81,7 +81,9 @@ class DataSet(object):
         print("training:",len(self.live_training))
         print("validation:",len(self.live_validation))
         print("test:",len(self.live_test))
-        
+
+        self.live_dataset = self.live_training + self.live_validation + self.live_test
+        self.data = self.live_dataset
 
     def CreateLiveDataSet(self, dataset_max_size=-1, even_examples=True, y_labels_to_use=[]):
         """
@@ -214,7 +216,7 @@ class DataSet(object):
         
 
     def GetBatch(self, batch_size=-1, even_examples=True, y_labels_to_use=[], split_batch=True, split_one_hot=True,
-                 batch_source="full", return_batch_data=False):
+                 batch_source="full", return_batch_data=False, shuffle=True):
         if len(self.live_dataset) == 0:
             self.live_dataset = self.CreateLiveDataSet(even_examples=even_examples, y_labels_to_use=y_labels_to_use)
             print("live dataset size: " + str(len(self.live_dataset)))
@@ -235,7 +237,7 @@ class DataSet(object):
             print("target batch source does not exist")
             return None
 
-        batch = self.FilterData(source, batch_size, even_examples, y_labels_to_use)
+        batch = self.FilterData(source, batch_size, even_examples, y_labels_to_use, shuffle=shuffle)
 
         if split_batch:
             if return_batch_data:
@@ -247,7 +249,7 @@ class DataSet(object):
             return batch
 
 
-    def FilterData(self, input_data, max_return_size=-1, even_examples=True, y_labels_to_use=[]):
+    def FilterData(self, input_data, max_return_size=-1, even_examples=True, y_labels_to_use=[],shuffle=True):
         working_data = input_data
 
         if (len(working_data)) == 0:
@@ -283,11 +285,15 @@ class DataSet(object):
             working_data = []
 
             for label in split_data:
-                working_data += random.sample(split_data[label], num_examples)
-
+                if(shuffle):
+                    working_data += random.sample(split_data[label], num_examples)
+                else:
+                    working_data += split_data[label][:num_examples]
         else:
-            working_data = random.sample(working_data, max_return_size)
-
+            if(shuffle):
+                working_data = random.sample(working_data, max_return_size)
+            else:
+                working_data = working_data[:max_return_size]
         return working_data
 
 
