@@ -132,3 +132,5 @@ saved_models/*
 
 #ignore ROAR saved models
 *ROAR_*
+
+*svrt_problem*
