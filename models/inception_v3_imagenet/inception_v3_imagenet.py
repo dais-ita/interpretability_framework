@@ -9,6 +9,8 @@ from keras.models import model_from_json
 
 from keras.models import Model
 
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 
