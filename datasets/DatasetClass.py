@@ -339,6 +339,10 @@ class DataSet(object):
 
         if load_images:
             x_vals = self.LoadImagesfromURLs(x_vals)
+        
+            if(len(x_vals.shape) == 3):
+                x_vals = np.resize(x_vals, (x_vals.shape[0], x_vals.shape[1], x_vals.shape[2], 1))
+
 
         # self.SaveImages((x_vals*255).astype('uint8'),"test_images",labels)
 
@@ -709,7 +713,7 @@ if __name__ == '__main__':
     
 
 
-    def GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo"):
+    def GetProjectExplicitBase(base_dir_name="interpretability_framework"):
         cwd = os.getcwd()
         split_cwd = cwd.split("/")
 
@@ -725,7 +729,7 @@ if __name__ == '__main__':
 
         return base_dir_path
 
-    base_dir = GetProjectExplicitBase(base_dir_name="p5_afm_2018_demo")
+    base_dir = GetProjectExplicitBase(base_dir_name="interpretability_framework")
 
     datasets_path = os.path.join(base_dir,"datasets")
 

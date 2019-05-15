@@ -1,5 +1,27 @@
 {
-	"models":[{"model_name":"keras_api_simple",
+	
+	"models":[
+		{"model_name":"lenet",
+			"script_name":"lenet",
+			"class_name":"LeNet",
+			"trained_on":[
+				
+			],
+			"layers":[
+				
+			],
+			"additional_arguments":[
+				{"name":"learning_rate",
+				"description":""
+				},
+				{"name":"dropout",
+				"description":""
+				}
+			],
+			"description":"A keras functional api based LeNet-like CNN.",
+			"license":"apache 2"
+			},
+		{"model_name":"keras_api_simple",
 		"script_name":"keras_api_simple",
 		"class_name":"KerasApiSimple",
 		"trained_on":[
@@ -36,7 +58,7 @@
 			"description":""
 			}
 		],
-		"description":"A keras functional api based VGG-like CNN.",
+		"description":"A keras functional api based LeNet-like CNN.",
 		"license":"apache 2"
 		},
 		{"model_name":"conv_svm",
