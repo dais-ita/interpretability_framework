@@ -3,9 +3,13 @@ import numpy as np
 import keras
 from keras.datasets import mnist
 from keras.layers import Dense, Flatten, Dropout, Activation, Reshape, Input
-from keras.layers import Conv2D, MaxPooling2D, Convolution2D, MaxPooling2D, ZeroPadding2D
+from keras.layers import Conv2D, MaxPooling2D, Convolution2D, MaxPooling2D, ZeroPadding2D, BatchNormalization
 from keras.models import Sequential
 from keras.models import model_from_json
+from keras import optimizers
+from keras.layers.core import Lambda
+from keras import backend as K
+from keras import regularizers
 
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
@@ -26,8 +30,10 @@ class VGG16Trainable(object):
                  additional_args={}):
         super(VGG16Trainable, self).__init__()
         # model specific variables
-        self.min_height = 48
-        self.min_width = 48
+        self.min_height = 28
+        self.min_width = 28
+
+        self.weight_decay = 0.0005
         
         self.model_input_dim_height = max(model_input_dim_height,self.min_height)
         self.model_input_dim_width = max(model_input_dim_width,self.min_width)
@@ -166,24 +172,93 @@ class VGG16Trainable(object):
     ### Model Specific Functions
     def BuildModel(self, model_input_dim_height, model_input_dim_width, model_input_channels, n_classes,dropout): 
         
-        model_input_dim_height, model_input_dim_width, model_input_channels = self.CheckInputDimensions((model_input_dim_height, model_input_dim_width, model_input_channels),self.min_height,self.min_width)
+        self.x_shape = [model_input_dim_height,model_input_dim_width,model_input_channels]
 
-        vis_input = Input(shape=(model_input_dim_height, model_input_dim_width, model_input_channels), name="absolute_input")
+        model = Sequential()
+        weight_decay = self.weight_decay
 
-        base_model = VGG16(input_tensor=vis_input, weights='imagenet',input_shape=(model_input_dim_height, model_input_dim_width, model_input_channels), include_top=False)
-        # for layer in base_model.layers:
-        #     layer.trainable = False
+        model.add(Conv2D(64, (3, 3), padding='same',
+                         input_shape=self.x_shape,kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.3))
 
-        # add a global spatial average pooling layer
-        x = base_model.output
-        x = GlobalAveragePooling2D()(x)
-        
-        # x = Flatten()                                      (x)
-        x = Dense(1024, activation='relu')                 (x)
-        x = Dropout(dropout)                                   (x)
-        x = Dense(n_classes, name="logits") (x)
-        x = Activation('softmax',name="absolute_output") (x)
-        model = Model(input=vis_input, output=x)
+        model.add(Conv2D(64, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+        model.add(Conv2D(128, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.4))
+
+        model.add(Conv2D(128, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+        model.add(Conv2D(256, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.4))
+
+        model.add(Conv2D(256, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.4))
+
+        model.add(Conv2D(256, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+
+        model.add(Conv2D(512, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.4))
+
+        model.add(Conv2D(512, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.4))
+
+        model.add(Conv2D(512, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+
+        model.add(Conv2D(512, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.4))
+
+        model.add(Conv2D(512, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.4))
+
+        model.add(Conv2D(512, (3, 3), padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.5))
+
+        model.add(Flatten())
+        model.add(Dense(512,kernel_regularizer=regularizers.l2(weight_decay)))
+        model.add(Activation('relu'))
+        model.add(BatchNormalization())
+
+        model.add(Dropout(0.5))
+        model.add(Dense(n_classes))
+        model.add(Activation('softmax'))
         return model
 
     def GetWeights(self):
