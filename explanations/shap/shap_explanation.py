@@ -147,8 +147,9 @@ class ShapExplainer(object):
     
     plt.autoscale(tight=True)
     plt.gcf().set_size_inches(10,10) 
-    
+
     sv = explanation_values[0] if len(explanation_values[0].shape) == 2 else explanation_values[0].sum(-1)
+
     plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
     plt.imshow(sv, cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
     plt.axis('off')
@@ -255,7 +256,9 @@ class ShapExplainer(object):
       prediction_scores = prediction_scores.tolist()
     
     attributions_list = [shap_value.tolist() for shap_value in shap_values]
+
     attributions_list = attributions_list[predicted_class][0]
+
     
     additional_outputs = {"attribution_map":attributions_list,"shap_values":[shap_value.tolist() for shap_value in shap_values],"prediction_scores":prediction_scores[0]}
 
