@@ -235,7 +235,7 @@ if __name__ == '__main__':#
 
 	dataset_name = "ImageNet Vehicles Birds 10 Class (Resized)"
 
-	explanation_name = "LRP"
+	explanation_name = "Shap"
 
 	if(len(sys.argv) > 1):
 		dataset_name = sys.argv[1]

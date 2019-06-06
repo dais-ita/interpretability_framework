@@ -148,7 +148,7 @@ class ShapExplainer(object):
     plt.autoscale(tight=True)
     plt.gcf().set_size_inches(10,10) 
     
-    sv = explanation_values[i] if len(explanation_values[i].shape) == 2 else explanation_values[i].sum(-1)
+    sv = explanation_values[0] if len(explanation_values[0].shape) == 2 else explanation_values[0].sum(-1)
     plt_img = plt.imshow(x_curr, cmap=plt.get_cmap('gray'), alpha=0.15, extent=(0, sv.shape[0], sv.shape[1], 0))
     plt.imshow(sv, cmap=self.GetColorMap(), vmin=-max_val, vmax=max_val)
     plt.axis('off')
@@ -177,7 +177,7 @@ class ShapExplainer(object):
     if("num_background_samples" in additional_args):
       num_background_samples=additional_args["num_background_samples"]
     else:
-      num_background_samples=10
+      num_background_samples=64
 
     #print("num_background_samples",num_background_samples)
 
@@ -255,7 +255,7 @@ class ShapExplainer(object):
       prediction_scores = prediction_scores.tolist()
     
     attributions_list = [shap_value.tolist() for shap_value in shap_values]
-    attributions_list = attributions_list[0][0]
+    attributions_list = attributions_list[predicted_class][0]
     
     additional_outputs = {"attribution_map":attributions_list,"shap_values":[shap_value.tolist() for shap_value in shap_values],"prediction_scores":prediction_scores[0]}
 

@@ -524,6 +524,24 @@
 	"license":"apache 2"
 	},
 	{
+		"dataset_name":"ImageNet",
+		"download_link":"",
+		"folder":"imagenet",
+		"absolute_path":true,
+		"labels":[
+					
+				],
+		"image_x":224,
+		"image_y":224,
+		"image_channels":3,
+		"ground_truth_csv_path":"imagenet.csv",
+		"default_training_allocation_path":"imagenet_train_split.csv",
+		"interesting_images":["00000_n01440764.JPEG","00000_n01440764.JPEG","00000_n01440764.JPEG","00000_n01440764.JPEG"],
+		"references":[""],
+		"description":"",
+		"license":"CHECK IMAGENET"
+		},
+	{
 	"dataset_name":"ImageNet 20 Class (Resized)",
 	"download_link":"",
 	"folder":"imagenet_20_class_resized",
