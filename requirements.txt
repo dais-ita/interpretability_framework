@@ -10,7 +10,7 @@ dask==0.20.2
 decorator==4.3.0
 -e git+https://github.com/marcoancona/DeepExplain.git@4ac3ba6ac3801ec72e137c448c879e3a223b48d4#egg=deepexplain
 enum34==1.1.6
-Flask==0.12.2
+Flask==1.0
 Flask-Cors==3.0.7
 funcsigs==1.0.2
 futures==3.2.0
@@ -57,10 +57,10 @@ simplegeneric==0.8.1
 six==1.11.0
 subprocess32==3.5.3
 tensorboard==1.10.0
-tensorflow-gpu==1.10.0
+tensorflow-gpu==1.15.2
 termcolor==1.1.0
 toolz==0.9.0
 tqdm==4.28.1
 traitlets==4.3.2
 wcwidth==0.1.7
-Werkzeug==0.14.1
+Werkzeug==0.15.3
