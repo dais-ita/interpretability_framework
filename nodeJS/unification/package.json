@@ -14,7 +14,7 @@
     "http-errors": "~1.6.2",
     "morgan": "^1.9.1",
     "promise": "^8.0.1",
-    "pug": "^2.0.4",
+    "pug": "^3.0.1",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "request-promise-core": "~1.1.1"
