@@ -11,7 +11,7 @@ decorator==4.3.0
 -e git+https://github.com/marcoancona/DeepExplain.git@4ac3ba6ac3801ec72e137c448c879e3a223b48d4#egg=deepexplain
 enum34==1.1.6
 Flask==1.0
-Flask-Cors==3.0.7
+Flask-Cors==3.0.9
 funcsigs==1.0.2
 futures==3.2.0
 gast==0.2.0
