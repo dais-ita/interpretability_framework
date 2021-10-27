@@ -6,7 +6,7 @@ backports.weakref==1.0.post1
 Click==7.0
 cloudpickle==0.6.1
 cycler==0.10.0
-dask==0.20.2
+dask==2021.10.0
 decorator==4.3.0
 -e git+https://github.com/marcoancona/DeepExplain.git@4ac3ba6ac3801ec72e137c448c879e3a223b48d4#egg=deepexplain
 enum34==1.1.6
